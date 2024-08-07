@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/Model/Progetto.dart';
 import 'package:teamsync_flutter/navigation/schermate.dart';
 
+
 void showAbbandonaProgettoDialog({
   required BuildContext context,
   required String progettoId,
@@ -60,6 +61,54 @@ void showAbbandonaProgettoDialog({
                 color: isDarkTheme ? Colors.white : Colors.black,
               ),
             ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
+void abbandonaProgettoDialog({
+  required BuildContext context,
+  required VoidCallback onDismissRequest,
+  required ProgettoViewModel viewModelProgetto,
+  required Schermate navController,
+  required String progettoId,
+}) {
+  final userId = viewModelProgetto.utenteCorrenteId;
+  final progettoID = viewModelProgetto.utenteCorrenteId;
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.grey[350],
+        content: const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            'Vuoi davvero abbandonare il progetto?',
+            style: TextStyle(
+              color: Colors.black,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: onDismissRequest,
+            child: Text(
+              'Annulla',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700]),
+            onPressed: () {
+              onDismissRequest();
+              viewModelProgetto.abbandonaProgetto(userId!);
+              navController.navigate('/ituoiProgetti');
+            },
+            child: Text('Abbandona'),
           ),
         ],
       );

@@ -27,14 +27,9 @@ class ITuoiProgettiItem extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      child: InkWell(
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isDarkTheme ? Colors.white : Colors.black,
-            ),
-          ),
+      color: isDarkTheme ? Colors.black : Colors.white,
+
+      child: Container(
           width: 220,
           height: 140,
           padding: const EdgeInsets.all(16),///ciao
@@ -79,7 +74,6 @@ class ITuoiProgettiItem extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 
