@@ -16,7 +16,6 @@ class YourProjectsPage extends StatefulWidget {
 
 class _YourProjectsPageState extends State<YourProjectsPage> {
   bool isDarkTheme = false;
-  bool showCreateProjectDialog = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +28,7 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'HOME',
+          'Home',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isDarkTheme ? Colors.white : Colors.black,
@@ -83,16 +82,31 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          setState(() {
-            showCreateProjectDialog = true;
-          });
+          if (currentUserId != null) {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return CreaProgettoDialog(
+                  onDismissRequest: () {
+                    Navigator.of(context).pop();
+                  },
+                  viewModelProgetto: viewModelProgetto,
+                  isDarkTheme: isDarkTheme,
+                  currentUserId: currentUserId!, // Utilizza il null-assertion operator
+                );
+              },
+            );
+          } else {
+            // Gestisci il caso in cui currentUserId è null
+            print("Errore: l'ID dell'utente corrente è null");
+          }
         },
         backgroundColor: Colors.red,
         child: Icon(Icons.add, color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: ListView(
           children: [
             if (isLoading)
               const Center(
@@ -127,15 +141,20 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
   }
 }
 
+
 class CreaProgettoDialog extends StatefulWidget {
   final VoidCallback onDismissRequest;
   final ProgettoViewModel viewModelProgetto;
   final bool isDarkTheme;
+  final String currentUserId;
+
 
   CreaProgettoDialog({
     required this.onDismissRequest,
     required this.viewModelProgetto,
     required this.isDarkTheme,
+    required this.currentUserId,
+
   });
 
   @override
@@ -266,7 +285,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
               ),
               style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
             ),
-            SizedBox(height: 8.0),
+            SizedBox(height: 18.0),
             TextField(
               controller: TextEditingController(text: dataConsegnaStr),
               onTap: () async {
@@ -304,27 +323,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
               ),
               style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
             ),
-            SizedBox(height: 8.0),
-            TextField(
-              onChanged: (value) {
-                setState(() {
-                  voto = value;
-                });
-              },
-              decoration: InputDecoration(
-                labelText: 'Voto',
-                labelStyle: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: widget.isDarkTheme ? Colors.white : Colors.black),
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red.shade700),
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-              ),
-              style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
-            ),
+            SizedBox(height: 10.0),
             SizedBox(height: 8.0),
             DropdownButtonFormField<Priorita>(
               value: priorita,
@@ -357,38 +356,6 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
               dropdownColor: widget.isDarkTheme ? Colors.black : Colors.white,
               style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
             ),
-            Divider(
-              color: Colors.red.shade700,
-              thickness: 2.0,
-              indent: 16.0,
-              endIndent: 16.0,
-            ),
-            Column(
-              children: [
-                Text(
-                  'Unisciti a un progetto',
-                  style: TextStyle(
-                    color: widget.isDarkTheme ? Colors.white : Colors.black,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      // Logica per mostrare la sezione di aggiunta progetto
-                    });
-                  },
-                  child: Text(
-                    'con un codice',
-                    style: TextStyle(
-                      color: Colors.red.shade700,
-                      decoration: TextDecoration.underline,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ),
@@ -409,8 +376,8 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
               descrizione: descrizione,
               dataScadenza: dataScadenza,
               priorita: priorita,
-              voto: voto,
               dataConsegna: dataConsegna,
+              partecipanti: [widget.currentUserId], // Aggiungi il partecipante qui
               onSuccess: (progettoId) {
                 Navigator.of(context).pop();
                 print('Progetto creato con successo con ID: $progettoId');

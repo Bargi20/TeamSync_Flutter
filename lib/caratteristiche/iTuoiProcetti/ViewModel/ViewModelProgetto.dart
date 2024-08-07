@@ -265,8 +265,8 @@ class ProgettoViewModel extends ChangeNotifier {
     required String descrizione,
     required DateTime dataScadenza,
     required Priorita priorita,
-    required String voto,
     required DateTime dataConsegna,
+    required List<String> partecipanti, // Aggiungi il parametro partecipanti
     required Function(String) onSuccess,
   }) async {
     try {
@@ -281,11 +281,9 @@ class ProgettoViewModel extends ChangeNotifier {
         dataScadenza: dataScadenza,
         dataConsegna: dataConsegna,
         priorita: priorita,
-        voto: voto,
         attivita: [],
-        partecipanti: [],
+        partecipanti: partecipanti, // Utilizza i partecipanti qui
         completato: false,
-        codice: '',
       );
 
       await repositoryProgetto.creaProgetto(progetto);
@@ -297,6 +295,7 @@ class ProgettoViewModel extends ChangeNotifier {
       print("Errore durante l'aggiunta del progetto: $e");
     }
   }
+
 
   Future<void> abbandonaProgetto(String progettoId) async {
     try {
