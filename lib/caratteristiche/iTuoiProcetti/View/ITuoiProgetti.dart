@@ -29,7 +29,7 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Home',
+          'HOME',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isDarkTheme ? Colors.white : Colors.black,
