@@ -1,0 +1,173 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:teamsync_flutter/data.models/Priorita.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/Model/Progetto.dart'; // Assicurati di avere il modello Progetto
+
+class ITuoiProgettiItem extends StatelessWidget {
+  final Progetto progetto;
+  final int attivitaNonCompletate;
+  final bool isDarkTheme;
+  final bool progettoScaduto; // Nuovo parametro per la scadenza del progetto
+
+  ITuoiProgettiItem({
+    required this.progetto,
+    required this.attivitaNonCompletate,
+    required this.isDarkTheme,
+    required this.progettoScaduto, // Nuovo parametro
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final dateFormatter = DateFormat('dd/MM/yyyy');
+    final dataScadenza = dateFormatter.format(progetto.dataScadenza);
+    final dataConsegna = dateFormatter.format(progetto.dataConsegna);
+
+    return Card(
+      elevation: 16,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: InkWell(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isDarkTheme ? Colors.white : Colors.black,
+            ),
+          ),
+          width: 220,
+          height: 140,
+          padding: const EdgeInsets.all(16),///ciao
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (progetto.completato)
+                    Icon(
+                      Icons.check_circle,
+                      color: isDarkTheme ? Colors.white : Colors.black,
+                    ),
+                  Flexible(
+                    child: Text(
+                      progetto.nome,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isDarkTheme ? Colors.white : Colors.black,
+                      ),
+                      overflow: TextOverflow.ellipsis, // Assicura che il testo non strabordi
+                    ),
+                  ),
+                  if (!progetto.completato)
+                    CircleAvatar(
+                      radius: 8,
+                      backgroundColor: progetto.priorita.colore,
+                    ),
+                ],
+              ),
+              Divider(
+                color: isDarkTheme ? Colors.white : Colors.grey[350],
+                thickness: 1,
+              ),
+              if (progetto.completato)
+                _buildCompletedProjectRow(dataConsegna)
+              else
+                _buildIncompleteProjectRow(attivitaNonCompletate),
+              _buildDeadlineRow(dataScadenza, progettoScaduto),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Row _buildCompletedProjectRow(String dataConsegna) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Icon(
+          Icons.date_range,
+          size: 16,
+          color: isDarkTheme ? Colors.white : Colors.black,
+        ),
+        const SizedBox(width: 5),
+        Text(
+          dataConsegna,
+          style: TextStyle(
+            fontSize: 12,
+            color: isDarkTheme ? Colors.white : Colors.black,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row _buildIncompleteProjectRow(int attivitaNonCompletate) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Icon(
+          Icons.task,
+          size: 16,
+          color: isDarkTheme ? Colors.white : Colors.black,
+        ),
+        SizedBox(width: 5),
+        Text(
+          '$attivitaNonCompletate attività',
+          style: TextStyle(
+            fontSize: 12,
+            color: isDarkTheme ? Colors.white : Colors.black,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row _buildDeadlineRow(String dataScadenza, bool progettoScaduto) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Icon(
+          progettoScaduto ? Icons.error : Icons.calendar_today,
+          size: 16,
+          color: progettoScaduto ? Colors.red : (isDarkTheme ? Colors.white : Colors.black),
+        ),
+        const SizedBox(width: 5),
+        Text(
+          dataScadenza,
+          style: TextStyle(
+            fontSize: 12,
+            color: progettoScaduto ? Colors.red : (isDarkTheme ? Colors.white : Colors.black),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: Scaffold(
+      body: Center(
+        child: ITuoiProgettiItem(
+          progetto: Progetto(
+            id: '1',
+            nome: 'TeamSync',
+            descrizione: 'Descrizione del progetto',
+            dataCreazione: DateTime.now().subtract(Duration(days: 10)),
+            dataScadenza: DateTime.now().add(Duration(days: 10)),
+            dataConsegna: DateTime.now().add(Duration(days: 5)),
+            priorita: Priorita.alta,
+            attivita: [],
+            partecipanti: [],
+          ),
+          attivitaNonCompletate: 3,
+          isDarkTheme: false,
+          progettoScaduto: false, // Esempio di valore per progettoScaduto
+        ),
+      ),
+    ),
+  ));
+}

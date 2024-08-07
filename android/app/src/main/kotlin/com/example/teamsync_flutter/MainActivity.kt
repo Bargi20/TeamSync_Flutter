@@ -1,4 +1,4 @@
-package com.example.teamsync_flutter_git
+package com.example.teamsync_flutter
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,0 +1,122 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // For date formatting
+
+// Existing models and priority
+import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/Model/Progetto.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/ViewModel/ViewModelProgetto.dart';
+import 'package:teamsync_flutter/data.models/Priorita.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/iTuoiProgettiItem.dart';
+
+
+class SezioneITUoiProgetti extends StatelessWidget {
+  final List<Progetto> progetti;
+  final Map<String, int> attivitaProgetti;
+  final bool isDarkTheme;
+  final void Function(Progetto) onProgettoTap; // Callback for handling taps
+
+  SezioneITUoiProgetti({
+    required this.progetti,
+    required this.attivitaProgetti,
+    required this.isDarkTheme,
+    required this.onProgettoTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    comparatore(Progetto p1, Progetto p2) {
+      final priorita1 = p1.priorita;
+      final priorita2 = p2.priorita;
+
+      if (priorita1 == Priorita.alta && priorita2 != Priorita.alta) return -1;
+      if (priorita1 != Priorita.alta && priorita2 == Priorita.alta) return 1;
+      if (priorita1 == Priorita.media && priorita2 == Priorita.bassa) return -1;
+      if (priorita1 == Priorita.bassa && priorita2 == Priorita.media) return 1;
+      if (priorita1 == Priorita.media && priorita2 == Priorita.nessuna) return -1;
+      if (priorita1 == Priorita.nessuna && priorita2 == Priorita.media) return 1;
+      if (priorita1 == Priorita.bassa && priorita2 == Priorita.nessuna) return -1;
+      if (priorita1 == Priorita.nessuna && priorita2 == Priorita.bassa) return 1;
+
+      return 0;
+    }
+
+    // Simulated preferences
+    const visualizzaCompletati = false; // Simulate: change as needed
+    const ordineProgetti = "cronologico"; // Simulate: change as needed
+
+    // Create a sorted list based on the preference
+    List<Progetto> sortedProgetti = List.from(progetti);
+
+    sortedProgetti.sort((p1, p2) {
+      switch (ordineProgetti) {
+        case "cronologico":
+          return p2.dataCreazione.compareTo(p1.dataCreazione);
+        case "scadenza":
+          return p1.dataScadenza.compareTo(p2.dataScadenza);
+        case "priorità":
+          return comparatore(p1, p2);
+        default:
+          return 0;
+      }
+    });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(padding: const EdgeInsets.only(right:120.0),
+        child:Text(
+          'I tuoi progetti',
+          style: TextStyle(
+            fontSize: 24,
+            color: isDarkTheme ? Colors.white : Colors.black,
+          ),
+        ),
+        ),
+        const SizedBox(height: 12),
+        if (progetti.isEmpty)
+          Card(
+            elevation: 16,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            color: isDarkTheme ? Colors.black : Colors.white,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: Placeholder(), // Replace with the desired image
+                ),
+                Text(
+                  'Nessun progetto',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDarkTheme ? Colors.white : Colors.black,
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          SizedBox(
+            height: 120,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: sortedProgetti
+                  .where((p) => visualizzaCompletati || !p.completato)
+                  .map((progetto) {
+                final attivitaNonCompletate = attivitaProgetti[progetto.id] ?? 0;
+                return ITuoiProgettiItem(
+                  progetto: progetto,
+                  attivitaNonCompletate: attivitaNonCompletate,
+                  isDarkTheme: isDarkTheme,
+                  progettoScaduto: false,
+                );
+              }).toList(),
+            ),
+          ),
+      ],
+    );
+  }
+}
