@@ -106,7 +106,7 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
+        child: ListView(//per la visualizzzione di piu item
           children: [
             if (isLoading)
               const Center(
