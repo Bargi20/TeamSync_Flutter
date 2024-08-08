@@ -186,4 +186,20 @@ class ViewModelUtente extends ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<ProfiloUtente?> ottieni_utente(String userId) async {
+    try {
+      final doc = await FirebaseFirestore.instance.collection('utenti').doc(userId).get();
+      if (doc.exists) {
+        // Crea e restituisci l'istanza di ProfiloUtente dal documento Firestore
+        return ProfiloUtente.fromFirestore(doc);
+      } else {
+        // Restituisci null se il documento non esiste
+        return null;
+      }
+    } catch (e) {
+      print("Errore nel recupero del profilo utente: $e");
+      // Restituisci null in caso di errore
+      return null;
+    }
+  }
 }

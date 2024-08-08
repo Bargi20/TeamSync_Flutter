@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:teamsync_flutter/caratteristiche/login/ViewModel/ViewModelUtente.dart';
 import 'package:teamsync_flutter/navigation/schermate.dart';
 import 'package:teamsync_flutter/caratteristiche/login/Model/UserClass.dart';
+import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
 
 class SezioneProfiloUtente extends StatelessWidget {
   final bool isDarkTheme;
-
   SezioneProfiloUtente({
     required this.isDarkTheme,
   });

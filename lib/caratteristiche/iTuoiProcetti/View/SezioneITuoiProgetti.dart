@@ -12,13 +12,11 @@ class SezioneITUoiProgetti extends StatelessWidget {
   final List<Progetto> progetti;
   final Map<String, int> attivitaProgetti;
   final bool isDarkTheme;
-  final void Function(Progetto) onProgettoTap; // Callback for handling taps
 
   SezioneITUoiProgetti({
     required this.progetti,
     required this.attivitaProgetti,
     required this.isDarkTheme,
-    required this.onProgettoTap,
   });
 
   @override

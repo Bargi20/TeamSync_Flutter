@@ -22,7 +22,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ViewModelUtente()),
-        ChangeNotifierProvider(create: (_) => ProgettoViewModel(repositoryProgetto: repositoryProgetto, repositoryUtente: repositoryUtente, repositoryLeMieAttivita: repositoryLeMieAttivita)), // Aggiungi il ProgettoViewModel
+        ChangeNotifierProvider(create: (_) => ProgettoViewModel()), // Aggiungi il ProgettoViewModel
       ],
       child: const MyApp(),
     ),

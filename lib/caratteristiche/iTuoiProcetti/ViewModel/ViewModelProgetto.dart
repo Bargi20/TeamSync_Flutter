@@ -11,15 +11,11 @@ import 'package:teamsync_flutter/data.models/Priorita.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ProgettoViewModel extends ChangeNotifier {
-  final RepositoryProgetto repositoryProgetto;
-  final RepositoryUtente repositoryUtente;
-  final TodoRepository repositoryLeMieAttivita;
+  final RepositoryProgetto repositoryProgetto = RepositoryProgetto();
+  final RepositoryUtente repositoryUtente = RepositoryUtente();
+  final TodoRepository repositoryLeMieAttivita = TodoRepository();
 
-  ProgettoViewModel({
-    required this.repositoryProgetto,
-    required this.repositoryUtente,
-    required this.repositoryLeMieAttivita,
-  }) {
+  ProgettoViewModel() {
     _init();
   }
 
@@ -43,12 +39,14 @@ class ProgettoViewModel extends ChangeNotifier {
 
   List<LeMieAttivita> _attivitaNonCompletate = [];
   List<LeMieAttivita> _attivitaCompletate = [];
+  List<LeMieAttivita> _LemieattivitanonCompletate = [];
   List<Progetto> _progetti = [];
   Map<String, int> _attivitaProgetti = {};
   List<Progetto> _progettiCollega = [];
 
   List<LeMieAttivita> get attivitaNonCompletate => _attivitaNonCompletate;
   List<LeMieAttivita> get attivitaCompletate => _attivitaCompletate;
+  List<LeMieAttivita> get leMieAttivitaNonCompletate => _LemieattivitanonCompletate;
   List<Progetto> get progetti => _progetti;
   Map<String, int> get attivitaProgetti => _attivitaProgetti;
   List<Progetto> get progettiCollega => _progettiCollega;
@@ -94,16 +92,36 @@ class ProgettoViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> caricaAttivitaUtente(String progettoId) async {
+  Future<void> caricaLeMieAttivita(String progettoId, String UserId) async {
     try {
       final attivitaProgetto = await repositoryLeMieAttivita.getAttivitaByProgettoId(progettoId);
-      _attivitaNonCompletate = attivitaProgetto.where((a) => !a.completato).toList();
+      _LemieattivitanonCompletate = attivitaProgetto.where((a) => !a.completato && a.utenti.contains(UserId)).toList();
+      notifyListeners();
+    } catch (e) {
+      print("Errore nel caricamento delle attività del progetto: $progettoId: $e");
+    }
+  }
+
+  Future<void> caricaAttivitaCompletate(String progettoId) async {
+    try {
+      final attivitaProgetto = await repositoryLeMieAttivita.getAttivitaByProgettoId(progettoId);
       _attivitaCompletate = attivitaProgetto.where((a) => a.completato).toList();
       notifyListeners();
     } catch (e) {
       print("Errore nel caricamento delle attività del progetto: $progettoId: $e");
     }
   }
+
+  caricaAttivitaNonCompletate(String progettoId) async {
+    try {
+      final attivitaProgetto = await repositoryLeMieAttivita.getAttivitaByProgettoId(progettoId);
+      _attivitaNonCompletate = attivitaProgetto.where((a) => !a.completato).toList();
+      notifyListeners();
+    } catch (e) {
+      print("Errore nel caricamento delle attività del progetto: $progettoId: $e");
+    }
+  }
+
 
   void condividiCodiceProgetto(BuildContext context, String codiceProgetto) {
     final String testoDaCondividere = "Ecco il codice per poter aggiungere il progetto: $codiceProgetto";
@@ -222,6 +240,17 @@ class ProgettoViewModel extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<Progetto?> getProgettoById(String progettoId) async {
+    try {
+      // Usa il repository per ottenere il progetto
+      final progetto = await repositoryProgetto.getProgettoById(progettoId);
+      return progetto;  // Restituisce il progetto trovato
+    } catch (e) {
+      print("Errore durante il recupero del progetto con ID $progettoId: $e");
+      return null;  // Restituisce null in caso di errore
     }
   }
 

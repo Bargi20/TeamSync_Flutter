@@ -8,8 +8,11 @@ import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/SezioneCalen
 import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/SezioneProgressiProgetti.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/SezioneITuoiProgetti.dart';
 import 'package:teamsync_flutter/navigation/Schermate.dart';
-
+import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
 class YourProjectsPage extends StatefulWidget {
+
+  ViewModelUtente viewmodelutente;
+  YourProjectsPage({required this.viewmodelutente});
   @override
   _YourProjectsPageState createState() => _YourProjectsPageState();
 }
@@ -46,7 +49,7 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
                   }
                   break;
                 case 'settings':
-                  Navigator.of(context).pushNamed('/settings');
+
                   break;
                 case 'logout':
                   viewModelProgetto.logout();
@@ -118,9 +121,6 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
               progetti: projects,
               attivitaProgetti: viewModelProgetto.attivitaProgetti,
               isDarkTheme: isDarkTheme,
-              onProgettoTap: (progetto) {
-                Navigator.of(context).pushNamed('/progettoDettagli', arguments: progetto);
-              },
             ),
             const SizedBox(height: 16),
             Row(

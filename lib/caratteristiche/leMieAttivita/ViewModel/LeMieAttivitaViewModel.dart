@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:teamsync_flutter/data/models/Priorita.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/Model/LeMieAttivita.dart';
 
 class LeMieAttivitaViewModel extends ChangeNotifier {
@@ -31,7 +30,6 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
       String titolo,
       String descrizione,
       DateTime dataScadenza,
-      Priorita priorita,
       bool completato,
       String proprietario,
       String progetto) async {
@@ -61,7 +59,6 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
       String titolo,
       String descrizione,
       DateTime dataScadenza,
-      Priorita priorita,
       String progetto,
       List<String> utenti,
       String? fileUri) async {
@@ -117,7 +114,6 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
       String titolo,
       String descrizione,
       DateTime dataScadenza,
-      Priorita priorita,
       String progetto)
   async {
     if (titolo.isEmpty) {
@@ -140,7 +136,7 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
       final downloadUrl = await storageRef.getDownloadURL();
 
       // Chiamata a repository per aggiornare il Todo con l'URL del file
-      await updateTodo(id, titolo, descrizione, dataScadenza, priorita, progetto, [], downloadUrl);
+      await updateTodo(id, titolo, descrizione, dataScadenza, progetto, [], downloadUrl);
     } catch (e) {
       setError("Errore durante l'upload del file.");
     }

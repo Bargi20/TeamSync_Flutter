@@ -3,9 +3,13 @@ import 'package:provider/provider.dart';
 
 import '../../../navigation/schermate.dart';
 import '../../../theme/color.dart';
-import '../ViewModel/ViewModelUtente.dart';
+import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
 
 class LoginScreen extends StatefulWidget {
+
+  ViewModelUtente viewmodelutente;
+
+  LoginScreen({required this.viewmodelutente});
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }

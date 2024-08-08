@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:teamsync_flutter/data.models/Priorita.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/Model/Progetto.dart'; // Assicurati di avere il modello Progetto
+import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/Model/Progetto.dart';
+
+import '../../../navigation/Schermate.dart'; // Assicurati di avere il modello Progetto
 
 class ITuoiProgettiItem extends StatelessWidget {
   final Progetto progetto;
@@ -13,7 +15,7 @@ class ITuoiProgettiItem extends StatelessWidget {
     required this.progetto,
     required this.attivitaNonCompletate,
     required this.isDarkTheme,
-    required this.progettoScaduto, // Nuovo parametro
+    required this.progettoScaduto,
   });
 
   @override
@@ -22,12 +24,21 @@ class ITuoiProgettiItem extends StatelessWidget {
     final dataScadenza = dateFormatter.format(progetto.dataScadenza);
     final dataConsegna = dateFormatter.format(progetto.dataConsegna);
 
-    return Card(
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          Schermate.leMieAttivita,
+          arguments: progetto.id, // Il parametro idProgetto
+        );
+      },
+      child: Card(
       elevation: 16,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
       color: isDarkTheme ? Colors.black : Colors.white,
+
 
       child: Container(
           width: 220,
@@ -74,6 +85,7 @@ class ITuoiProgettiItem extends StatelessWidget {
             ],
           ),
         ),
+    )
     );
   }
 
@@ -141,27 +153,4 @@ class ITuoiProgettiItem extends StatelessWidget {
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    home: Scaffold(
-      body: Center(
-        child: ITuoiProgettiItem(
-          progetto: Progetto(
-            id: '1',
-            nome: 'TeamSync',
-            descrizione: 'Descrizione del progetto',
-            dataCreazione: DateTime.now().subtract(Duration(days: 10)),
-            dataScadenza: DateTime.now().add(Duration(days: 10)),
-            dataConsegna: DateTime.now().add(Duration(days: 5)),
-            priorita: Priorita.alta,
-            attivita: [],
-            partecipanti: [],
-          ),
-          attivitaNonCompletate: 3,
-          isDarkTheme: false,
-          progettoScaduto: false, // Esempio di valore per progettoScaduto
-        ),
-      ),
-    ),
-  ));
-}
+
