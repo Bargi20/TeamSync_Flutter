@@ -16,6 +16,20 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   Uri? get fileUri => _fileUri;
 
+  final StreamController<String> _erroreAggiungiTaskController =
+  StreamController<String>.broadcast();
+
+  Stream<String> get erroreAggiungiTaskStream =>
+      _erroreAggiungiTaskController.stream;
+
+  void setErroreAggiungiTask(String message) {
+    _erroreAggiungiTaskController.add(message);
+  }
+
+  void resetErroreAggiungiTask() {
+    _erroreAggiungiTaskController.add('');
+  }
+
   setError(String? message) {
     _errorMessage = message;
     notifyListeners();

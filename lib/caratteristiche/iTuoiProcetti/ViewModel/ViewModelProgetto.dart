@@ -9,6 +9,7 @@ import 'package:teamsync_flutter/caratteristiche/login/Model/UserClass.dart';
 import 'package:teamsync_flutter/caratteristiche/login/Repository/RepositoryUtente.dart';
 import 'package:teamsync_flutter/data.models/Priorita.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:teamsync_flutter/caratteristiche/login/Model/UserClass.dart';
 
 class ProgettoViewModel extends ChangeNotifier {
   final RepositoryProgetto repositoryProgetto = RepositoryProgetto();
@@ -221,6 +222,18 @@ class ProgettoViewModel extends ChangeNotifier {
     }
   }
 
+  Future<ProfiloUtente?> getUtenteByIdAsync(String id) async {
+    try {
+      final profileData = await repositoryUtente.getUserProfile(id);
+      final profile = profileData != null ? ProfiloUtente.fromMap(profileData) : null;
+      return profile;
+    } catch (e) {
+      print("Errore durante il recupero dell'utente con ID $id: $e");
+      return null;
+    }
+  }
+
+
   Future<void> caricaProgettiUtente(String userId, bool loadingInit) async {
     _isLoading = loadingInit;
     notifyListeners();
@@ -252,6 +265,28 @@ class ProgettoViewModel extends ChangeNotifier {
       print("Errore durante il recupero del progetto con ID $progettoId: $e");
       return null;  // Restituisce null in caso di errore
     }
+  }
+
+  Future<List<String>> getListaPartecipanti(String idProgetto) async {
+    try {
+      // Assumendo che repositoryProgetto sia un'istanza di un repository
+      final partecipanti = await repositoryProgetto.getPartecipantiDelProgetto(idProgetto);
+      return partecipanti;
+    } catch (e) {
+      print('Errore durante il recupero dei partecipanti: $e');
+      return []; // Restituisce una lista vuota in caso di errore
+    }
+  }
+
+  Future<List<ProfiloUtente>> getPartecipantiByIds(List<String> userIds) async {
+    List<ProfiloUtente> utenti = [];
+    for (String userId in userIds) {
+      ProfiloUtente? utente = await getUtenteByIdAsync(userId);
+      if (utente != null) {
+        utenti.add(utente);
+      }
+    }
+    return utenti;
   }
 
   Future<void> caricaProgettiCollega(String userId, bool loadingInit) async {

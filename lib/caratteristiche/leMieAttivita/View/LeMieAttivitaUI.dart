@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/Model/Progetto.dart';
 import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
 import '../../login/Model/UserClass.dart';
+import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/InfoProgettoUI.dart';
 
 
 
@@ -132,9 +133,43 @@ class _LemieAttivitaState extends State<lemieAttivita> {
             ? const Center(child: CircularProgressIndicator())
             : Center(child: Text(progetto?.nome ?? 'Nome non disponibile')),
         actions: [
-          IconButton(
+          PopupMenuButton<int>(
             icon: const Icon(Icons.more_vert),
-            onPressed: () {},
+            onSelected: (int result) {
+              if (result == 1) {
+                ProgettoViewModel viewModel = ProgettoViewModel(); // Creazione dell'istanza
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InfoProgetto(
+                      projectId: widget.idProgetto, // Passaggio dell'ID del progetto
+                      viewModel: viewModel, // Passaggio dell'istanza del ViewModel
+                    ),
+                  ),
+                );
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+              PopupMenuItem<int>(
+                value: 1,
+                child: Row(
+                  children: const [
+                    Icon(Icons.info, color: Colors.grey),
+                    SizedBox(width: 8),
+                    Text('Info'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem<int>(
+                value: 2,
+                child: Text('Opzione 2'),
+              ),
+              const PopupMenuItem<int>(
+                value: 3,
+                child: Text('Opzione 3'),
+              ),
+            ],
           ),
         ],
       ),

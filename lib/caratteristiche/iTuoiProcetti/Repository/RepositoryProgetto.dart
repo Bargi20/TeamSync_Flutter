@@ -111,20 +111,7 @@ class RepositoryProgetto {
   }
 
 
-  /// Recupera la lista dei partecipanti di un progetto.
-  Future<List<String>> getPartecipantiDelProgetto(String progettoId) async {
-    try {
-      final docSnapshot = await firestore.collection('progetti').doc(progettoId).get();
-      if (docSnapshot.exists) {
-        final partecipanti = docSnapshot.get('partecipanti') as List<dynamic>?;
-        return partecipanti?.cast<String>() ?? [];
-      } else {
-        return [];
-      }
-    } catch (e) {
-      throw Exception("Errore durante il recupero dei partecipanti: $e");
-    }
-  }
+
 
   /// Elimina un progetto dal database.
   Future<void> eliminaProgetto(String progettoId) async {
@@ -180,6 +167,28 @@ class RepositoryProgetto {
     } catch (e) {
       print("Errore durante l'aggiornamento del progetto: $e");
       throw Exception("Errore durante l'aggiornamento del progetto: $e");
+    }
+  }
+
+  Future<List<String>> getPartecipantiDelProgetto(String progettoId) async {
+    try {
+      // Ottieni il riferimento al documento
+      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+          .collection('progetti')
+          .doc(progettoId)
+          .get();
+
+      // Verifica se il documento esiste
+      if (docSnapshot.exists) {
+        // Ottieni il campo "partecipanti" dal documento
+        List<String>? partecipanti = List<String>.from(docSnapshot.get('partecipanti') ?? []);
+        return partecipanti;
+      } else {
+        return []; // Se il documento non esiste, restituisci una lista vuota
+      }
+    } catch (e) {
+      print('Errore durante il recupero dei partecipanti: $e');
+      rethrow; // Rilancia l'eccezione per una gestione più ampia
     }
   }
 
