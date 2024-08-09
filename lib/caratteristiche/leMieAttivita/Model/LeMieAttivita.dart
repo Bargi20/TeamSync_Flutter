@@ -6,6 +6,7 @@ class LeMieAttivita {
   final String titolo;
   final String descrizione;
   final DateTime dataScadenza;
+  final DateTime dataCreazione;
   final Priorita priorita;
   final bool completato;
   final String progetto;
@@ -22,7 +23,8 @@ class LeMieAttivita {
     required this.progetto,
     required this.utenti,
     this.fileUri,
-  });
+    DateTime? dataCreazione,  // Parametro opzionale
+  }) : dataCreazione = dataCreazione ?? DateTime.now();
 
   factory LeMieAttivita.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
@@ -32,9 +34,10 @@ class LeMieAttivita {
       titolo: data['titolo'] ?? '',
       descrizione: data['descrizione'] ?? '',
       dataScadenza: (data['dataScadenza'] as Timestamp).toDate(),
+      dataCreazione: (data['dataCreazione'] as Timestamp).toDate(),
       priorita: Priorita.values.firstWhere(
-            (e) => e.toString() == data['priorita'],
-        orElse: () => Priorita.bassa,
+            (e) => e.name == data['priorita'],  // Confronta il nome dell'enum con il valore nel database
+        orElse: () => Priorita.NESSUNA,
       ),
       completato: data['completato'] ?? false,
       progetto: data['progetto'] ?? '',
@@ -50,9 +53,10 @@ class LeMieAttivita {
       titolo: map['titolo'] ?? '',
       descrizione: map['descrizione'] ?? '',
       dataScadenza: (map['dataScadenza'] as Timestamp).toDate(),
+      dataCreazione: (map['dataCreazione'] as Timestamp).toDate(),
       priorita: Priorita.values.firstWhere(
-            (e) => e.toString() == 'Priorita.${map['priorita']}',
-        orElse: () => Priorita.nessuna,
+            (e) => e.name == 'Priorita.${map['priorita']}',
+        orElse: () => Priorita.NESSUNA,
       ),
       completato: map['completato'] ?? false,
       progetto: map['progetto'] ?? '',
@@ -67,11 +71,13 @@ class LeMieAttivita {
       'titolo': titolo,
       'descrizione': descrizione,
       'dataScadenza': Timestamp.fromDate(dataScadenza),
-      'priorita': priorita.toString(),
+      'dataCreazione': Timestamp.fromDate(dataCreazione),
+      'priorita': priorita.toShortString(),
       'completato': completato,
       'progetto': progetto,
       'utenti': utenti,
       'fileUri': fileUri,
+
     };
   }
 }

@@ -43,7 +43,7 @@ class Progetto {
       dataConsegna: (data['dataConsegna'] as Timestamp).toDate(),
       priorita: Priorita.values.firstWhere(
             (e) => e.toString() == 'Priorita.${data['priorita']}',
-        orElse: () => Priorita.nessuna,
+        orElse: () => Priorita.NESSUNA,
       ),
       attivita: (data['attivita'] as List<dynamic>)
           .map((item) => LeMieAttivita.fromMap(item as Map<String, dynamic>))

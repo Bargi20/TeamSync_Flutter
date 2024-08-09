@@ -2,37 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:teamsync_flutter/theme/color.dart';
 
 enum Priorita {
-  alta,
-  media,
-  bassa,
-  nessuna,
+  ALTA,
+  MEDIA,
+  BASSA,
+  NESSUNA,
 }
 
 extension PrioritaExtension on Priorita {
   Color get colore {
     switch (this) {
-      case Priorita.alta:
+      case Priorita.ALTA:
         return ColorePrioritaAlta;
-      case Priorita.media:
+      case Priorita.MEDIA:
         return ColorePrioritaMedia;
-      case Priorita.bassa:
+      case Priorita.BASSA:
         return ColorePrioritaBassa;
-      case Priorita.nessuna:
+      case Priorita.NESSUNA:
       default:
         return ColoreSenzaPriorita;
     }
   }
+
   static Priorita fromString(String value) {
     switch (value) {
-      case 'alta':
-        return Priorita.alta;
-      case 'media':
-        return Priorita.media;
-      case 'bassa':
-        return Priorita.bassa;
-      case 'nessuna':
+      case 'ALTA':
+        return Priorita.ALTA;
+      case 'MEDIA':
+        return Priorita.MEDIA;
+      case 'BASSA':
+        return Priorita.BASSA;
+      case 'NESSUNA':
       default:
-        return Priorita.nessuna;
+        return Priorita.NESSUNA;
     }
   }
 

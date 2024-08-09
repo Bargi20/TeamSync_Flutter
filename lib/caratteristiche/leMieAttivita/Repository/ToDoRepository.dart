@@ -10,7 +10,7 @@ class TodoRepository {
     required DateTime dataScadenza,
     required Priorita priorita,
     required bool completato,
-    required List<String> utenti, // Corretto da String a List<String>
+    required String utenti, // Corretto da String a List<String>
     required String progetto,
   }) async {
     try {
@@ -21,8 +21,10 @@ class TodoRepository {
         priorita: priorita,
         completato: completato,
         progetto: progetto,
-        utenti: utenti, // Corretto
+        utenti: [utenti],
+        fileUri: null,
       );
+
       await _database.collection('Todo').add(leMieAttivita.toMap());
     } catch (e) {
       print("Errore durante l'aggiunta del Todo: ${e.toString()}");
@@ -97,10 +99,11 @@ class TodoRepository {
     required String titolo,
     required String descrizione,
     required DateTime dataScadenza,
+    required DateTime dataCreazione,
     required Priorita priorita,
     required String progetto,
     required List<String> utenti,
-    String? fileUri,
+    required bool completato,
   }) async {
     try {
       final updatedTodo = LeMieAttivita(
@@ -108,11 +111,12 @@ class TodoRepository {
         titolo: titolo,
         descrizione: descrizione,
         dataScadenza: dataScadenza,
+        dataCreazione: dataCreazione,
         priorita: priorita,
         progetto: progetto,
-        completato: false,
+        completato: completato,
         utenti: utenti,
-        fileUri: fileUri,
+        fileUri: null,
       );
       await _database.collection('Todo').doc(id).set(updatedTodo.toMap());
     } catch (e) {
@@ -124,7 +128,7 @@ class TodoRepository {
   Future<void> completeTodo(String id, bool completato) async {
     try {
       await _database.collection('Todo').doc(id).update({
-        'completato': !completato,
+        'completato': completato,
       });
     } catch (e) {
       print("Errore durante il completamento del Todo: ${e.toString()}");

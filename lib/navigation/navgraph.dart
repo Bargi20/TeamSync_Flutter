@@ -3,6 +3,7 @@ import 'package:teamsync_flutter/caratteristiche/benvenuto/schermata_di_benvenut
 import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/ITuoiProgetti.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/ViewModel/ViewModelProgetto.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/LeMieAttivitaUI.dart';
+import 'package:teamsync_flutter/caratteristiche/leMieAttivita/ViewModel/LeMieAttivitaViewModel.dart';
 import 'package:teamsync_flutter/caratteristiche/login/View/PasswordDimenticata.dart';
 import 'package:teamsync_flutter/caratteristiche/login/View/login.dart';
 import 'package:teamsync_flutter/caratteristiche/login/View/registrazione.dart';
@@ -24,6 +25,9 @@ class NavGraph extends StatelessWidget {
           ),
           ChangeNotifierProvider<ProgettoViewModel>(
             create: (BuildContext context) => ProgettoViewModel(),
+          ),
+          ChangeNotifierProvider<LeMieAttivitaViewModel>(
+            create: (BuildContext context) => LeMieAttivitaViewModel(),
           ),
         ],
 
@@ -61,10 +65,12 @@ class NavGraph extends StatelessWidget {
             final String idProgetto = ModalRoute.of(context)!.settings.arguments as String;
             var viewModelProgetto = Provider.of<ProgettoViewModel>(context, listen: true);
             var viewModelutente = Provider.of<ViewModelUtente>(context, listen: true);
+            var viewModelAttivita = Provider.of<LeMieAttivitaViewModel>(context, listen: true);
             return lemieAttivita(
               idProgetto: idProgetto,
               viemodelprogetto: viewModelProgetto,
               viewmodelutente: viewModelutente,
+              viewmodelAttivita: viewModelAttivita,
             );
     },
 

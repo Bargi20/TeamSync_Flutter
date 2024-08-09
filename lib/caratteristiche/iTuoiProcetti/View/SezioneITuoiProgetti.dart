@@ -25,14 +25,14 @@ class SezioneITUoiProgetti extends StatelessWidget {
       final priorita1 = p1.priorita;
       final priorita2 = p2.priorita;
 
-      if (priorita1 == Priorita.alta && priorita2 != Priorita.alta) return -1;
-      if (priorita1 != Priorita.alta && priorita2 == Priorita.alta) return 1;
-      if (priorita1 == Priorita.media && priorita2 == Priorita.bassa) return -1;
-      if (priorita1 == Priorita.bassa && priorita2 == Priorita.media) return 1;
-      if (priorita1 == Priorita.media && priorita2 == Priorita.nessuna) return -1;
-      if (priorita1 == Priorita.nessuna && priorita2 == Priorita.media) return 1;
-      if (priorita1 == Priorita.bassa && priorita2 == Priorita.nessuna) return -1;
-      if (priorita1 == Priorita.nessuna && priorita2 == Priorita.bassa) return 1;
+      if (priorita1 == Priorita.ALTA && priorita2 != Priorita.ALTA) return -1;
+      if (priorita1 != Priorita.ALTA && priorita2 == Priorita.ALTA) return 1;
+      if (priorita1 == Priorita.MEDIA && priorita2 == Priorita.BASSA) return -1;
+      if (priorita1 == Priorita.BASSA && priorita2 == Priorita.MEDIA) return 1;
+      if (priorita1 == Priorita.MEDIA && priorita2 == Priorita.NESSUNA) return -1;
+      if (priorita1 == Priorita.NESSUNA && priorita2 == Priorita.MEDIA) return 1;
+      if (priorita1 == Priorita.BASSA && priorita2 == Priorita.NESSUNA) return -1;
+      if (priorita1 == Priorita.NESSUNA && priorita2 == Priorita.BASSA) return 1;
 
       return 0;
     }

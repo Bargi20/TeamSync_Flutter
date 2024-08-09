@@ -2,9 +2,12 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:teamsync_flutter/caratteristiche/LeMieAttivita/Repository/ToDoRepository.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/Model/LeMieAttivita.dart';
+import 'package:teamsync_flutter/data.models/Priorita.dart';
 
 class LeMieAttivitaViewModel extends ChangeNotifier {
+  final repository = TodoRepository();
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final List<LeMieAttivita> _leMieAttivita = [];
   bool _isLoading = false;
@@ -46,7 +49,8 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
       DateTime dataScadenza,
       bool completato,
       String proprietario,
-      String progetto) async {
+      String progetto,
+      Priorita priorita) async {
     if (titolo.isEmpty) {
       setError("Il titolo non può essere omesso.");
       return;
@@ -59,7 +63,7 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
     try {
       // Chiamata a repository per aggiungere il Todo
       // Esempio:
-      // await repository.addTodo(titolo, descrizione, dataScadenza, priorita, completato, proprietario, progetto);
+      await repository.addTodo(titolo: titolo, descrizione: descrizione, dataScadenza: dataScadenza, priorita: priorita , completato: completato, utenti: proprietario, progetto: progetto);
 
       // Recupera di nuovo i Todo
       await getTodoByProject(progetto);
@@ -73,9 +77,12 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
       String titolo,
       String descrizione,
       DateTime dataScadenza,
+      DateTime dataCreazione,
       String progetto,
       List<String> utenti,
-      String? fileUri) async {
+      bool completato,
+      Priorita priorita
+     ) async {
     if (titolo.isEmpty) {
       setError("Il titolo non può essere omesso.");
       return;
@@ -86,75 +93,29 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
     }
 
     try {
-      // Chiamata a repository per aggiornare il Todo
-      // Esempio:
-      // await repository.updateTodo(id, titolo, descrizione, dataScadenza, priorita, progetto, utenti, fileUri);
-
-      // Recupera di nuovo i Todo
-      await getTodoByProject(progetto);
+      await repository.updateTodo(id: id, titolo: titolo, descrizione: descrizione, dataScadenza: dataScadenza, priorita: priorita, progetto: progetto, utenti: utenti, completato : completato, dataCreazione : dataCreazione);
     } catch (e) {
       setError("Errore durante l'aggiornamento della task.");
     }
   }
 
-  Future<void> deleteTodo(String id, String progetto) async {
+  Future<void> deleteTodo(String id) async {
     try {
-      // Chiamata a repository per eliminare il Todo
-      // Esempio:
-      // await repository.deleteTodo(id);
-
-      // Recupera di nuovo i Todo
-      await getTodoByProject(progetto);
+      await repository.deleteTodo(id);
     } catch (e) {
       setError("Errore durante l'eliminazione della task.");
     }
   }
 
-  Future<void> completeTodo(String id, bool completato, String progetto) async {
+  Future<void> completeTodo(String id, bool completato) async {
     try {
-      // Chiamata a repository per aggiornare lo stato completato del Todo
-      // Esempio:
-      // await repository.completeTodo(id, completato);
-
-      // Recupera di nuovo i Todo
-      await getTodoByProject(progetto);
+      await repository.completeTodo(id, completato);
     } catch (e) {
       setError("Errore durante l'aggiornamento dello stato della task.");
     }
   }
 
-  Future<void> uploadFileAndSaveTodo(
-      String id,
-      String titolo,
-      String descrizione,
-      DateTime dataScadenza,
-      String progetto)
-  async {
-    if (titolo.isEmpty) {
-      setError("Il titolo non può essere omesso.");
-      return;
-    }
-    if (isDateBeforeToday(dataScadenza)) {
-      setError("La data di scadenza non può essere precedente alla data di creazione della task.");
-      return;
-    }
 
-    try {
-      if (_fileUri == null) return;
-
-      final file = File.fromUri(_fileUri!);
-      final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final storageRef = _storage.ref().child('files/$fileName');
-
-      await storageRef.putFile(file);
-      final downloadUrl = await storageRef.getDownloadURL();
-
-      // Chiamata a repository per aggiornare il Todo con l'URL del file
-      await updateTodo(id, titolo, descrizione, dataScadenza, progetto, [], downloadUrl);
-    } catch (e) {
-      setError("Errore durante l'upload del file.");
-    }
-  }
 
   Future<void> getTodoByProject(String progetto) async {
     try {

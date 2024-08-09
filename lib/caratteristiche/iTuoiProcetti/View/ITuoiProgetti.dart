@@ -95,7 +95,7 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
                   },
                   viewModelProgetto: viewModelProgetto,
                   isDarkTheme: isDarkTheme,
-                  currentUserId: currentUserId!, // Utilizza il null-assertion operator
+                  currentUserId: currentUserId, // Utilizza il null-assertion operator
                 );
               },
             );
@@ -165,7 +165,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
   String nome = '';
   String descrizione = '';
   DateTime dataScadenza = DateTime.now();
-  Priorita priorita = Priorita.nessuna;
+  Priorita priorita = Priorita.NESSUNA;
   String voto = '';
   DateTime dataConsegna = DateTime.now();
   final maxCharsNome = 20;
