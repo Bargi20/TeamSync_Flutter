@@ -8,6 +8,7 @@ import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente
 import 'package:teamsync_flutter/data.models/Priorita.dart';
 import '../../login/Model/UserClass.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/InfoProgettoUI.dart';
+import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/ModificaProgetto.dart';
 
 
 
@@ -200,6 +201,19 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                   ),
                 );
               }
+              
+              if (result == 2){
+                ProgettoViewModel viewModel = ProgettoViewModel();
+                
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ModificaProgetto(
+                      projectId:widget.idProgetto,
+                      viewModel: viewModel
+                    ),
+                  ),
+                );
+              }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
               PopupMenuItem<int>(
@@ -214,11 +228,23 @@ class _LemieAttivitaState extends State<lemieAttivita> {
               ),
               const PopupMenuItem<int>(
                 value: 2,
-                child: Text('Opzione 2'),
+                child: Row(
+                  children: [
+                    Icon(Icons.edit_outlined, color: Colors.grey),
+                    SizedBox(width: 8),
+                    Text('Modifica')
+                  ],
+                ),
               ),
               const PopupMenuItem<int>(
                 value: 3,
-                child: Text('Opzione 3'),
+                child: Row(
+                  children: [
+                    Icon(Icons.logout, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text('Abbandona')
+                  ],
+                ),
               ),
             ],
           ),

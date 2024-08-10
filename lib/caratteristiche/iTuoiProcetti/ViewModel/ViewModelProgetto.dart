@@ -128,7 +128,7 @@ class ProgettoViewModel extends ChangeNotifier {
     final String testoDaCondividere = "Ecco il codice per poter aggiungere il progetto: $codiceProgetto";
     Share.share(testoDaCondividere);
   }
-
+/*
   Future<void> aggiornaProgetto(
       String progettoId,
       String nome,
@@ -191,7 +191,7 @@ class ProgettoViewModel extends ChangeNotifier {
     } catch (e) {
       print("Errore durante l'aggiornamento dello stato del progetto: $e");
     }
-  }
+  }*/
 
   Future<String> getNomeProgetto(String idProg) async {
     _isLoading = true;
@@ -322,6 +322,44 @@ class ProgettoViewModel extends ChangeNotifier {
 
   bool progettoScaduto(Progetto progetto) {
     return progetto.dataScadenza.isBefore(DateTime.now());
+  }
+
+  Future<void> aggiornaProgetto({
+    required String progettoId,
+    required String nome,
+    required String descrizione,
+    required DateTime dataScadenza,
+    required Priorita priorita,
+    required String voto,
+    required DateTime dataConsegna,
+  }) async {
+    try {
+      // Recupera il progetto esistente dal repository
+      Progetto? progetto = await repositoryProgetto.getProgettoById(progettoId);
+
+      if (progetto != null) {
+        // Crea una nuova istanza del progetto con i dati aggiornati
+        Progetto progettoAggiornato = progetto.copyWith(
+          nome: nome,
+          descrizione: descrizione,
+          dataScadenza: dataScadenza,
+          priorita: priorita,
+          voto: voto,
+          dataConsegna: dataConsegna,
+        );
+
+        // Aggiorna il progetto nel repository
+        await repositoryProgetto.aggiornaProgetto(progettoAggiornato);
+
+        // Se l'utente corrente è disponibile, ricarica i suoi progetti
+        String? utenteCorrenteId = this.utenteCorrenteId;
+        if (utenteCorrenteId != null) {
+          await caricaProgettiUtente(utenteCorrenteId, false);
+        }
+      }
+    } catch (e) {
+      print("Errore durante l'aggiornamento del progetto: $e");
+    }
   }
 
   Future<void> addProgetto({

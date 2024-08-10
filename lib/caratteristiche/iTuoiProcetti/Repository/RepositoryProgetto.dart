@@ -155,20 +155,22 @@ class RepositoryProgetto {
     }
   }
 
-  /// Aggiorna un progetto nel database.
   Future<void> aggiornaProgetto(Progetto progetto) async {
     try {
-      if (progetto.id != null) {
-        await firestore
-            .collection('progetti')
-            .doc(progetto.id!)
+      final String? id = progetto.id;
+
+      if (id != null) {
+        await FirebaseFirestore.instance
+            .collection("progetti")
+            .doc(id)
             .set(progetto.toMap());
       }
     } catch (e) {
       print("Errore durante l'aggiornamento del progetto: $e");
-      throw Exception("Errore durante l'aggiornamento del progetto: $e");
+      rethrow; // Rilancia l'eccezione per gestirla a un livello superiore, se necessario.
     }
   }
+
 
   Future<List<String>> getPartecipantiDelProgetto(String progettoId) async {
     try {
