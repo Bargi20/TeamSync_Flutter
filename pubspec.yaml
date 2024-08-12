@@ -24,7 +24,7 @@ dependencies:
   # UUID package
   uuid: ^3.0.6 # Aggiungi questa dipendenza per generare UUID
 
-  share_plus: ^6.0.0
+  share_plus: ^8.0.0
 
   cached_network_image: ^3.0.0
 

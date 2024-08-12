@@ -53,7 +53,7 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
                   break;
                 case 'logout':
                   viewModelProgetto.logout();
-                  Navigator.of(context).pushReplacementNamed('/login');
+                  Navigator.of(context).pushReplacementNamed(Schermate.login);
                   break;
               }
             },
@@ -75,8 +75,8 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
               PopupMenuItem(
                 value: 'logout',
                 child: ListTile(
-                  leading: Icon(Icons.logout, color: isDarkTheme ? Colors.white : Colors.black),
-                  title: Text('Logout', style: TextStyle(color: isDarkTheme ? Colors.white : Colors.black)),
+                  leading: Icon(Icons.logout, color: Colors.red),
+                  title: Text('Logout', style: TextStyle(color: Colors.red)),
                 ),
               ),
             ],

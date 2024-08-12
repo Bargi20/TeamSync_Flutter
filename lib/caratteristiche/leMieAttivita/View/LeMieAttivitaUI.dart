@@ -10,6 +10,7 @@ import '../../login/Model/UserClass.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/InfoProgettoUI.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/ModificaProgetto.dart';
 import '../../../navigation/schermate.dart';
+import 'package:share_plus/share_plus.dart';
 
 
 
@@ -218,6 +219,42 @@ class _LemieAttivitaState extends State<lemieAttivita> {
 
               if (result == 3) {
                 ProgettoViewModel viewModel = ProgettoViewModel();
+                TextEditingController controller = TextEditingController(text: '${progetto!.codice}');
+
+                showDialog(context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Inserisci il valore'),
+                      content: TextField(
+                        readOnly: true,
+                        controller: controller,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Codice Progetto',
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('Annulla'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: Text('Condividi'),
+                          onPressed: () {
+                            Share.share('${progetto!.codice}');
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+
+              if (result == 4) {
+                ProgettoViewModel viewModel = ProgettoViewModel();
                 String? utenteId = viewModel.utenteCorrenteId; // Dichiarazione della variabile `utenteId`
 
                 if (progetto != null && progetto!.id != null && utenteId != null) {
@@ -259,6 +296,16 @@ class _LemieAttivitaState extends State<lemieAttivita> {
               ),
               const PopupMenuItem<int>(
                 value: 3,
+                child: Row(
+                  children: [
+                    Icon(Icons.share, color: Colors.grey),
+                    SizedBox(width: 8),
+                    Text('Condividi')
+                  ],
+                ),
+              ),
+              const PopupMenuItem<int>(
+                value: 4,
                 child: Row(
                   children: [
                     Icon(Icons.logout, color: Colors.red),
