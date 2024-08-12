@@ -9,6 +9,7 @@ import 'package:teamsync_flutter/data.models/Priorita.dart';
 import '../../login/Model/UserClass.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/InfoProgettoUI.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/ModificaProgetto.dart';
+import '../../../navigation/schermate.dart';
 
 
 
@@ -214,7 +215,27 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                   ),
                 );
               }
+
+              if (result == 3) {
+                ProgettoViewModel viewModel = ProgettoViewModel();
+                String? utenteId = viewModel.utenteCorrenteId; // Dichiarazione della variabile `utenteId`
+
+                if (progetto != null && progetto!.id != null && utenteId != null) {
+                  viewModel.abbandonaProgetto(utenteId!, progetto!.id!); // Usa `utenteId!` per forzare il cast a `String`
+                } else {
+                  // Gestisci il caso in cui `progetto`, `progetto.id` o `viewModel.utenteCorrenteId` sia `null`
+                  print('Il progetto, il suo ID o l\'ID dell\'utente corrente è null');
+                }
+                Navigator.pushReplacementNamed(context, Schermate.ituoiProgetti);
+
+              }
+
+
+
+
             },
+            
+            
             itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
               PopupMenuItem<int>(
                 value: 1,
@@ -1259,7 +1280,3 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
   }
 
 }
-
-
-
-

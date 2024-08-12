@@ -399,10 +399,17 @@ class ProgettoViewModel extends ChangeNotifier {
   }
 
 
-  Future<void> abbandonaProgetto(String progettoId) async {
+  Future<void> abbandonaProgetto(String userID, String progettoID) async {
     try {
-      await repositoryProgetto.eliminaProgetto(progettoId);
-      notifyListeners();
+      await repositoryProgetto.abbandonaProgetto(userID, progettoID,(bool isProgettoEliminato) {
+        if (isProgettoEliminato) {
+          // Il progetto è stato eliminato perché non ci sono più partecipanti
+          print('Il progetto è stato eliminato.');
+        } else {
+          // Il progetto non è stato eliminato
+          print('Hai abbandonato il progetto, ma il progetto non è stato eliminato.');
+        }
+      });
     } catch (e) {
       _erroreAbbandonaProgetto = "Errore durante l'abbandono del progetto.";
       print("Errore durante l'abbandono del progetto: $e");
