@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:teamsync_flutter/caratteristiche/login/Repository/repositoryUtente.dart';
+import '../../../navigation/navgraph.dart';
 import '../Model/UserClass.dart'; // Assicurati che contenga ProfiloUtente
 
 class ViewModelUtente extends ChangeNotifier {
@@ -71,7 +72,6 @@ class ViewModelUtente extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      print("Eccezione nella registrazione: $e");
       if (e is FirebaseAuthException) {
         switch (e.code) {
           case 'email-already-in-use':
@@ -100,7 +100,6 @@ class ViewModelUtente extends ChangeNotifier {
   }
 
   String? _validateRegistrationField(String matricola, String nome, String cognome, String email, DateTime dataNascita, String password, String confermaPassword) {
-    print("Fammi vedere : $confermaPassword");
     if (matricola.isEmpty) return "Per favore, inserisci il numero di matricola.";
     if (email.isEmpty) return "Per favore, inserisci il tuo indirizzo email.";
     if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) return "L'indirizzo email inserito non è valido.";
@@ -138,7 +137,7 @@ class ViewModelUtente extends ChangeNotifier {
 
   Future<void> resetPassword(String email) async {
     if (email.isNotEmpty) {
-      final emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+      final emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
       if (!emailValid.hasMatch(email)) {
         resetPasswordRiuscito = false;
         erroreResetPassword = "L'indirizzo email inserito non è valido.";
@@ -171,6 +170,39 @@ class ViewModelUtente extends ChangeNotifier {
     }
   }
 
+
+  Future<void> logout(BuildContext context) async {
+    // Esegui eventuali operazioni di pulizia, come il logout da Firebase
+    await FirebaseAuth.instance.signOut();
+
+
+    resetState();
+
+    // Reindirizza l'utente alla schermata di login e reinizializza i providers
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NavGraph(), // Ricrea tutta la struttura dei providers
+      ),
+          (Route<dynamic> route) => false, // Rimuove tutte le route precedenti
+    );
+  }
+
+  void resetState() {
+    utenteCorrente = null;
+    loginSuccessful = false;
+    firstLogin = false;
+    erroreLogin = null;
+    erroreVerificaEmail = null;
+    registrazioneRiuscita = false;
+    resetPasswordRiuscito = false;
+    erroreResetPassword = null;
+    primoAccesso = false;
+    erroreRegistrazione = null;
+
+    notifyListeners();  // Notifica alla UI di aggiornarsi
+  }
+
   Future<void> _fetchUserProfile(String userId) async {
     try {
       final doc = await FirebaseFirestore.instance.collection('utenti').doc(userId).get();
@@ -181,12 +213,11 @@ class ViewModelUtente extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      print("Errore nel recupero del profilo utente: $e");
       utenteCorrente = null;
       notifyListeners();
     }
   }
-  Future<ProfiloUtente?> ottieni_utente(String userId) async {
+  Future<ProfiloUtente?> ottieniUtente(String userId) async {
     try {
       final doc = await FirebaseFirestore.instance.collection('utenti').doc(userId).get();
       if (doc.exists) {
@@ -197,8 +228,7 @@ class ViewModelUtente extends ChangeNotifier {
         return null;
       }
     } catch (e) {
-      print("Errore nel recupero del profilo utente: $e");
-      // Restituisci null in caso di errore
+
       return null;
     }
   }

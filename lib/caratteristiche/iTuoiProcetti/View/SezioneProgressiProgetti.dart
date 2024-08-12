@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 class SezioneProgressiProgetti extends StatelessWidget {
   final int progettiCompletati;
   final int progettiUtente;
-  final bool isDarkTheme;
 
   SezioneProgressiProgetti({
     required this.progettiCompletati,
     required this.progettiUtente,
-    required this.isDarkTheme,
   });
 
   @override
@@ -21,7 +19,7 @@ class SezioneProgressiProgetti extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
       ),
-      color: isDarkTheme ? Colors.black : Colors.white,
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(30.0),
         child: Column(
@@ -33,7 +31,7 @@ class SezioneProgressiProgetti extends StatelessWidget {
               'Progressi', // Usa Localizations per stringhe localizzate
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: isDarkTheme ? Colors.white : Colors.black,
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 15.0, width: 4.0,),
@@ -45,7 +43,7 @@ class SezioneProgressiProgetti extends StatelessWidget {
                 value: progress,
                 color: Colors.red[700],
                 strokeWidth: 4.0,
-                backgroundColor: isDarkTheme ? Colors.white : Colors.grey[400],
+                backgroundColor: Colors.grey[400],
               ),
               Center(
                 child: Text(
@@ -53,7 +51,7 @@ class SezioneProgressiProgetti extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 12.0,
-                    color: isDarkTheme ? Colors.white : Colors.black,
+                    color: Colors.black,
                     ),
                   ),
                   ),
@@ -64,7 +62,7 @@ class SezioneProgressiProgetti extends StatelessWidget {
             Text(
               'Continua Così!!!', // Usa Localizations per stringhe localizzate
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: isDarkTheme ? Colors.white : Colors.black,
+                color:  Colors.black,
               ),
             ),
           ],
@@ -81,7 +79,6 @@ void main() {
         child: SezioneProgressiProgetti(
           progettiCompletati: 3,
           progettiUtente: 10,
-          isDarkTheme: false,
         ),
       ),
     ),

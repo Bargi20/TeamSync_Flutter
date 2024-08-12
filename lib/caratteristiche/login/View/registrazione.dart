@@ -11,7 +11,7 @@ import 'package:intl/intl.dart';
 class Registrazione extends StatefulWidget {
 
   ViewModelUtente viewModelUtente;
-  Registrazione(this.viewModelUtente);
+  Registrazione(this.viewModelUtente, {super.key});
 
   @override
   _RegistrazioneState createState() => _RegistrazioneState();
@@ -69,19 +69,19 @@ class _RegistrazioneState extends State<Registrazione> {
     padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child:  Column(
             children: [
-              SizedBox(height: 70),
+              const SizedBox(height: 70),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                     Image.asset('assets/icon.png', width: 70, height: 70),
                 ],
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               const Text(
                 "Iscriviti",
                 style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: Colors.black),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Column(
                 children: [
                   Padding(
@@ -99,7 +99,7 @@ class _RegistrazioneState extends State<Registrazione> {
                           ),
                           onChanged: (value) => setState(() => matricola = value),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         TextField(
                           decoration: const InputDecoration(
                             labelText: 'Email',
@@ -112,7 +112,7 @@ class _RegistrazioneState extends State<Registrazione> {
                           onChanged: (value) => setState(() => email = value),
                         ),
 
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Row(
                           children: [
                             Expanded(
@@ -140,7 +140,7 @@ class _RegistrazioneState extends State<Registrazione> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Row(
                           children: [
                             Expanded(
@@ -184,7 +184,7 @@ class _RegistrazioneState extends State<Registrazione> {
                           obscureText: !passwordVisibile,
                           onChanged: (value) => setState(() => password = value),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         TextField(
                           decoration: InputDecoration(
                             labelText: 'Conferma Password',
@@ -207,7 +207,7 @@ class _RegistrazioneState extends State<Registrazione> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed:   () async {
                     await widget.viewModelUtente.signUp(matricola, nome, cognome, email, dataDiNascita, sesso, password, confermaPassword);
@@ -221,7 +221,7 @@ class _RegistrazioneState extends State<Registrazione> {
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                             content: Text(widget.viewModelUtente.erroreRegistrazione!),
-                            duration: Duration(seconds: 1), // Durata del SnackBar
+                            duration: const Duration(seconds: 1), // Durata del SnackBar
                             action: SnackBarAction(
                               label: 'Chiudi',
                               onPressed: () {
@@ -245,7 +245,7 @@ class _RegistrazioneState extends State<Registrazione> {
                   ),
                 ],
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Column(
                 children: [
                   const Text(

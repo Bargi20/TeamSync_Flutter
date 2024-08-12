@@ -28,7 +28,6 @@ class LeMieAttivita {
 
   factory LeMieAttivita.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
-    print("Dati ricevuti: $data"); // Aggiungi questo per il debug
     return LeMieAttivita(
       id: doc.id,
       titolo: data['titolo'] ?? '',

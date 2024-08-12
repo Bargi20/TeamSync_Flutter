@@ -6,10 +6,8 @@ import 'package:teamsync_flutter/caratteristiche/login/Model/UserClass.dart';
 import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
 
 class SezioneProfiloUtente extends StatelessWidget {
-  final bool isDarkTheme;
-  SezioneProfiloUtente({
-    required this.isDarkTheme,
-  });
+
+  SezioneProfiloUtente();
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +19,7 @@ class SezioneProfiloUtente extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
       ),
-      color: isDarkTheme ? Colors.black : Colors.red[700],
+      color:  Colors.red[700],
       child: InkWell(
         onTap: () {
           Navigator.of(context).pushNamed(Schermate.profilo);
@@ -64,10 +62,11 @@ class SezioneProfiloUtente extends StatelessWidget {
               if (userProfile != null)
                 CircleAvatar(
                   radius: 45,
-                  backgroundImage: userProfile.immagine != null && userProfile.immagine!.isNotEmpty
+                  backgroundImage: userProfile.immagine != null
                       ? CachedNetworkImageProvider(userProfile.immagine!)
-                      : AssetImage('assets/images/logo_rotondo.png'),
+                      : AssetImage("assets/logo_teamsync.png") as ImageProvider,
                 ),
+
             ],
           ),
         ),

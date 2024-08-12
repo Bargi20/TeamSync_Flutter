@@ -7,9 +7,9 @@ const String icCalendarioEvento = 'assets/ic_calendario_evento.png';
 const String calendarioString = 'Calendario';
 
 class SezioneCalendario extends StatelessWidget {
-  final bool isDarkTheme;
 
-  SezioneCalendario({required this.isDarkTheme});
+
+  SezioneCalendario();
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class SezioneCalendario extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      color: isDarkTheme ? Colors.black : Colors.white,
+      color: Colors.white,
       child: InkWell(
         onTap: () {
           _showDatePicker(context);
@@ -46,7 +46,7 @@ class SezioneCalendario extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: isDarkTheme ? Colors.white : Colors.black,
+                      color: Colors.black,
                     ),
                     textAlign: TextAlign.center, // Center text
                   ),
@@ -56,7 +56,7 @@ class SezioneCalendario extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: isDarkTheme ? Colors.white : Colors.grey[350],
+                  color:  Colors.grey[350],
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
@@ -94,7 +94,7 @@ class SezioneCalendario extends StatelessWidget {
       lastDate: DateTime(2100),
       builder: (context, child) {
         return Theme(
-          data: isDarkTheme ? ThemeData.dark() : ThemeData.light(),
+          data:  ThemeData.light(),
           child: child!,
         );
       },
@@ -107,12 +107,4 @@ class SezioneCalendario extends StatelessWidget {
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    home: Scaffold(
-      body: Center(
-        child: SezioneCalendario(isDarkTheme: false),
-      ),
-    ),
-  ));
-}
+

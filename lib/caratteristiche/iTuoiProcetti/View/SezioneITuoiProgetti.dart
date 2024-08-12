@@ -11,12 +11,10 @@ import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/iTuoiProgett
 class SezioneITUoiProgetti extends StatelessWidget {
   final List<Progetto> progetti;
   final Map<String, int> attivitaProgetti;
-  final bool isDarkTheme;
 
   SezioneITUoiProgetti({
     required this.progetti,
     required this.attivitaProgetti,
-    required this.isDarkTheme,
   });
 
   @override
@@ -65,7 +63,7 @@ class SezioneITUoiProgetti extends StatelessWidget {
           'I tuoi progetti',
           style: TextStyle(
             fontSize: 24,
-            color: isDarkTheme ? Colors.white : Colors.black,
+            color: Colors.black,
           ),
         ),
         ),
@@ -79,22 +77,30 @@ class SezioneITUoiProgetti extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(
+                 SizedBox(
                   width: 150,
                   height: 150,
-                  child: Placeholder(), // Replace with the desired image
+                  child: Image.asset(
+                    "assets/nessun_progetto___image.png", // Percorso dell'immagine
+                    fit: BoxFit.scaleDown, // Puoi cambiare il fit a seconda di come vuoi che l'immagine si adatti
+                  ),
                 ),
-                Text(
-                  'Nessun progetto',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: isDarkTheme ? Colors.white : Colors.black,
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      'Nessun progetto',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           )
+
         else
           SizedBox(
             height: 120,
@@ -107,7 +113,6 @@ class SezioneITUoiProgetti extends StatelessWidget {
                 return ITuoiProgettiItem(
                   progetto: progetto,
                   attivitaNonCompletate: attivitaNonCompletate,
-                  isDarkTheme: isDarkTheme,
                   progettoScaduto: false,
                 );
               }).toList(),

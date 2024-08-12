@@ -6,7 +6,7 @@ import '../../../theme/color.dart';
 class PasswordDimenticata extends StatefulWidget {
   final ViewModelUtente viewModelUtente;
 
-  PasswordDimenticata(this.viewModelUtente);
+  const PasswordDimenticata(this.viewModelUtente, {super.key});
 
   @override
   _PasswordDimenticataState createState() => _PasswordDimenticataState();
@@ -89,7 +89,7 @@ class _PasswordDimenticataState extends State<PasswordDimenticata> {
                         ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(errore!),
-                              duration: Duration(seconds: 1),),
+                              duration: const Duration(seconds: 1),),
                         );
                       }
                       setState(() => isLoading = false);

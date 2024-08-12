@@ -26,8 +26,6 @@ class lemieAttivita extends StatefulWidget {
   _LemieAttivitaState createState() => _LemieAttivitaState();
 }
 
-
-
 class _LemieAttivitaState extends State<lemieAttivita> {
   Progetto? progetto;
   bool isLoadingProgetto = true;
@@ -158,17 +156,52 @@ class _LemieAttivitaState extends State<lemieAttivita> {
   }
 
   Future<void> _handleModificaTask(LeMieAttivita attivita) async {
-    await widget.viewmodelAttivita.updateTodo(attivita.id!, attivita.titolo, attivita.descrizione, attivita.dataScadenza, attivita.dataCreazione, attivita.progetto, attivita.utenti, attivita.completato, attivita.priorita);
-    if (isClickedCompletate) {
-      _fetchAttivitaCompletate();
-    }
+    final result = await widget.viewmodelAttivita.updateTodo(attivita.id!, attivita.titolo, attivita.descrizione, attivita.dataScadenza, attivita.dataCreazione, attivita.progetto, attivita.utenti, attivita.completato, attivita.priorita, context);
+    if(result == null)
+      {
+        if (isClickedCompletate) {
+          await _fetchAttivitaCompletate();
+        }
 
-    if (isClickedLeMie) {
-      _fetchLeMieAttivitaData();
-    }
-    if (isClickedNonCompletate) {
-      _fetchAttivitaNonCompletate();
-    }
+        if (isClickedLeMie) {
+          await _fetchLeMieAttivitaData();
+        }
+        if (isClickedNonCompletate) {
+          await _fetchAttivitaNonCompletate();
+        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text("Task Aggiornata con successo"),
+              duration: const Duration(seconds: 1), // Durata del SnackBar
+              action: SnackBarAction(
+                label: 'Chiudi',
+                onPressed: () {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                },
+              ),
+            ),
+          );
+        });
+
+      }else
+        {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(result),
+                duration: const Duration(seconds: 2), // Durata del SnackBar
+                action: SnackBarAction(
+                  label: 'Chiudi',
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  },
+                ),
+              ),
+            );
+          });
+        }
+
   }
 
 
@@ -180,7 +213,8 @@ class _LemieAttivitaState extends State<lemieAttivita> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context).pushReplacementNamed(Schermate.ituoiProgetti);
+
           },
         ),
         title: isLoadingProgetto
@@ -260,26 +294,18 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                 String? utenteId = viewModel.utenteCorrenteId; // Dichiarazione della variabile `utenteId`
 
                 if (progetto != null && progetto!.id != null && utenteId != null) {
-                  viewModel.abbandonaProgetto(utenteId!, progetto!.id!); // Usa `utenteId!` per forzare il cast a `String`
+                  viewModel.abbandonaProgetto(utenteId, progetto!.id!); // Usa `utenteId!` per forzare il cast a `String`
                 } else {
                   // Gestisci il caso in cui `progetto`, `progetto.id` o `viewModel.utenteCorrenteId` sia `null`
-                  print('Il progetto, il suo ID o l\'ID dell\'utente corrente è null');
                 }
                 Navigator.pushReplacementNamed(context, Schermate.ituoiProgetti);
-
               }
-
-
-
-
             },
-            
-            
             itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-              PopupMenuItem<int>(
+              const PopupMenuItem<int>(
                 value: 1,
                 child: Row(
-                  children: const [
+                  children: [
                     Icon(Icons.info, color: Colors.grey),
                     SizedBox(width: 8),
                     Text('Info'),
@@ -412,29 +438,29 @@ class _LemieAttivitaState extends State<lemieAttivita> {
             builder: (BuildContext context) {
               return AddTodoDialog(
                 onSave: (LeMieAttivita nuovaAttivita) async {
-                  await widget.viewmodelAttivita.addTodo(
-                      nuovaAttivita.titolo,
-                      nuovaAttivita.descrizione,
-                      nuovaAttivita.dataScadenza,
-                      nuovaAttivita.completato,
-                      widget.viewmodelutente.utenteCorrente!.id,
-                      widget.idProgetto,
-                      nuovaAttivita.priorita);
-                  if (isClickedLeMie) {
-                    _fetchLeMieAttivitaData();
+                  final result = await widget.viewmodelAttivita.addTodo(
+                    nuovaAttivita.titolo,
+                    nuovaAttivita.descrizione,
+                    nuovaAttivita.dataScadenza,
+                    nuovaAttivita.completato,
+                    widget.viewmodelutente.utenteCorrente!.id,
+                    widget.idProgetto,
+                    nuovaAttivita.priorita,
+                    context,
+                  );
+                  if (result == null) {
+                    if (isClickedLeMie) {
+                      _fetchLeMieAttivitaData();
+                    }
+                    if (isClickedNonCompletate) {
+                      _fetchAttivitaNonCompletate();
+                    }
+                    if (isClickedCompletate) {
+                      _fetchAttivitaCompletate();
+                    }
+                    Navigator.of(context).pop();
                   }
-                  if (isClickedNonCompletate) {
-                    _fetchAttivitaNonCompletate();
-                  }
-                  if (isClickedCompletate) {
-                    _fetchAttivitaCompletate();
-                  }
-                  Navigator.of(context).pop();
-                },
-
-                onDismiss: () {
-                  Navigator.of(context).pop();
-                },
+                }, onDismiss: () { Navigator.of(context).pop();  },
               );
             },
           );
@@ -496,7 +522,7 @@ class _TodoItemState extends State<TodoItem> {
     int contatore = 0;
 
     for (String idUtente in widget.item.utenti) {
-      ProfiloUtente? persona = await widget.viewModelUtente.ottieni_utente(
+      ProfiloUtente? persona = await widget.viewModelUtente.ottieniUtente(
           idUtente);
       if (persona != null) {
         setState(() {
@@ -1308,10 +1334,9 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
 
 
   void _onSave() {
+
     final titolo = titoloController.text;
     final descrizione = descrizioneController.text;
-
-
 
     final updatedTodo = LeMieAttivita(
       id: widget.todoItem.id,

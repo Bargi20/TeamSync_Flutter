@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:teamsync_flutter/caratteristiche/login/ViewModel/ViewModelUtente.dart';
+import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
 import 'package:teamsync_flutter/navigation/Schermate.dart';
 import 'pagina_di_benvenuto.dart';
 import 'package:provider/provider.dart';
 
 class SchermataDiBenvenuto extends StatefulWidget {
-  final VoidCallback onStart;
+  ViewModelUtente viewModelUtente;
 
-  SchermataDiBenvenuto({required this.onStart});
+  SchermataDiBenvenuto({required this.viewModelUtente});
 
   @override
   _SchermataDiBenvenutoState createState() => _SchermataDiBenvenutoState();
@@ -92,17 +92,12 @@ class _SchermataDiBenvenutoState extends State<SchermataDiBenvenuto> {
                           duration: Duration(milliseconds: 200),
                           child: ElevatedButton(
                             onPressed: () async {
-                              // Ottieni l'istanza del ViewModelUtente
-                              final viewModel = Provider.of<ViewModelUtente>(context, listen: false);
 
-                              // Chiama il metodo per aggiornare lo stato dell'utente
-                              await viewModel.updateFirstLogin();
+                              await widget.viewModelUtente.updateFirstLogin();
 
                               // Naviga verso la pagina dei tuoi progetti
                               Navigator.pushReplacementNamed(context, Schermate.ituoiProgetti);
 
-                              // Chiama la funzione onStart se necessario
-                              widget.onStart();
                             },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,

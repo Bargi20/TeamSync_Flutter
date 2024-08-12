@@ -8,13 +8,11 @@ import '../../../navigation/Schermate.dart'; // Assicurati di avere il modello P
 class ITuoiProgettiItem extends StatelessWidget {
   final Progetto progetto;
   final int attivitaNonCompletate;
-  final bool isDarkTheme;
   final bool progettoScaduto; // Nuovo parametro per la scadenza del progetto
 
   ITuoiProgettiItem({
     required this.progetto,
     required this.attivitaNonCompletate,
-    required this.isDarkTheme,
     required this.progettoScaduto,
   });
 
@@ -37,7 +35,7 @@ class ITuoiProgettiItem extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      color: isDarkTheme ? Colors.black : Colors.white,
+      color:Colors.white,
 
 
       child: Container(
@@ -54,14 +52,14 @@ class ITuoiProgettiItem extends StatelessWidget {
                   if (progetto.completato)
                     Icon(
                       Icons.check_circle,
-                      color: isDarkTheme ? Colors.white : Colors.black,
+                      color: Colors.black,
                     ),
                   Flexible(
                     child: Text(
                       progetto.nome,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: isDarkTheme ? Colors.white : Colors.black,
+                        color:  Colors.black,
                       ),
                       overflow: TextOverflow.ellipsis, // Assicura che il testo non strabordi
                     ),
@@ -74,7 +72,7 @@ class ITuoiProgettiItem extends StatelessWidget {
                 ],
               ),
               Divider(
-                color: isDarkTheme ? Colors.white : Colors.grey[350],
+                color:Colors.grey[350],
                 thickness: 1,
               ),
               if (progetto.completato)
@@ -96,14 +94,14 @@ class ITuoiProgettiItem extends StatelessWidget {
         Icon(
           Icons.date_range,
           size: 16,
-          color: isDarkTheme ? Colors.white : Colors.black,
+          color: Colors.black,
         ),
         const SizedBox(width: 5),
         Text(
           dataConsegna,
           style: TextStyle(
             fontSize: 12,
-            color: isDarkTheme ? Colors.white : Colors.black,
+            color: Colors.black,
           ),
         ),
       ],
@@ -117,14 +115,14 @@ class ITuoiProgettiItem extends StatelessWidget {
         Icon(
           Icons.task,
           size: 16,
-          color: isDarkTheme ? Colors.white : Colors.black,
+          color:  Colors.black,
         ),
         SizedBox(width: 5),
         Text(
           '$attivitaNonCompletate attività',
           style: TextStyle(
             fontSize: 12,
-            color: isDarkTheme ? Colors.white : Colors.black,
+            color: Colors.black,
           ),
         ),
       ],
@@ -138,14 +136,14 @@ class ITuoiProgettiItem extends StatelessWidget {
         Icon(
           progettoScaduto ? Icons.error : Icons.calendar_today,
           size: 16,
-          color: progettoScaduto ? Colors.red : (isDarkTheme ? Colors.white : Colors.black),
+          color: progettoScaduto ? Colors.red : Colors.black,
         ),
         const SizedBox(width: 5),
         Text(
           dataScadenza,
           style: TextStyle(
             fontSize: 12,
-            color: progettoScaduto ? Colors.red : (isDarkTheme ? Colors.white : Colors.black),
+            color: progettoScaduto ? Colors.red : Colors.black,
           ),
         ),
       ],

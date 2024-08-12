@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/ViewModel/ViewModelProgetto.dart';
 import 'package:teamsync_flutter/data.models/Priorita.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/SezioneProfiloUtente.dart';
@@ -9,20 +8,30 @@ import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/SezioneProgr
 import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/SezioneITuoiProgetti.dart';
 import 'package:teamsync_flutter/navigation/Schermate.dart';
 import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
-class YourProjectsPage extends StatefulWidget {
 
+class YourProjectsPage extends StatefulWidget {
   ViewModelUtente viewmodelutente;
-  YourProjectsPage({required this.viewmodelutente});
+  ProgettoViewModel viwmodelProgetto;
+
+  YourProjectsPage({required this.viewmodelutente, required this.viwmodelProgetto});
+
   @override
   _YourProjectsPageState createState() => _YourProjectsPageState();
 }
 
 class _YourProjectsPageState extends State<YourProjectsPage> {
-  bool isDarkTheme = false;
+  @override
+  void initState() {
+    super.initState();
+    if (widget.viwmodelProgetto.utenteCorrenteId != null) {
+      widget.viwmodelProgetto.caricaProgettiUtente(widget.viwmodelProgetto.utenteCorrenteId!, true);
+      widget.viwmodelProgetto.caricaProgettiCompletatiUtente(widget.viwmodelProgetto.utenteCorrenteId!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final viewModelProgetto = Provider.of<ProgettoViewModel>(context);
+    final viewModelProgetto = widget.viwmodelProgetto;
     final isLoading = viewModelProgetto.isLoading;
     final projects = viewModelProgetto.progetti;
     final completedProjects = viewModelProgetto.progettiCompletati;
@@ -30,17 +39,19 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Home',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isDarkTheme ? Colors.white : Colors.black,
+        automaticallyImplyLeading: false,
+        title: const Text(
+            'Home',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
-        ),
+
         actions: [
           PopupMenuButton(
-            icon: Icon(Icons.more_vert, color: isDarkTheme ? Colors.white : Colors.black),
-            onSelected: (value) {
+            icon: Icon(Icons.more_vert, color: Colors.black),
+            onSelected: (value) async {
               switch (value) {
                 case 'sync':
                   if (currentUserId != null) {
@@ -48,35 +59,26 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
                     viewModelProgetto.caricaProgettiCompletatiUtente(currentUserId);
                   }
                   break;
-                case 'settings':
-
-                  break;
                 case 'logout':
-                  viewModelProgetto.logout();
+                  widget.viwmodelProgetto.logout();
+                  widget.viewmodelutente.logout(context);
                   Navigator.of(context).pushReplacementNamed(Schermate.login);
                   break;
               }
             },
             itemBuilder: (context) => [
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'sync',
                 child: ListTile(
-                  leading: Icon(Icons.refresh, color: isDarkTheme ? Colors.white : Colors.black),
-                  title: Text('Sync', style: TextStyle(color: isDarkTheme ? Colors.white : Colors.black)),
-                ),
-              ),
-              PopupMenuItem(
-                value: 'settings',
-                child: ListTile(
-                  leading: Icon(Icons.settings, color: isDarkTheme ? Colors.white : Colors.black),
-                  title: Text('Settings', style: TextStyle(color: isDarkTheme ? Colors.white : Colors.black)),
+                  leading: Icon(Icons.refresh, color: Colors.black),
+                  title: Text('Sync', style: TextStyle(color: Colors.black)),
                 ),
               ),
               PopupMenuItem(
                 value: 'logout',
                 child: ListTile(
-                  leading: Icon(Icons.logout, color: Colors.red),
-                  title: Text('Logout', style: TextStyle(color: Colors.red)),
+                  leading: Icon(Icons.logout, color: Colors.black),
+                  title: Text('Logout', style: TextStyle(color: Colors.black)),
                 ),
               ),
             ],
@@ -94,13 +96,11 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
                     Navigator.of(context).pop();
                   },
                   viewModelProgetto: viewModelProgetto,
-                  isDarkTheme: isDarkTheme,
-                  currentUserId: currentUserId, // Utilizza il null-assertion operator
+                  currentUserId: currentUserId,
                 );
               },
             );
           } else {
-            // Gestisci il caso in cui currentUserId è null
             print("Errore: l'ID dell'utente corrente è null");
           }
         },
@@ -109,18 +109,20 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(//per la visualizzzione di piu item
+        child: ListView(
           children: [
             if (isLoading)
               const Center(
                 child: CircularProgressIndicator(),
               ),
-            SezioneProfiloUtente(isDarkTheme: isDarkTheme),
+            if (isLoading)
             const SizedBox(height: 16),
-            SezioneITUoiProgetti(
+            SezioneProfiloUtente(),
+            const SizedBox(height: 16),
+            if (!isLoading)
+              SezioneITUoiProgetti(
               progetti: projects,
               attivitaProgetti: viewModelProgetto.attivitaProgetti,
-              isDarkTheme: isDarkTheme,
             ),
             const SizedBox(height: 16),
             Row(
@@ -129,9 +131,8 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
                 SezioneProgressiProgetti(
                   progettiCompletati: completedProjects.length,
                   progettiUtente: projects.length,
-                  isDarkTheme: isDarkTheme,
                 ),
-                SezioneCalendario(isDarkTheme: isDarkTheme),
+                SezioneCalendario(),
               ],
             ),
           ],
@@ -141,20 +142,16 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
   }
 }
 
-
 class CreaProgettoDialog extends StatefulWidget {
   final VoidCallback onDismissRequest;
-  final ProgettoViewModel viewModelProgetto;
-  final bool isDarkTheme;
+  ProgettoViewModel viewModelProgetto;
   final String currentUserId;
 
 
   CreaProgettoDialog({
     required this.onDismissRequest,
     required this.viewModelProgetto,
-    required this.isDarkTheme,
     required this.currentUserId,
-
   });
 
   @override
@@ -166,39 +163,41 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
   String descrizione = '';
   DateTime dataScadenza = DateTime.now();
   Priorita priorita = Priorita.NESSUNA;
-  String voto = '';
-  DateTime dataConsegna = DateTime.now();
+  String codiceProgetto = '';
   final maxCharsNome = 20;
   final maxCharsDescrizione = 200;
+  bool aggiungiProgetto = false;
+  bool creaProgetto = true;
 
   @override
   Widget build(BuildContext context) {
     var dataScadenzaStr = DateFormat('dd/MM/yyyy').format(dataScadenza);
-    var dataConsegnaStr = DateFormat('dd/MM/yyyy').format(dataConsegna);
 
     return AlertDialog(
-      title: Text(
-        'Crea Nuovo Progetto',
-        style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
+      title: const Text(
+        'Crea o Unisciti a un Progetto',
+        style: TextStyle(color: Colors.black),
       ),
-      backgroundColor: widget.isDarkTheme ? Colors.black : Colors.white,
+      backgroundColor: Colors.white,
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if(creaProgetto)
             TextField(
               onChanged: (value) {
                 if (value.length <= maxCharsNome) {
                   setState(() {
+                    aggiungiProgetto = false;
                     nome = value;
                   });
                 }
               },
               decoration: InputDecoration(
                 labelText: 'Nome',
-                labelStyle: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
+                labelStyle: TextStyle(color: Colors.black),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: widget.isDarkTheme ? Colors.white : Colors.black),
+                  borderSide: BorderSide(color: Colors.black),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -206,30 +205,34 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
-              style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
+              style: TextStyle(color: Colors.black),
               maxLines: 2,
-            ),
+            ) ,
+            if(creaProgetto)
             Align(
               alignment: Alignment.centerRight,
               child: Text(
                 '${nome.length} / $maxCharsNome',
-                style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
+                style: TextStyle(color: Colors.black),
               ),
             ),
-            SizedBox(height: 8.0),
+            if(creaProgetto)
+            const SizedBox(height: 8.0),
+            if(creaProgetto)
             TextField(
               onChanged: (value) {
                 if (value.length <= maxCharsDescrizione) {
                   setState(() {
+                    aggiungiProgetto = false;
                     descrizione = value;
                   });
                 }
               },
               decoration: InputDecoration(
                 labelText: 'Descrizione',
-                labelStyle: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
+                labelStyle: TextStyle(color: Colors.black),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: widget.isDarkTheme ? Colors.white : Colors.black),
+                  borderSide: BorderSide(color: Colors.black),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -237,17 +240,20 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
-              style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
+              style: TextStyle(color: Colors.black),
               maxLines: 4,
             ),
+            if(creaProgetto)
             Align(
               alignment: Alignment.centerRight,
               child: Text(
                 '${descrizione.length} / $maxCharsDescrizione',
-                style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
+                style: TextStyle(color: Colors.black),
               ),
             ),
+            if(creaProgetto)
             SizedBox(height: 8.0),
+            if(creaProgetto)
             TextField(
               controller: TextEditingController(text: dataScadenzaStr),
               onTap: () async {
@@ -258,13 +264,14 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                   lastDate: DateTime(2101),
                   builder: (context, child) {
                     return Theme(
-                      data: widget.isDarkTheme ? ThemeData.dark() : ThemeData.light(),
+                      data: ThemeData.light(),
                       child: child!,
                     );
                   },
                 );
                 if (pickedDate != null && pickedDate != dataScadenza) {
                   setState(() {
+                    aggiungiProgetto = false;
                     dataScadenza = pickedDate;
                   });
                 }
@@ -272,80 +279,44 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
               readOnly: true,
               decoration: InputDecoration(
                 labelText: 'Data di Scadenza',
-                labelStyle: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
+                labelStyle: TextStyle(color: Colors.black),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: widget.isDarkTheme ? Colors.white : Colors.black),
+                  borderSide: BorderSide(color: Colors.black),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red.shade700),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
-                suffixIcon: Icon(Icons.calendar_today, color: widget.isDarkTheme ? Colors.white : Colors.black),
+                suffixIcon: Icon(Icons.calendar_today, color: Colors.black),
               ),
-              style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
+              style: TextStyle(color: Colors.black),
             ),
-            SizedBox(height: 18.0),
-            TextField(
-              controller: TextEditingController(text: dataConsegnaStr),
-              onTap: () async {
-                final pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: dataConsegna,
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2101),
-                  builder: (context, child) {
-                    return Theme(
-                      data: widget.isDarkTheme ? ThemeData.dark() : ThemeData.light(),
-                      child: child!,
-                    );
-                  },
-                );
-                if (pickedDate != null && pickedDate != dataConsegna) {
-                  setState(() {
-                    dataConsegna = pickedDate;
-                  });
-                }
-              },
-              readOnly: true,
-              decoration: InputDecoration(
-                labelText: 'Data di Consegna',
-                labelStyle: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: widget.isDarkTheme ? Colors.white : Colors.black),
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red.shade700),
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                suffixIcon: Icon(Icons.calendar_today, color: widget.isDarkTheme ? Colors.white : Colors.black),
-              ),
-              style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
-            ),
-            SizedBox(height: 10.0),
-            SizedBox(height: 8.0),
+            if(creaProgetto)
+            const SizedBox(height: 8.0),
+            if(creaProgetto)
             DropdownButtonFormField<Priorita>(
               value: priorita,
-              onChanged: (Priorita? newValue) {
+              onChanged: (value) {
                 setState(() {
-                  priorita = newValue!;
+                  aggiungiProgetto = false;
+                  priorita = value!;
                 });
               },
-              items: Priorita.values.map((Priorita classType) {
+              items: Priorita.values.map((priorita) {
                 return DropdownMenuItem<Priorita>(
-                  value: classType,
+                  value: priorita,
                   child: Text(
-                    classType.name,
-                    style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
+                    priorita.toString().split('.').last,
+                    style: TextStyle(color: Colors.black),
                   ),
                 );
               }).toList(),
               decoration: InputDecoration(
                 labelText: 'Priorità',
-                labelStyle: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
+                labelStyle: TextStyle(color: Colors.black),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: widget.isDarkTheme ? Colors.white : Colors.black),
+                  borderSide: BorderSide(color: Colors.black),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -353,41 +324,184 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
-              dropdownColor: widget.isDarkTheme ? Colors.black : Colors.white,
-              style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
             ),
+            if(creaProgetto)
+            SizedBox(height: 16.0),
+            if(aggiungiProgetto)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        creaProgetto = !creaProgetto;
+                        codiceProgetto = '';
+                        aggiungiProgetto = !aggiungiProgetto;
+                      });
+                    },
+                    child: Text(
+                      'Oppure crea un progetto',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.red[700],
+                        decoration: TextDecoration.underline,
+                        fontSize: 16.0,
+                      ),
+                    )
+                ),
+              ],
+            ),
+            Divider(color: Colors.black),
+            if(creaProgetto)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  'Unisciti a un Progetto',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16.0,
+                  ),
+                ),
+
+                GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        creaProgetto = !creaProgetto;
+                        nome = '';
+                        descrizione = '';
+                        priorita = Priorita.NESSUNA;
+                        dataScadenzaStr = '';
+                        dataScadenza = DateTime.now();
+                        codiceProgetto = '';
+                        aggiungiProgetto = !aggiungiProgetto;
+                      });
+                    },
+                    child: Text(
+                      'Con un Codice',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.red[700],
+                        decoration: TextDecoration.underline,
+                        fontSize: 16.0,
+                      ),
+                    )
+                ),
+                ],
+              ),
+            const SizedBox(height: 10.0),
+
+            if(aggiungiProgetto)
+              const Text(
+                'Inserisci il codice:',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.0,
+                ),
+              ),
+            if(aggiungiProgetto)
+            SizedBox(height: 15.0),
+            if(aggiungiProgetto)
+              TextField(
+              onChanged: (value) {
+                setState(() {
+                  nome = '';
+                  print (nome);
+                  codiceProgetto = value;
+                });
+              },
+              decoration: InputDecoration(
+                labelText: 'Codice Progetto',
+                labelStyle: TextStyle(color: Colors.black),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red.shade700),
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+              ),
+              style: TextStyle(color: Colors.black),
+            ),
+
+            const SizedBox(height: 16.0),
+
           ],
         ),
       ),
+
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            widget.onDismissRequest();
           },
           child: Text(
             'Annulla',
-            style: TextStyle(color: widget.isDarkTheme ? Colors.white : Colors.black),
+            style: TextStyle(color: Colors.red.shade700),
           ),
         ),
         ElevatedButton(
-          onPressed: () {
-            widget.viewModelProgetto.addProgetto(
-              nome: nome,
-              descrizione: descrizione,
-              dataScadenza: dataScadenza,
-              priorita: priorita,
-              dataConsegna: dataConsegna,
-              partecipanti: [widget.currentUserId], // Aggiungi il partecipante qui
-              onSuccess: (progettoId) {
+          onPressed: codiceProgetto.isNotEmpty || nome.isNotEmpty
+              ? () async {
+            if (codiceProgetto.isNotEmpty) {
+
+              bool success = await widget.viewModelProgetto.aggiungiPartecipanteConCodice(
+                widget.currentUserId, codiceProgetto);
+              if (success) {
+                widget.viewModelProgetto.caricaProgettiUtente(widget.currentUserId, true);
+                widget.viewModelProgetto.caricaProgettiCompletatiUtente(widget.currentUserId);
+                creaProgetto = false;
+                aggiungiProgetto = false;
                 Navigator.of(context).pop();
-                print('Progetto creato con successo con ID: $progettoId');
-              },
-            );
-          },
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.red.shade700),
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('Errore'),
+                      content: Text(widget.viewModelProgetto.erroreAggiungiProgetto!),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+            } else {
+              // Create a new project
+              await widget.viewModelProgetto.addProgetto(
+                  nome: nome,
+                  descrizione: descrizione,
+                  dataScadenza: dataScadenza,
+                  priorita: priorita,
+                  partecipanti: [widget.currentUserId], // Aggiungi il partecipante qui
+                  onSuccess: (progettoId) {
+                    widget.viewModelProgetto.caricaProgettiUtente(widget.currentUserId, true);
+                    widget.viewModelProgetto.caricaProgettiCompletatiUtente(widget.currentUserId);
+                    Navigator.of(context).pushReplacementNamed(Schermate.ituoiProgetti);
+                    print('Progetto creato con successo con ID: $progettoId');
+                  }
+
+              );
+              creaProgetto = false;
+              aggiungiProgetto = false;
+              Navigator.of(context).pop();
+            }
+          } : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red.shade700,
+
           ),
-          child: Text('Crea', style: TextStyle(color: Colors.white)),
+          child: const Text('Conferma',style: TextStyle(color: Colors.white),),
+
         ),
       ],
     );

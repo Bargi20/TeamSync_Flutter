@@ -24,54 +24,12 @@ class TodoRepository {
         utenti: [utenti],
         fileUri: null,
       );
-
       await _database.collection('Todo').add(leMieAttivita.toMap());
     } catch (e) {
-      print("Errore durante l'aggiunta del Todo: ${e.toString()}");
       throw Exception("Errore durante l'aggiunta del Todo: ${e.toString()}");
     }
   }
 
-  Future<List<LeMieAttivita>> getAllTodo() async {
-    try {
-      final snapshot = await _database.collection('Todo')
-          .where('completato', isEqualTo: false)
-          .orderBy('dataScadenza')
-          .get();
-      return snapshot.docs.map((doc) => LeMieAttivita.fromFirestore(doc)).toList();
-    } catch (e) {
-      print("Errore durante il recupero di tutti i Todo: ${e.toString()}");
-      return [];
-    }
-  }
-
-  Future<List<LeMieAttivita>> getTodoByUtente(String idProg, String utenteId) async {
-    try {
-      final snapshot = await _database.collection('Todo')
-          .where('progetto', isEqualTo: idProg)
-          .where('utenti', arrayContains: utenteId)
-          .where('completato', isEqualTo: false)
-          .orderBy('dataScadenza')
-          .get();
-      return snapshot.docs.map((doc) => LeMieAttivita.fromFirestore(doc)).toList();
-    } catch (e) {
-      print("Errore durante il recupero dei Todo per utente: ${e.toString()}");
-      return [];
-    }
-  }
-
-  Future<List<LeMieAttivita>> getAllTodoCompletate() async {
-    try {
-      final snapshot = await _database.collection('Todo')
-          .where('completato', isEqualTo: true)
-          .orderBy('dataScadenza')
-          .get();
-      return snapshot.docs.map((doc) => LeMieAttivita.fromFirestore(doc)).toList();
-    } catch (e) {
-      print("Errore durante il recupero dei Todo completati: ${e.toString()}");
-      return [];
-    }
-  }
 
   Future<List<LeMieAttivita>> getAttivitaByProgettoId(String progettoId) async {
     try {
@@ -80,7 +38,6 @@ class TodoRepository {
           .get();
       return snapshot.docs.map((doc) => LeMieAttivita.fromFirestore(doc)).toList();
     } catch (e) {
-      print("Errore durante il recupero delle attività per progetto: ${e.toString()}");
       return [];
     }
   }
@@ -89,7 +46,6 @@ class TodoRepository {
     try {
       await _database.collection('Todo').doc(id).delete();
     } catch (e) {
-      print("Errore durante l'eliminazione del Todo: ${e.toString()}");
       throw Exception("Errore durante l'eliminazione del Todo: ${e.toString()}");
     }
   }
@@ -120,7 +76,6 @@ class TodoRepository {
       );
       await _database.collection('Todo').doc(id).set(updatedTodo.toMap());
     } catch (e) {
-      print("Errore durante l'aggiornamento del Todo: ${e.toString()}");
       throw Exception("Errore durante l'aggiornamento del Todo: ${e.toString()}");
     }
   }
@@ -131,7 +86,6 @@ class TodoRepository {
         'completato': completato,
       });
     } catch (e) {
-      print("Errore durante il completamento del Todo: ${e.toString()}");
       throw Exception("Errore durante il completamento del Todo: ${e.toString()}");
     }
   }
@@ -145,7 +99,6 @@ class TodoRepository {
         'utenti': updatedUsers,
       });
     } catch (e) {
-      print("Errore durante l'aggiunta dell'utente al Todo: ${e.toString()}");
       throw Exception("Errore durante l'aggiunta dell'utente al Todo: ${e.toString()}");
     }
   }
@@ -166,7 +119,6 @@ class TodoRepository {
         await deleteTodo(id);
       }
     } catch (e) {
-      print("Errore durante la rimozione dell'utente dal Todo: ${e.toString()}");
       throw Exception("Errore durante la rimozione dell'utente dal Todo: ${e.toString()}");
     }
   }
@@ -176,7 +128,6 @@ class TodoRepository {
       final doc = await _database.collection('Todo').doc(id).get();
       return LeMieAttivita.fromFirestore(doc);
     } catch (e) {
-      print("Errore durante il recupero del Todo: ${e.toString()}");
       throw Exception("Errore durante il recupero del Todo: ${e.toString()}");
     }
   }
@@ -189,7 +140,6 @@ class TodoRepository {
           .get();
       return snapshot.size;
     } catch (e) {
-      print("Errore durante il conteggio dei Todo completati: ${e.toString()}");
       return 0;
     }
   }
@@ -201,7 +151,6 @@ class TodoRepository {
           .get();
       return snapshot.size;
     } catch (e) {
-      print("Errore durante il conteggio di tutti i Todo: ${e.toString()}");
       return 0;
     }
   }
@@ -214,7 +163,6 @@ class TodoRepository {
           .get();
       return snapshot.size;
     } catch (e) {
-      print("Errore durante il conteggio dei Todo non completati per progetto: ${e.toString()}");
       return 0;
     }
   }

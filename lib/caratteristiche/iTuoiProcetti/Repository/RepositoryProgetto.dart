@@ -15,7 +15,7 @@ class RepositoryProgetto {
           .collection('progetti')
           .where('partecipanti', arrayContains: userId)
           .get();
-
+      print("persone: $querySnapshot");
       // Mappa i documenti a oggetti Progetto usando fromFirestore
       return querySnapshot.docs
           .map((doc) => Progetto.fromFirestore(doc))
@@ -26,14 +26,6 @@ class RepositoryProgetto {
     }
   }
 
-  Future<void> logout() async {
-    try {
-      await auth.signOut();
-    } catch (e) {
-      // Gestione dell'errore
-      print("Errore durante il logout: $e");
-    }
-  }
 
   /// Crea un nuovo progetto nel database Firestore.
   Future<String> creaProgetto(Progetto progetto) async {
@@ -53,6 +45,7 @@ class RepositoryProgetto {
       await progettoRef.update({
         'partecipanti': FieldValue.arrayUnion([userId])
       });
+      print("aggiunto");
     } catch (e) {
       throw Exception("Errore durante l'aggiunta del partecipante: $e");
     }
@@ -100,6 +93,7 @@ class RepositoryProgetto {
           .where('codice', isEqualTo: codice)
           .get();
       if (querySnapshot.docs.isNotEmpty) {
+        print("trovato");
         return querySnapshot.docs[0].id;
       } else {
         return null;

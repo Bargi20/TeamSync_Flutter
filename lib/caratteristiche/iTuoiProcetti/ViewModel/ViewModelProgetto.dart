@@ -9,7 +9,7 @@ import 'package:teamsync_flutter/caratteristiche/login/Model/UserClass.dart';
 import 'package:teamsync_flutter/caratteristiche/login/Repository/RepositoryUtente.dart';
 import 'package:teamsync_flutter/data.models/Priorita.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:teamsync_flutter/caratteristiche/login/Model/UserClass.dart';
+
 
 class ProgettoViewModel extends ChangeNotifier {
   final RepositoryProgetto repositoryProgetto = RepositoryProgetto();
@@ -37,6 +37,8 @@ class ProgettoViewModel extends ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+
 
   List<LeMieAttivita> _attivitaNonCompletate = [];
   List<LeMieAttivita> _attivitaCompletate = [];
@@ -68,10 +70,9 @@ class ProgettoViewModel extends ChangeNotifier {
 
   Future<void> logout() async {
     try {
-      await repositoryProgetto.logout();
       _utenteCorrenteId = null;
-      notifyListeners();  // Notifica i listener (ad es. UI) che lo stato è cambiato
-      print("utente corrente: $_utenteCorrenteId");
+      notifyListeners();
+
     } catch (e) {
       // Gestione dell'errore
       print("Errore durante il logout: $e");
@@ -123,75 +124,10 @@ class ProgettoViewModel extends ChangeNotifier {
     }
   }
 
-
   void condividiCodiceProgetto(BuildContext context, String codiceProgetto) {
     final String testoDaCondividere = "Ecco il codice per poter aggiungere il progetto: $codiceProgetto";
     Share.share(testoDaCondividere);
   }
-/*
-  Future<void> aggiornaProgetto(
-      String progettoId,
-      String nome,
-      String descrizione,
-      DateTime dataScadenza,
-      Priorita priorita,
-      String voto,
-      DateTime dataConsegna,
-      ) async {
-    try {
-      final progetto = await repositoryProgetto.getProgettoById(progettoId);
-      if (progetto != null) {
-        final progettoAggiornato = Progetto(
-          id: progettoId,
-          nome: nome,
-          descrizione: descrizione,
-          dataCreazione: progetto.dataCreazione, // Mantiene la data di creazione originale
-          dataScadenza: dataScadenza,
-          dataConsegna: dataConsegna,
-          priorita: priorita,
-          voto: voto,
-          attivita: progetto.attivita, // Mantiene le attività originali
-          partecipanti: progetto.partecipanti, // Mantiene i partecipanti originali
-          completato: progetto.completato, // Mantiene lo stato di completamento originale
-          codice: progetto.codice, // Mantiene il codice originale
-        );
-        await repositoryProgetto.aggiornaProgetto(progettoAggiornato);
-        if (_utenteCorrenteId != null) {
-          await caricaProgettiUtente(_utenteCorrenteId!, false);
-        }
-      }
-    } catch (e) {
-      print("Errore durante l'aggiornamento del progetto: $e");
-    }
-  }
-
-  Future<void> aggiornaStatoProgetto(String progettoId, bool completato) async {
-    try {
-      final progetto = await repositoryProgetto.getProgettoById(progettoId);
-      if (progetto != null) {
-        final progettoAggiornato = Progetto(
-          id: progettoId,
-          nome: progetto.nome,
-          descrizione: progetto.descrizione,
-          dataCreazione: progetto.dataCreazione,
-          dataScadenza: progetto.dataScadenza,
-          dataConsegna: progetto.dataConsegna,
-          priorita: progetto.priorita,
-          voto: progetto.voto,
-          attivita: progetto.attivita,
-          partecipanti: progetto.partecipanti,
-          completato: completato,
-          codice: progetto.codice,
-        );
-        await repositoryProgetto.aggiornaProgetto(progettoAggiornato);
-        if (_utenteCorrenteId != null) {
-          await caricaProgettiUtente(_utenteCorrenteId!, true);
-        }
-      }
-    } catch (e) {
-      print("Errore durante l'aggiornamento dello stato del progetto: $e");
-    }
-  }*/
 
   Future<String> getNomeProgetto(String idProg) async {
     _isLoading = true;
@@ -208,17 +144,6 @@ class ProgettoViewModel extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
-    }
-  }
-
-  Future<void> getUtenteById(String id, Function(ProfiloUtente?) callback) async {
-    try {
-      final profileData = await repositoryUtente.getUserProfile(id);
-      final profile = profileData != null ? ProfiloUtente.fromMap(profileData) : null;
-      callback(profile);
-    } catch (e) {
-      print("Errore durante il recupero dell'utente con ID $id: $e");
-      callback(null);
     }
   }
 
@@ -289,25 +214,6 @@ class ProgettoViewModel extends ChangeNotifier {
     return utenti;
   }
 
-  Future<void> caricaProgettiCollega(String userId, bool loadingInit) async {
-    _isLoading = loadingInit;
-    notifyListeners();
-    try {
-      final progetti = await repositoryProgetto.getProgettiUtente(userId);
-      _progettiCollega = progetti;
-      notifyListeners();
-    } catch (e) {
-      print("Errore nel caricamento dei progetti del collega: $e");
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> resetProgetti() async {
-    _progetti = [];
-    notifyListeners();
-  }
 
   Future<void> caricaProgettiCompletatiUtente(String userId) async {
     try {
@@ -367,36 +273,37 @@ class ProgettoViewModel extends ChangeNotifier {
     required String descrizione,
     required DateTime dataScadenza,
     required Priorita priorita,
-    required DateTime dataConsegna,
-    required List<String> partecipanti, // Aggiungi il parametro partecipanti
+    required List<String> partecipanti,
     required Function(String) onSuccess,
-  }) async {
-    try {
-      final uuid = Uuid();
-      final progettoId = uuid.v4();
+    }) async
+      {
+        try {
+          final uuid = Uuid();
+          final progettoId = uuid.v4();
+          final codice =  repositoryProgetto.generaCodiceProgetto();
+          final progetto = Progetto(
+            id: progettoId,
+            nome: nome,
+            descrizione: descrizione,
+            dataCreazione: DateTime.now(),
+            dataScadenza: dataScadenza,
+            dataConsegna: dataScadenza,
+            priorita: priorita,
+            attivita: [],
+            codice: codice,
+            partecipanti: partecipanti, // Utilizza i partecipanti qui
+            completato: false,
+          );
 
-      final progetto = Progetto(
-        id: progettoId,
-        nome: nome,
-        descrizione: descrizione,
-        dataCreazione: DateTime.now(),
-        dataScadenza: dataScadenza,
-        dataConsegna: dataConsegna,
-        priorita: priorita,
-        attivita: [],
-        partecipanti: partecipanti, // Utilizza i partecipanti qui
-        completato: false,
-      );
-
-      await repositoryProgetto.creaProgetto(progetto);
-      _aggiungiProgettoRiuscito = true;
-      notifyListeners();
-      onSuccess(progettoId);
-    } catch (e) {
-      _erroreAggiungiProgetto = "Errore durante l'aggiunta del progetto.";
-      print("Errore durante l'aggiunta del progetto: $e");
-    }
-  }
+          await repositoryProgetto.creaProgetto(progetto);
+          _aggiungiProgettoRiuscito = true;
+          notifyListeners();
+          onSuccess(progettoId);
+        } catch (e) {
+          _erroreAggiungiProgetto = "Errore durante l'aggiunta del progetto.";
+          print("Errore durante l'aggiunta del progetto: $e");
+        }
+      }
 
 
   Future<void> abbandonaProgetto(String userID, String progettoID) async {
@@ -415,4 +322,70 @@ class ProgettoViewModel extends ChangeNotifier {
       print("Errore durante l'abbandono del progetto: $e");
     }
   }
-}
+
+
+  Future<List<String>> convertiProgettiInId(List<Progetto> listaProgetti) async {
+    List<String> progettiUtenteStringId = [];
+
+    for (var progetto in listaProgetti) {
+      if (progetto.id != null) { // Assicurati che id non sia nullo
+        progettiUtenteStringId.add(progetto.id!);
+      }
+    }
+
+    return progettiUtenteStringId;
+  }
+
+
+  Future<bool> aggiungiPartecipanteConCodice(String userId, String codiceProgetto) async {
+    try {
+      final progettoId = await repositoryProgetto.getProgettoIdByCodice(codiceProgetto);
+      final progettiUtente = await repositoryProgetto.getProgettiUtente(userId);
+      List<String> progettiUtenteStringId = await convertiProgettiInId(progettiUtente);
+
+      if (progettoId != null && !utentePartecipa(progettiUtenteStringId, progettoId)) {
+        await repositoryProgetto.aggiungiPartecipante(progettoId, userId);
+        _aggiungiProgettoRiuscito = true;
+        _erroreAggiungiProgetto = null;
+      } else if (progettoId == null) {
+        _aggiungiProgettoRiuscito = false;
+        _erroreAggiungiProgetto =
+        "Il codice inserito non è valido. Riprovare o contattare il creatore del progetto";
+        return false;
+      } else if(utentePartecipa(progettiUtenteStringId, progettoId)){
+        _aggiungiProgettoRiuscito = false;
+        _erroreAggiungiProgetto = "Fai già parte di questo progetto!";
+        return false;
+      }
+    }catch (e) {
+      _aggiungiProgettoRiuscito = false;
+      _erroreAggiungiProgetto =
+      "Si è verificato un errore durante l'aggiunta di un progetto";
+      return false;
+    }
+
+    // Notifica i listener per aggiornare l'interfaccia utente
+    notifyListeners();
+    return true;
+  }
+
+  bool utentePartecipa(List<String> progettiUtente, String progettoId) {
+    return progettiUtente.contains(progettoId);
+  }
+
+
+
+  Future<String?> getProgettoIdByCodice(String codice) async {
+    // Implementa il metodo per ottenere l'ID del progetto in base al codice
+    // Questo potrebbe essere un'interrogazione a un database o una chiamata API
+    return null;
+  }
+
+  Future<List<String>> getProgettiUtente(String userId) async {
+    // Implementa il metodo per ottenere i progetti dell'utente
+    return [];
+  }
+
+    // Implementa il metodo per aggiungere un partecipante a un progetto
+  }
+

@@ -5,11 +5,12 @@ import '../../../navigation/schermate.dart';
 import '../../../theme/color.dart';
 import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
 
+
 class LoginScreen extends StatefulWidget {
 
   ViewModelUtente viewmodelutente;
 
-  LoginScreen({required this.viewmodelutente});
+  LoginScreen({super.key, required this.viewmodelutente});
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -31,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(viewModelUtente.erroreLogin!),
-            duration: Duration(seconds: 1), // Durata del SnackBar
+            duration: const Duration(seconds: 1), // Durata del SnackBar
             action: SnackBarAction(
               label: 'Chiudi',
               onPressed: () {
@@ -61,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: 100), // Aggiungi uno spazio iniziale per centrare meglio il contenuto
+                    const SizedBox(height: 100), // Aggiungi uno spazio iniziale per centrare meglio il contenuto
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -72,13 +73,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
                     Image.asset(
                       "assets/user_icon.png",
                       width: 150,
                       height: 150,
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     const Text(
                       'Accedi',
                       style: TextStyle(
@@ -87,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40.0),
                       child: Column(
@@ -103,11 +104,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             keyboardType: TextInputType.emailAddress,
                             onChanged: (value) => setState(() => email = value),
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           TextField(
                             decoration: InputDecoration(
                               labelText: 'Password',
-                              prefixIcon: Icon(Icons.lock),
+                              prefixIcon: const Icon(Icons.lock),
                               suffixIcon: IconButton(
                                 icon: Icon(passwordVisible ? Icons.visibility : Icons.visibility_off),
                                 onPressed: () => setState(() => passwordVisible = !passwordVisible),
@@ -119,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             obscureText: !passwordVisible,
                             onChanged: (value) => setState(() => password = value),
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(context, Schermate.recuperoPassword);
@@ -139,12 +140,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     SizedBox(
                       height: 50,
                       child: Stack(
                         children: [
-                          if (isLoading) Center(child: CircularProgressIndicator()),
+                          if (isLoading) const Center(child: CircularProgressIndicator()),
                           if (!isLoading)
                             ElevatedButton(
                               onPressed: () async {
@@ -156,23 +157,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                   if (viewModelUtente.firstLogin) {
                                     Navigator.pushReplacementNamed(context, Schermate.benvenuto);
                                   } else {
-                                    await Future.delayed(Duration(seconds: 2));
+                                    await Future.delayed(const Duration(seconds: 2));
                                     Navigator.pushReplacementNamed(context, Schermate.ituoiProgetti);
                                   }
                                 }
 
                                 setState(() => isLoading = false);
                               },
-                              child: Text('Accedi'),
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white, backgroundColor: Red70,
-                                minimumSize: Size(200, 50),
+                                minimumSize: const Size(200, 50),
                               ),
+                              child: const Text('Accedi'),
                             )
                         ],
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -193,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 90), // Questo spazio potrebbe essere ridotto se necessario
+                    const SizedBox(height: 90), // Questo spazio potrebbe essere ridotto se necessario
                   ],
                 ),
               ),

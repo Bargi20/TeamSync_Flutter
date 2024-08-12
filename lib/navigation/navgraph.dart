@@ -35,11 +35,11 @@ class NavGraph extends StatelessWidget {
       child: MaterialApp(
         initialRoute: Schermate.login,
         routes: {
-          Schermate.benvenuto: (context) => SchermataDiBenvenuto(
-            onStart: () {
-              Navigator.pushReplacementNamed(context, Schermate.login);
-            },
-          ),
+
+          Schermate.benvenuto: (context) {
+            var viewModel = Provider.of<ViewModelUtente>(context, listen: true);
+            return SchermataDiBenvenuto(viewModelUtente: viewModel);
+          },
           Schermate.registrazione: (context) {
             final viewModel = Provider.of<ViewModelUtente>(context, listen: true);
             return Registrazione(viewModel);
@@ -56,8 +56,9 @@ class NavGraph extends StatelessWidget {
             return PasswordDimenticata(viewModel);
           },
           Schermate.ituoiProgetti: (context) {
-            var viewModel = Provider.of<ViewModelUtente>(context, listen: true);
-            return YourProjectsPage(viewmodelutente: viewModel);
+            var viewModelProgetto = Provider.of<ProgettoViewModel>(context, listen: true);
+            var viewModelutente = Provider.of<ViewModelUtente>(context, listen: true);
+            return YourProjectsPage(viewmodelutente: viewModelutente, viwmodelProgetto: viewModelProgetto,);
           },
 
 

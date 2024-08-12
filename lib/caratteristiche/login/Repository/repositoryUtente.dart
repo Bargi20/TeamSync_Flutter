@@ -2,8 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 
-
-
 class RepositoryUtente {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -13,7 +11,7 @@ class RepositoryUtente {
       UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       return result.user;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -38,13 +36,10 @@ class RepositoryUtente {
         await _firestore.collection('utenti').doc(utente.uid).set(profiloUtente);
       }
       return utente;
-    } on FirebaseAuthException catch (e) {
-
-      print("Errore FirebaseAuthException: ${e.message}");
-      throw e;
+    } on FirebaseAuthException {
+      rethrow;
     } catch (e) {
-      print("Errore generico: $e");
-      throw e;
+      rethrow;
     }
   }
 
@@ -53,7 +48,7 @@ class RepositoryUtente {
     try {
       await _auth.sendPasswordResetEmail(email: email);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -63,7 +58,7 @@ class RepositoryUtente {
       var profiloUtente = document.data() as Map<String, dynamic>?;
       return profiloUtente?['primoAccesso'] ?? true;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -71,7 +66,7 @@ class RepositoryUtente {
     try {
       await _firestore.collection('utenti').doc(userId).update({'primoAccesso': false});
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -84,7 +79,7 @@ class RepositoryUtente {
     try {
       await utente?.sendEmailVerification();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -93,7 +88,7 @@ class RepositoryUtente {
       DocumentSnapshot document = await _firestore.collection('utenti').doc(userId).get();
       return document.data() as Map<String, dynamic>?;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -101,7 +96,7 @@ class RepositoryUtente {
     try {
       await _firestore.collection('utenti').doc(profiloUtente['id']).set(profiloUtente);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -126,46 +121,13 @@ class RepositoryUtente {
       await utenteAttuale?.reload();
       return utenteAttuale?.emailVerified ?? false;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
-  void signOut() {
-    _auth.signOut();
+  Future<void> logout() async {
+    await _auth.signOut();
   }
 
-  Future<void> aggiungiAmico(String userId, String amicoId) async {
-    try {
-      DocumentReference userRef = _firestore.collection('utenti').doc(userId);
-      DocumentSnapshot snapshot = await userRef.get();
-      var userProfile = snapshot.data() as Map<String, dynamic>?;
-      if (userProfile != null) {
-        List<String> amici = List<String>.from(userProfile['amici'] ?? []);
-        if (!amici.contains(amicoId)) {
-          amici.add(amicoId);
-          await userRef.update({'amici': amici});
-        }
-      }
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  Future<void> rimuoviAmico(String userId, String amicoId) async {
-    try {
-      DocumentReference userRef = _firestore.collection('utenti').doc(userId);
-      DocumentSnapshot snapshot = await userRef.get();
-      var userProfile = snapshot.data() as Map<String, dynamic>?;
-      if (userProfile != null) {
-        List<String> amici = List<String>.from(userProfile['amici'] ?? []);
-        if (amici.contains(amicoId)) {
-          amici.remove(amicoId);
-          await userRef.update({'amici': amici});
-        }
-      }
-    } catch (e) {
-      throw e;
-    }
-  }
 
 }
