@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teamsync_flutter/caratteristiche/login/Repository/repository_utente.dart';
@@ -105,6 +104,7 @@ class ViewModelUtente extends ChangeNotifier {
   }
 
 
+
   /// Valida i campi del modulo di registrazione.
   /// @return String? Ritorna un messaggio di errore se uno dei campi non è valido, altrimenti null.
   String? _validateRegistrationField(String matricola, String nome, String cognome, String email, DateTime dataNascita, String password, String confermaPassword) {
@@ -198,35 +198,41 @@ class ViewModelUtente extends ChangeNotifier {
   /// @return Future<void> Ritorna un Future che notifica il completamento del recupero del profilo utente.
   Future<void> fetchUserProfile(String userId) async {
     try {
-      final doc = await FirebaseFirestore.instance.collection('utenti').doc(userId).get();
-      if (doc.exists) {
-        utenteCorrente = ProfiloUtente.fromFirestore(doc);
+      // Chiamata alla repository per ottenere il profilo utente
+      ProfiloUtente? profilo = await repositoryUtente.fetchUserProfile(userId);
+
+      // Aggiornamento dello stato
+      if (profilo != null) {
+        utenteCorrente = profilo;
       } else {
         utenteCorrente = null;
       }
+
+      // Notifica ai listener
       notifyListeners();
     } catch (e) {
+      // Gestione dell'errore generico e notifica ai listener
       utenteCorrente = null;
       notifyListeners();
     }
   }
 
-  /// Ottiene i dettagli del profilo utente dal database.
-  /// @param userId L'ID univoco dell'utente nel database.
-  /// @return Future<ProfiloUtente?> Ritorna un oggetto ProfiloUtente se il profilo esiste, altrimenti null.
+  /// Recupera il profilo utente
+  /// Questa funzione chiama `fetchUserProfileFromRepository` per ottenere i dati dell'utente.
+  /// [userId] L'ID dell'utente di cui si desidera recuperare il profilo.
   Future<ProfiloUtente?> ottieniUtente(String userId) async {
     try {
-      final doc = await FirebaseFirestore.instance.collection('utenti').doc(userId).get();
-      if (doc.exists) {
-
-        return ProfiloUtente.fromFirestore(doc);
-      } else {
-
-        return null;
-      }
+      final utente = await repositoryUtente.fetchUserProfileFromRepository(userId);
+    return utente;
     } catch (e) {
-
-      return null;
+    return null;
+    } finally {
+      notifyListeners();
     }
   }
+
+
+
+
+
 }

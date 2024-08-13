@@ -59,6 +59,49 @@ class RepositoryUtente {
   }
 
 
+  /// Recupera il profilo utente dal database Firestore.
+  /// Questa funzione tenta di ottenere il documento utente corrispondente all'ID fornito
+  /// dalla collezione 'utenti' di Firestore. Se il documento esiste,
+  /// viene restituito un oggetto `ProfiloUtente` costruito dai dati ottenuti.
+  /// Se il documento non esiste o se si verifica un errore durante il recupero,
+  /// la funzione restituisce `null`.
+  /// [userId] L'ID dell'utente di cui si desidera recuperare il profilo.
+  /// Restituisce un `ProfiloUtente` se il profilo esiste, altrimenti `null`.
+  Future<ProfiloUtente?> fetchUserProfile(String userId) async {
+    try {
+      final doc = await FirebaseFirestore.instance.collection('utenti').doc(userId).get();
+      if (doc.exists) {
+        return ProfiloUtente.fromFirestore(doc);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+
+  /// Recupera il profilo utente dal database Firestore.
+  /// Questa funzione tenta di ottenere il documento utente corrispondente
+  /// all'ID fornito dalla collezione 'utenti' di Firestore. Se il documento esiste,
+  /// viene restituito un oggetto `ProfiloUtente` costruito dai dati ottenuti.
+  /// Se il documento non esiste o se si verifica un errore durante il recupero,
+  /// la funzione restituisce `null`.
+  /// [userId] L'ID dell'utente di cui si desidera recuperare il profilo.
+  Future<ProfiloUtente?> fetchUserProfileFromRepository(String userId) async {
+    try {
+      final doc = await FirebaseFirestore.instance.collection('utenti').doc(userId).get();
+      if (doc.exists) {
+        return ProfiloUtente.fromFirestore(doc);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+
 
   /// Invia un'email per il reset della password all'indirizzo email fornito.
   /// [email] L'indirizzo email dell'utente che richiede il reset della password.
@@ -137,6 +180,7 @@ class RepositoryUtente {
       rethrow;
     }
   }
+
 
 
 

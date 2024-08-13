@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Model/progetto.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Repository/repository_progetto.dart';
@@ -40,12 +39,12 @@ class ProgettoViewModel extends ChangeNotifier {
 
   Future<void> _init() async {
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        _utenteCorrenteId = user.uid;
+      final userId = await repositoryProgetto.getUtenteCorrenteId();
+      if (userId != null) {
+        _utenteCorrenteId = userId;
         notifyListeners();
-        await caricaProgettiUtente(user.uid, false);
-        await caricaProgettiCompletatiUtente(user.uid);
+        await caricaProgettiUtente(userId, false);
+        await caricaProgettiCompletatiUtente(userId);
       }
     } catch (e) {
       rethrow;

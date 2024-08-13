@@ -27,6 +27,20 @@ class RepositoryProgetto {
     }
   }
 
+  /// Recupera l'ID dell'utente attualmente autenticato.
+  /// Questo metodo restituisce l'identificatore univoco (UID) dell'utente attualmente autenticato.
+  /// Il metodo interagisce con Firebase Authentication per ottenere l'utente corrente.
+  /// @return Un `Future` che completa con il UID dell'utente corrente, o `null` se nessun utente è autenticato.
+  /// @throws Un'eccezione se si verifica un errore durante il recupero dell'ID utente.
+  Future<String?> getUtenteCorrenteId() async {
+    try {
+      final user = auth.currentUser;
+      return user?.uid;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 
 
   /// Crea un nuovo progetto e lo aggiunge alla collezione di Firestore.
