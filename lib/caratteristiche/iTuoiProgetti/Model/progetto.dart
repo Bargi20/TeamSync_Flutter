@@ -1,16 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:teamsync_flutter/caratteristiche/leMieAttivita/Model/LeMieAttivita.dart'; // Importa il modello di LeMieAttivita
 import 'package:teamsync_flutter/data.models/Priorita.dart';
 class Progetto {
-  final String? id; // L'ID del documento Firestore
+  final String? id;
   final String nome;
   final String? descrizione;
-  final DateTime dataCreazione; // Data di creazione del progetto
-  final DateTime dataScadenza; // Data di scadenza del progetto
+  final DateTime dataCreazione;
+  final DateTime dataScadenza;
   final DateTime dataConsegna;
-  final Priorita priorita; // Priorità del progetto
-  final List<LeMieAttivita> attivita; // Lista di attività associate al progetto
-  final List<String> partecipanti; // lista degli id dei partecipanti
+  final Priorita priorita;
+  final List<String> partecipanti;
   final String voto;
   final bool completato;
   final String codice;
@@ -23,17 +21,18 @@ class Progetto {
     required this.dataScadenza,
     required this.dataConsegna,
     required this.priorita,
-    required this.attivita,
     required this.partecipanti,
     this.voto = "Non Valutato",
     this.completato = false,
     this.codice = "",
   });
 
-  // Factory method to create a Progetto from Firestore DocumentSnapshot
+
+  /// Crea un'istanza di [Progetto] a partire da un [DocumentSnapshot] di Firestore.
+  /// [doc] Documento di Firestore contenente i dati del progetto.
+  /// Ritorna un'istanza di [Progetto] con i dati estratti dal documento.
   factory Progetto.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-
     return Progetto(
       id: doc.id,
       nome: data['nome'] ?? '',
@@ -45,9 +44,6 @@ class Progetto {
             (e) => e.toString() == 'Priorita.${data['priorita']}',
         orElse: () => Priorita.NESSUNA,
       ),
-      attivita: (data['attivita'] as List<dynamic>)
-          .map((item) => LeMieAttivita.fromMap(item as Map<String, dynamic>))
-          .toList(),
       partecipanti: List<String>.from(data['partecipanti'] ?? []),
       voto: data['voto'] ?? 'Non Valutato',
       completato: data['completato'] ?? false,
@@ -55,38 +51,23 @@ class Progetto {
     );
   }
 
-  // Method to convert Progetto to a Map for Firestore
-  Map<String, dynamic> toMap() {
-    return {
-      'nome': nome,
-      'descrizione': descrizione,
-      'dataCreazione': Timestamp.fromDate(dataCreazione),
-      'dataScadenza': Timestamp.fromDate(dataScadenza),
-      'dataConsegna': Timestamp.fromDate(dataConsegna),
-      'priorita': priorita.toString().split('.').last, // Convert enum to string
-      'attivita': attivita.map((item) => item.toMap()).toList(),
-      'partecipanti': partecipanti,
-      'voto': voto,
-      'completato': completato,
-      'codice': codice,
-    };
-  }
 
-  // CopyWith method to create a new Progetto with updated fields
-  Progetto copyWith({
-    String? id,
-    String? nome,
-    String? descrizione,
-    DateTime? dataCreazione,
-    DateTime? dataScadenza,
-    DateTime? dataConsegna,
-    Priorita? priorita,
-    List<LeMieAttivita>? attivita,
-    List<String>? partecipanti,
-    String? voto,
-    bool? completato,
-    String? codice,
-  }) {
+
+
+  /// Crea una copia dell'istanza di [Progetto] con eventuali modifiche.
+  /// [id] Nuovo ID del progetto (opzionale).
+  /// [nome] Nuovo nome del progetto (opzionale).
+  /// [descrizione] Nuova descrizione del progetto (opzionale).
+  /// [dataCreazione] Nuova data di creazione del progetto (opzionale).
+  /// [dataScadenza] Nuova data di scadenza del progetto (opzionale).
+  /// [dataConsegna] Nuova data di consegna del progetto (opzionale).
+  /// [priorita] Nuova priorità del progetto (opzionale).
+  /// [partecipanti] Nuova lista di partecipanti (opzionale).
+  /// [voto] Nuovo voto del progetto (opzionale).
+  /// [completato] Nuovo stato di completamento del progetto (opzionale).
+  /// [codice] Nuovo codice identificativo del progetto (opzionale).
+  /// Ritorna una nuova istanza di [Progetto] con i dati aggiornati.
+  Progetto copyWith({String? id, String? nome, String? descrizione, DateTime? dataCreazione, DateTime? dataScadenza, DateTime? dataConsegna, Priorita? priorita, List<String>? partecipanti, String? voto, bool? completato, String? codice,}) {
     return Progetto(
       id: id ?? this.id,
       nome: nome ?? this.nome,
@@ -95,11 +76,15 @@ class Progetto {
       dataScadenza: dataScadenza ?? this.dataScadenza,
       dataConsegna: dataConsegna ?? this.dataConsegna,
       priorita: priorita ?? this.priorita,
-      attivita: attivita ?? this.attivita,
       partecipanti: partecipanti ?? this.partecipanti,
       voto: voto ?? this.voto,
       completato: completato ?? this.completato,
       codice: codice ?? this.codice,
     );
   }
+
+
+
+
+
 }

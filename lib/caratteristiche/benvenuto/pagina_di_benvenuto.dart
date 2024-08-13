@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 
-// Classe per rappresentare le pagine di benvenuto
 class PaginaDiBenvenuto {
   final String immagine;
   final String titolo;
@@ -13,6 +11,7 @@ class PaginaDiBenvenuto {
     required this.sottotitolo,
     required this.sfondo,
   });
+
 
   // Pagine di benvenuto predefinite
   static final primaPagina = PaginaDiBenvenuto(

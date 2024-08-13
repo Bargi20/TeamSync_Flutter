@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../../../navigation/schermate.dart';
 import '../../../theme/color.dart';
-import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
+import 'package:teamsync_flutter/caratteristiche/login/viewModel/view_model_utente.dart';
 
 
 class LoginScreen extends StatefulWidget {
 
-  ViewModelUtente viewmodelutente;
+  final ViewModelUtente viewmodelutente;
 
-  LoginScreen({super.key, required this.viewmodelutente});
+  const LoginScreen({super.key, required this.viewmodelutente});
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginScreenState extends State<LoginScreen> {
   String email = '';
   String password = '';
   bool passwordVisible = false;
@@ -24,15 +22,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModelUtente = Provider.of<ViewModelUtente>(context);
-    //final viewModelProgetto = Provider.of<ViewModelProgetto>(context);
+    var viewModelUtente = widget.viewmodelutente;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final double horizontalPaddingText = screenWidth * 0.15;
 
     if (hasAttemptedLogin && viewModelUtente.erroreLogin != null) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(viewModelUtente.erroreLogin!),
-            duration: const Duration(seconds: 1), // Durata del SnackBar
+            duration: const Duration(seconds: 1),
             action: SnackBarAction(
               label: 'Chiudi',
               onPressed: () {
@@ -46,23 +47,21 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/background.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          const Image(
+            image: AssetImage('assets/background.png'),
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPaddingText),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 100), // Aggiungi uno spazio iniziale per centrare meglio il contenuto
+                    SizedBox(height: (screenHeight*0.05)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -73,13 +72,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 50),
+                     SizedBox(height: (screenHeight*0.06)),
                     Image.asset(
                       "assets/user_icon.png",
                       width: 150,
                       height: 150,
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: (screenHeight*0.02)),
                     const Text(
                       'Accedi',
                       style: TextStyle(
@@ -88,23 +87,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.black,
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                      child: Column(
+                    SizedBox(height: (screenHeight*0.02)),
+                    Column(
                         children: [
                           TextField(
                             decoration: const InputDecoration(
                               labelText: 'Email',
                               prefixIcon: Icon(Icons.email),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(10.0)), // Angoli arrotondati
+                                borderRadius: BorderRadius.all(Radius.circular(10.0)),
                               ),
                             ),
                             keyboardType: TextInputType.emailAddress,
                             onChanged: (value) => setState(() => email = value),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: (screenHeight*0.01)),
                           TextField(
                             decoration: InputDecoration(
                               labelText: 'Password',
@@ -114,13 +111,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 onPressed: () => setState(() => passwordVisible = !passwordVisible),
                               ),
                               border: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(10.0)), // Angoli arrotondati
+                                borderRadius: BorderRadius.all(Radius.circular(10.0)),
                               ),
                             ),
                             obscureText: !passwordVisible,
                             onChanged: (value) => setState(() => password = value),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: (screenHeight*0.02)),
                           GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(context, Schermate.recuperoPassword);
@@ -139,10 +136,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 30),
+
+                    SizedBox(height: (screenHeight*0.03)),
                     SizedBox(
-                      height: 50,
+                      height: (screenHeight*0.06),
                       child: Stack(
                         children: [
                           if (isLoading) const Center(child: CircularProgressIndicator()),
@@ -150,30 +147,29 @@ class _LoginScreenState extends State<LoginScreen> {
                             ElevatedButton(
                               onPressed: () async {
                                 setState(() => isLoading = true);
-
+                                final navigator = Navigator.of(context);
                                 await viewModelUtente.login(email, password);
                                 hasAttemptedLogin = true;
                                 if (viewModelUtente.loginSuccessful) {
                                   if (viewModelUtente.firstLogin) {
-                                    Navigator.pushReplacementNamed(context, Schermate.benvenuto);
+                                    navigator.pushReplacementNamed(Schermate.benvenuto);
                                   } else {
-                                    await Future.delayed(const Duration(seconds: 2));
-                                    Navigator.pushReplacementNamed(context, Schermate.ituoiProgetti);
+                                    navigator.pushReplacementNamed(Schermate.ituoiProgetti);
                                   }
                                 }
-
                                 setState(() => isLoading = false);
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white, backgroundColor: Red70,
-                                minimumSize: const Size(200, 50),
+                                minimumSize:  Size((screenWidth*0.5),(screenHeight*0.2)),
+                                maximumSize: Size((screenWidth*0.5),(screenHeight*0.2))
                               ),
                               child: const Text('Accedi'),
                             )
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: (screenHeight*0.02)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -194,12 +190,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 90), // Questo spazio potrebbe essere ridotto se necessario
                   ],
                 ),
               ),
             ),
-          ),
         ],
       ),
     );

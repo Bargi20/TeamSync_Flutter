@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:teamsync_flutter/navigation/schermate.dart';
-import 'package:teamsync_flutter/caratteristiche/login/Model/UserClass.dart';
-import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
+import 'package:teamsync_flutter/caratteristiche/login/Model/user_class.dart';
+import 'package:teamsync_flutter/caratteristiche/login/viewModel/view_model_utente.dart';
 
 class SezioneProfiloUtente extends StatelessWidget {
 
-  SezioneProfiloUtente();
+  const SezioneProfiloUtente({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     final viewModelUtente = Provider.of<ViewModelUtente>(context);
     final ProfiloUtente? userProfile = viewModelUtente.utenteCorrente;
 
@@ -25,7 +27,7 @@ class SezioneProfiloUtente extends StatelessWidget {
           Navigator.of(context).pushNamed(Schermate.profilo);
         },
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: EdgeInsets.symmetric(vertical: screenHeight*0.015,horizontal: screenWidth*0.03),
           child: Row(
             children: [
               Expanded(
@@ -46,13 +48,15 @@ class SezioneProfiloUtente extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.normal,
+                          fontSize: screenHeight *0.03,
                         ),
                       ),
                       Text(
-                        '${userProfile.nome}!', // Assicurati che userProfile sia di tipo ProfiloUtente
+                        '${userProfile.nome} !',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.normal,
+                          fontSize: screenHeight *0.03,
                         ),
                       ),
                     ],
@@ -64,7 +68,7 @@ class SezioneProfiloUtente extends StatelessWidget {
                   radius: 45,
                   backgroundImage: userProfile.immagine != null
                       ? CachedNetworkImageProvider(userProfile.immagine!)
-                      : AssetImage("assets/logo_teamsync.png") as ImageProvider,
+                      : const AssetImage("assets/logo_teamsync.png") as ImageProvider,
                 ),
 
             ],

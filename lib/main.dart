@@ -2,10 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:teamsync_flutter/caratteristiche/LeMieAttivita/Repository/ToDoRepository.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/Repository/RepositoryProgetto.dart';
-import 'package:teamsync_flutter/caratteristiche/login/Repository/RepositoryUtente.dart';
-import 'caratteristiche/login/ViewModel/ViewModelUtente.dart';
-import 'caratteristiche/iTuoiProcetti/ViewModel/ViewModelProgetto.dart';  // Importa il ViewModelProgetto
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Repository/repository_progetto.dart';
+import 'package:teamsync_flutter/caratteristiche/login/Repository/repository_utente.dart';
+import 'caratteristiche/login/ViewModel/view_model_utente.dart';
+import 'caratteristiche/iTuoiProgetti/ViewModel/view_model_progetto.dart';  // Importa il ViewModelProgetto
 import 'firebase_options.dart';
 import 'navigation/navgraph.dart';
 

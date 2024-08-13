@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:teamsync_flutter/theme/color.dart';
 import 'package:teamsync_flutter/data.models/Priorita.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/Model/Progetto.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/ViewModel/ViewModelProgetto.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Model/progetto.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/ViewModel/view_model_progetto.dart';
 
 class ModificaProgetto extends StatefulWidget {
   final String projectId;
@@ -73,7 +72,6 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
         dataScadenza: dataScadenza,
         dataCreazione: _progetto!.dataCreazione,
         dataConsegna: _progetto!.dataConsegna,
-        attivita: _progetto!.attivita,
         partecipanti: _progetto!.partecipanti,
       );
 

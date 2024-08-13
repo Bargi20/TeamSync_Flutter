@@ -1,43 +1,62 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/Model/Progetto.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Model/progetto.dart';
 import 'package:uuid/uuid.dart';
 
 class RepositoryProgetto {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  /// Recupera la lista dei progetti a cui partecipa un utente specifico.
+  /// Recupera la lista dei progetti associati a un dato utente.
+
+  /// [userId] ID dell'utente per cui recuperare i progetti.
+  /// Ritorna una lista di oggetti [Progetto] associati all'utente.
   Future<List<Progetto>> getProgettiUtente(String userId) async {
     try {
-      // Ottieni i documenti dalla collezione "progetti" in cui il campo "partecipanti" contiene userId
+
       final querySnapshot = await firestore
           .collection('progetti')
           .where('partecipanti', arrayContains: userId)
           .get();
-      print("persone: $querySnapshot");
-      // Mappa i documenti a oggetti Progetto usando fromFirestore
+
       return querySnapshot.docs
           .map((doc) => Progetto.fromFirestore(doc))
           .toList();
     } catch (e) {
-      print("Errore nel recupero dei progetti: $e");
       return [];
     }
   }
 
 
-  /// Crea un nuovo progetto nel database Firestore.
+
+  /// Crea un nuovo progetto e lo aggiunge alla collezione di Firestore.
+  /// [progetto] Oggetto [Progetto] da aggiungere.
+  /// Ritorna l'ID del documento creato.
   Future<String> creaProgetto(Progetto progetto) async {
     try {
-      final docRef = await firestore.collection('progetti').add(progetto.toMap());
+      final docRef = await FirebaseFirestore.instance.collection('progetti').add({
+        'nome': progetto.nome,
+        'descrizione': progetto.descrizione,
+        'dataCreazione': Timestamp.fromDate(progetto.dataCreazione),
+        'dataScadenza': Timestamp.fromDate(progetto.dataScadenza),
+        'dataConsegna': Timestamp.fromDate(progetto.dataConsegna),
+        'priorita': progetto.priorita.toString().split('.').last,
+        'partecipanti': progetto.partecipanti,
+        'voto': progetto.voto,
+        'completato': progetto.completato,
+        'codice': progetto.codice,
+      });
+
       return docRef.id;
     } catch (e) {
       throw Exception("Errore durante la creazione del progetto: $e");
     }
   }
 
-  /// Aggiunge un partecipante a un progetto.
+
+  /// Aggiunge un partecipante a un progetto esistente.
+  /// [progettoId] ID del progetto a cui aggiungere il partecipante.
+  /// [userId] ID dell'utente da aggiungere come partecipante.
   Future<void> aggiungiPartecipante(String? progettoId, String? userId) async {
     if (progettoId == null || userId == null) return;
     try {
@@ -45,14 +64,16 @@ class RepositoryProgetto {
       await progettoRef.update({
         'partecipanti': FieldValue.arrayUnion([userId])
       });
-      print("aggiunto");
     } catch (e) {
-      throw Exception("Errore durante l'aggiunta del partecipante: $e");
+      rethrow;
     }
   }
 
 
-  /// Permette a un utente di abbandonare un progetto.
+  /// Rimuove un partecipante da un progetto e elimina il progetto se non ci sono più partecipanti.
+  /// [userId] ID dell'utente che abbandona il progetto.
+  /// [progettoId] ID del progetto da cui l'utente abbandona.
+  /// [callback] Funzione di callback da chiamare al termine dell'abbandono del progetto.
   Future<void> abbandonaProgetto(String? userId, String progettoId, Function(bool) callback) async {
     if (userId == null) return;
     try {
@@ -71,21 +92,20 @@ class RepositoryProgetto {
     }
   }
 
-  /// Recupera l'utente attualmente autenticato.
-  Future<User?> getUtenteCorrente() async {
-    try {
-      return auth.currentUser;
-    } catch (e) {
-      throw Exception("Errore durante il recupero dell'utente attualmente autenticato: $e");
-    }
-  }
 
-  /// Genera un codice univoco per un progetto.
+
+
+  /// Genera un codice unico per un progetto.
+  /// Ritorna un codice di 8 caratteri.
   String generaCodiceProgetto() {
-    return Uuid().v4().substring(0, 8);
+    return const Uuid().v4().substring(0, 8);
   }
 
-  /// Recupera l'ID di un progetto in base a un codice specificato.
+
+
+  /// Recupera l'ID di un progetto a partire dal codice del progetto.
+  /// [codice] Codice del progetto di cui ottenere l'ID.
+  /// Ritorna l'ID del progetto se trovato, altrimenti `null`.
   Future<String?> getProgettoIdByCodice(String codice) async {
     try {
       final querySnapshot = await firestore
@@ -93,21 +113,19 @@ class RepositoryProgetto {
           .where('codice', isEqualTo: codice)
           .get();
       if (querySnapshot.docs.isNotEmpty) {
-        print("trovato");
         return querySnapshot.docs[0].id;
       } else {
         return null;
       }
     } catch (e) {
-      print("Errore durante il recupero dell'ID del progetto: $e");
       return null;
     }
   }
 
 
 
-
-  /// Elimina un progetto dal database.
+  /// Elimina un progetto dalla collezione di Firestore.
+  /// [progettoId] ID del progetto da eliminare.
   Future<void> eliminaProgetto(String progettoId) async {
     try {
       await firestore.collection('progetti').doc(progettoId).delete();
@@ -116,22 +134,10 @@ class RepositoryProgetto {
     }
   }
 
-  /// Elimina tutte le notifiche associate a un progetto.
-  Future<void> eliminaNotificheDelProgetto(String progettoId) async {
-    try {
-      final querySnapshot = await firestore
-          .collection('Notifiche')
-          .where('progetto_id', isEqualTo: progettoId)
-          .get();
-      for (final document in querySnapshot.docs) {
-        await firestore.collection('Notifiche').doc(document.id).delete();
-      }
-    } catch (e) {
-      throw Exception("Errore durante l'eliminazione delle notifiche: $e");
-    }
-  }
 
-  /// Recupera un progetto in base al suo ID.
+  /// Recupera un progetto a partire dal suo ID.
+  /// [progettoId] ID del progetto da recuperare.
+  /// Ritorna un oggetto [Progetto] se trovato, altrimenti `null`.
   Future<Progetto?> getProgettoById(String progettoId) async {
     try {
       final documentSnapshot = await firestore
@@ -144,11 +150,14 @@ class RepositoryProgetto {
         return null;
       }
     } catch (e) {
-      print("Errore nel caricamento del progetto: $e");
       return null;
     }
   }
 
+
+
+  /// Aggiorna un progetto esistente con i nuovi dati.
+  /// [progetto] Oggetto [Progetto] con i dati aggiornati.
   Future<void> aggiornaProgetto(Progetto progetto) async {
     try {
       final String? id = progetto.id;
@@ -157,58 +166,54 @@ class RepositoryProgetto {
         await FirebaseFirestore.instance
             .collection("progetti")
             .doc(id)
-            .set(progetto.toMap());
+            .set({
+          'nome': progetto.nome,
+          'descrizione': progetto.descrizione,
+          'dataCreazione': Timestamp.fromDate(progetto.dataCreazione),
+          'dataScadenza': Timestamp.fromDate(progetto.dataScadenza),
+          'dataConsegna': Timestamp.fromDate(progetto.dataConsegna),
+          'priorita': progetto.priorita.toString().split('.').last,
+          'partecipanti': progetto.partecipanti,
+          'voto': progetto.voto,
+          'completato': progetto.completato,
+          'codice': progetto.codice,
+        });
       }
     } catch (e) {
-      print("Errore durante l'aggiornamento del progetto: $e");
-      rethrow; // Rilancia l'eccezione per gestirla a un livello superiore, se necessario.
+      rethrow;
     }
   }
 
 
+  /// Recupera la lista dei partecipanti di un progetto.
+  /// [progettoId] ID del progetto di cui ottenere i partecipanti.
+  /// Ritorna una lista di ID di partecipanti.
   Future<List<String>> getPartecipantiDelProgetto(String progettoId) async {
     try {
-      // Ottieni il riferimento al documento
+
       DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
           .collection('progetti')
           .doc(progettoId)
           .get();
 
-      // Verifica se il documento esiste
+
       if (docSnapshot.exists) {
-        // Ottieni il campo "partecipanti" dal documento
+
         List<String>? partecipanti = List<String>.from(docSnapshot.get('partecipanti') ?? []);
         return partecipanti;
       } else {
-        return []; // Se il documento non esiste, restituisci una lista vuota
+        return [];
       }
     } catch (e) {
-      print('Errore durante il recupero dei partecipanti: $e');
-      rethrow; // Rilancia l'eccezione per una gestione più ampia
+
+      rethrow;
     }
   }
 
-  /// Recupera la lista dei progetti a cui partecipa un utente specifico e utilizza un callback.
-  Future<void> getProgettiUtenteCallback(String userId, Function(List<Progetto>) callback) async {
-    try {
-      final querySnapshot = await firestore
-          .collection('progetti')
-          .where('partecipanti', arrayContains: userId)
-          .get();
-      if (querySnapshot.docs.isNotEmpty) {
-        final progettiUtente = querySnapshot.docs
-            .map((doc) => Progetto.fromFirestore(doc))
-            .toList();
-        callback(progettiUtente);
-      } else {
-        callback([]);
-      }
-    } catch (e) {
-      print("Errore nel recupero dei progetti: $e");
-      callback([]);
-    }
-  }
 
+  /// Recupera la lista dei progetti completati da un dato utente.
+  /// [userId] ID dell'utente per cui recuperare i progetti completati.
+  /// Ritorna una lista di oggetti [Progetto] completati dall'utente.
   Future<List<Progetto>> getProgettiCompletatiUtente(String userId) async {
     try {
       final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -221,8 +226,10 @@ class RepositoryProgetto {
           .map((doc) => Progetto.fromFirestore(doc))
           .toList();
     } catch (e) {
-      print('Errore nel recupero dei progetti completati: $e');
       return [];
     }
   }
+
+
+
 }

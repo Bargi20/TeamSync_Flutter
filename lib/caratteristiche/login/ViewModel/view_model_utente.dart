@@ -1,30 +1,34 @@
-import 'package:cloud_firestore/cloud_firestore.dart'; // Per accedere a Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:teamsync_flutter/caratteristiche/login/Repository/repositoryUtente.dart';
+import 'package:teamsync_flutter/caratteristiche/login/Repository/repository_utente.dart';
 import '../../../navigation/navgraph.dart';
-import '../Model/UserClass.dart'; // Assicurati che contenga ProfiloUtente
+import '../Model/user_class.dart';
 
 class ViewModelUtente extends ChangeNotifier {
   final RepositoryUtente repositoryUtente = RepositoryUtente();
-  ProfiloUtente? utenteCorrente; // Cambia User? a ProfiloUtente?
+  ProfiloUtente? utenteCorrente;
   bool loginSuccessful = false;
   bool firstLogin = false;
   String? erroreLogin;
-  String? erroreVerificaEmail;
   bool registrazioneRiuscita = false;
   bool resetPasswordRiuscito = false;
   String? erroreResetPassword;
   bool primoAccesso = false;
   String? erroreRegistrazione;
 
+
+  /*
+   * Gestisce il processo di login dell'utente.
+   * @return Future<void> Ritorna un Future che notifica il completamento del login.
+   */
   Future<void> login(String email, String password) async {
     if (email.isEmpty) {
       erroreLogin = "Per favore, inserisci l'indirizzo email.";
       notifyListeners();
       return;
     }
+
     if (!RegExp(r"^[^@]+@[^@]+\.[^@]+").hasMatch(email)) {
       erroreLogin = "L'indirizzo email inserito non è valido.";
       notifyListeners();
@@ -39,8 +43,8 @@ class ViewModelUtente extends ChangeNotifier {
     try {
       final user = await repositoryUtente.login(email, password);
       if (user != null && await repositoryUtente.isEmailVerified()) {
-        // Recupera ProfiloUtente da Firestore
-        await _fetchUserProfile(user.uid);
+
+        await fetchUserProfile(user.uid);
         firstLogin = await repositoryUtente.isFirstLogin(user.uid);
         loginSuccessful = true;
         erroreLogin = null;
@@ -54,6 +58,10 @@ class ViewModelUtente extends ChangeNotifier {
     notifyListeners();
   }
 
+  /*
+   * Gestisce il processo di registrazione di un nuovo utente.
+   * @return Future<void> Ritorna un Future che notifica il completamento della registrazione.
+   */
   Future<void> signUp(String matricola, String nome, String cognome, String email, DateTime dataNascita, SessoUtente sesso, String password, String confermaPassword) async {
     erroreRegistrazione = null;
     String? errore = _validateRegistrationField(matricola, nome, cognome, email, dataNascita, password, confermaPassword);
@@ -62,14 +70,12 @@ class ViewModelUtente extends ChangeNotifier {
       notifyListeners();
       return;
     }
-
     try {
       String sessoStringa = sesso.toString().split('.').last;
       await repositoryUtente.signUp(matricola, nome, cognome, dataNascita, sessoStringa, email, password);
       _sendEmailVerification();
       erroreRegistrazione = null;
       registrazioneRiuscita = true;
-
       notifyListeners();
     } catch (e) {
       if (e is FirebaseAuthException) {
@@ -93,12 +99,14 @@ class ViewModelUtente extends ChangeNotifier {
       } else {
         erroreRegistrazione = "Registrazione fallita. Riprovare.";
       }
-
       registrazioneRiuscita = false;
       notifyListeners();
     }
   }
 
+
+  /// Valida i campi del modulo di registrazione.
+  /// @return String? Ritorna un messaggio di errore se uno dei campi non è valido, altrimenti null.
   String? _validateRegistrationField(String matricola, String nome, String cognome, String email, DateTime dataNascita, String password, String confermaPassword) {
     if (matricola.isEmpty) return "Per favore, inserisci il numero di matricola.";
     if (email.isEmpty) return "Per favore, inserisci il tuo indirizzo email.";
@@ -111,30 +119,24 @@ class ViewModelUtente extends ChangeNotifier {
     return null;
   }
 
-  void resetErroreLogin() {
-    erroreLogin = null;
-    notifyListeners();
-  }
 
-  void resetErroreVerificaEmail() {
-    erroreVerificaEmail = null;
-    notifyListeners();
-  }
-
+  /// Invia un'email di verifica all'utente registrato.
+  /// @return void : Non ritorna nulla, ma invia un'email di verifica.
   void _sendEmailVerification() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null && !user.emailVerified) {
       try {
         await user.sendEmailVerification();
-        erroreVerificaEmail = null;
         notifyListeners();
       } catch (e) {
-        erroreVerificaEmail = "Si è verificato un errore durante la conferma dell'email.";
-        notifyListeners();
+        rethrow;
       }
     }
   }
 
+
+  /// Gestisce il processo di reset della password per un utente che ha dimenticato la propria password.
+  /// @return Future<void> Ritorna un Future che notifica il completamento del reset della password.
   Future<void> resetPassword(String email) async {
     if (email.isNotEmpty) {
       final emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
@@ -162,6 +164,9 @@ class ViewModelUtente extends ChangeNotifier {
     }
   }
 
+
+  /// Aggiorna lo stato di primo accesso dell'utente corrente.
+  /// @return Future<void> Ritorna un Future che notifica il completamento dell'aggiornamento dello stato di primo accesso.
   Future<void> updateFirstLogin() async {
     if (utenteCorrente != null) {
       await repositoryUtente.updateFirstLogin(utenteCorrente!.id);
@@ -170,40 +175,28 @@ class ViewModelUtente extends ChangeNotifier {
     }
   }
 
-
+  /// Gestisce il logout dell'utente corrente.
+  /// @param context Il contesto di build di Flutter.
+  /// @return Future<void> Ritorna un Future che notifica il completamento del logout.
   Future<void> logout(BuildContext context) async {
-    // Esegui eventuali operazioni di pulizia, come il logout da Firebase
-    await FirebaseAuth.instance.signOut();
-
-
-    resetState();
-
-    // Reindirizza l'utente alla schermata di login e reinizializza i providers
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (context) => NavGraph(), // Ricrea tutta la struttura dei providers
-      ),
-          (Route<dynamic> route) => false, // Rimuove tutte le route precedenti
-    );
+    try {
+      final navigator = Navigator.of(context);
+      await repositoryUtente.logout();
+      navigator.pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const NavGraph(),
+        ),
+            (Route<dynamic> route) => false,
+      );
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  void resetState() {
-    utenteCorrente = null;
-    loginSuccessful = false;
-    firstLogin = false;
-    erroreLogin = null;
-    erroreVerificaEmail = null;
-    registrazioneRiuscita = false;
-    resetPasswordRiuscito = false;
-    erroreResetPassword = null;
-    primoAccesso = false;
-    erroreRegistrazione = null;
-
-    notifyListeners();  // Notifica alla UI di aggiornarsi
-  }
-
-  Future<void> _fetchUserProfile(String userId) async {
+  /// Recupera il profilo dell'utente corrente dal database.
+  /// @param userId L'ID univoco dell'utente nel database.
+  /// @return Future<void> Ritorna un Future che notifica il completamento del recupero del profilo utente.
+  Future<void> fetchUserProfile(String userId) async {
     try {
       final doc = await FirebaseFirestore.instance.collection('utenti').doc(userId).get();
       if (doc.exists) {
@@ -217,14 +210,18 @@ class ViewModelUtente extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  /// Ottiene i dettagli del profilo utente dal database.
+  /// @param userId L'ID univoco dell'utente nel database.
+  /// @return Future<ProfiloUtente?> Ritorna un oggetto ProfiloUtente se il profilo esiste, altrimenti null.
   Future<ProfiloUtente?> ottieniUtente(String userId) async {
     try {
       final doc = await FirebaseFirestore.instance.collection('utenti').doc(userId).get();
       if (doc.exists) {
-        // Crea e restituisci l'istanza di ProfiloUtente dal documento Firestore
+
         return ProfiloUtente.fromFirestore(doc);
       } else {
-        // Restituisci null se il documento non esiste
+
         return null;
       }
     } catch (e) {

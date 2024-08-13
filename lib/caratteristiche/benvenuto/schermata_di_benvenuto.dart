@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
+import 'package:teamsync_flutter/caratteristiche/login/viewModel/view_model_utente.dart';
 import 'package:teamsync_flutter/navigation/Schermate.dart';
 import 'pagina_di_benvenuto.dart';
-import 'package:provider/provider.dart';
 
 class SchermataDiBenvenuto extends StatefulWidget {
-  ViewModelUtente viewModelUtente;
+  final ViewModelUtente viewModelUtente;
 
-  SchermataDiBenvenuto({required this.viewModelUtente});
+  const SchermataDiBenvenuto({super.key, required this.viewModelUtente});
 
   @override
-  _SchermataDiBenvenutoState createState() => _SchermataDiBenvenutoState();
+  SchermataDiBenvenutoState createState() => SchermataDiBenvenutoState();
 }
 
-class _SchermataDiBenvenutoState extends State<SchermataDiBenvenuto> {
+class SchermataDiBenvenutoState extends State<SchermataDiBenvenuto> {
   late PageController _pageController;
   int _currentPage = 0;
 
@@ -45,8 +44,10 @@ class _SchermataDiBenvenutoState extends State<SchermataDiBenvenuto> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: Stack(
+      body:  Stack(
         children: [
           PageView.builder(
             controller: _pageController,
@@ -61,12 +62,14 @@ class _SchermataDiBenvenutoState extends State<SchermataDiBenvenuto> {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  Center(
+                  Padding(
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth*0.05),
+                  child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(pagina.immagine, height: 240),
-                        SizedBox(height: 16),
+                        SizedBox(height: screenHeight*0.02),
                         Text(
                           pagina.titolo,
                           style: const TextStyle(
@@ -76,7 +79,7 @@ class _SchermataDiBenvenutoState extends State<SchermataDiBenvenuto> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: screenHeight*0.015),
                         Text(
                           pagina.sottotitolo,
                           style: const TextStyle(
@@ -86,29 +89,30 @@ class _SchermataDiBenvenutoState extends State<SchermataDiBenvenuto> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: 20), // Spazio tra il sottotitolo e il pulsante
+                        SizedBox(height: screenHeight*0.03), // Spazio tra il sottotitolo e il pulsante
                         AnimatedOpacity(
                           opacity: _currentPage == _pages.length - 1 ? 1.0 : 0.0,
-                          duration: Duration(milliseconds: 200),
+                          duration: const Duration(milliseconds: 200),
                           child: ElevatedButton(
                             onPressed: () async {
-
+                              final navigator = Navigator.of(context);
                               await widget.viewModelUtente.updateFirstLogin();
 
                               // Naviga verso la pagina dei tuoi progetti
-                              Navigator.pushReplacementNamed(context, Schermate.ituoiProgetti);
+                              navigator.pushReplacementNamed(Schermate.ituoiProgetti);
 
                             },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               backgroundColor: Colors.red,
                             ),
-                            child: Text('Inizia Ora'),
+                            child: const Text('Inizia Ora'),
                           )
 
                         ),
                       ],
                     ),
+                  ),
                   ),
                 ],
               );
@@ -122,7 +126,7 @@ class _SchermataDiBenvenutoState extends State<SchermataDiBenvenuto> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(_pages.length, (index) {
                 return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
                   width: 12,
                   height: 12,
                   decoration: BoxDecoration(
@@ -136,5 +140,5 @@ class _SchermataDiBenvenutoState extends State<SchermataDiBenvenuto> {
         ],
       ),
     );
-  }
+    }
 }

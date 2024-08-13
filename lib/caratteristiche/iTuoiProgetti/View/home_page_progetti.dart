@@ -1,37 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/ViewModel/ViewModelProgetto.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/ViewModel/view_model_progetto.dart';
 import 'package:teamsync_flutter/data.models/Priorita.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/SezioneProfiloUtente.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/SezioneCalendario.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/SezioneProgressiProgetti.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/SezioneITuoiProgetti.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/View/sezione_profilo_utente.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/View/sezione_calendario.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/View/sezione_progressi_progetti.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/View/sezione_i_tuoi_progetti.dart';
 import 'package:teamsync_flutter/navigation/Schermate.dart';
-import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
+import 'package:teamsync_flutter/caratteristiche/login/viewModel/view_model_utente.dart';
 
 class YourProjectsPage extends StatefulWidget {
-  ViewModelUtente viewmodelutente;
-  ProgettoViewModel viwmodelProgetto;
+  final ViewModelUtente viewmodelutente;
+  final ProgettoViewModel viewmodelProgetto;
 
-  YourProjectsPage({required this.viewmodelutente, required this.viwmodelProgetto});
+  const YourProjectsPage({super.key, required this.viewmodelutente, required this.viewmodelProgetto});
 
   @override
-  _YourProjectsPageState createState() => _YourProjectsPageState();
+  YourProjectsPageState createState() => YourProjectsPageState();
 }
 
-class _YourProjectsPageState extends State<YourProjectsPage> {
+class YourProjectsPageState extends State<YourProjectsPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.viwmodelProgetto.utenteCorrenteId != null) {
-      widget.viwmodelProgetto.caricaProgettiUtente(widget.viwmodelProgetto.utenteCorrenteId!, true);
-      widget.viwmodelProgetto.caricaProgettiCompletatiUtente(widget.viwmodelProgetto.utenteCorrenteId!);
+    if (widget.viewmodelProgetto.utenteCorrenteId != null) {
+      widget.viewmodelProgetto.caricaProgettiUtente(widget.viewmodelProgetto.utenteCorrenteId!, true);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModelProgetto = widget.viwmodelProgetto;
+    final viewModelProgetto = widget.viewmodelProgetto;
     final isLoading = viewModelProgetto.isLoading;
     final projects = viewModelProgetto.progetti;
     final completedProjects = viewModelProgetto.progettiCompletati;
@@ -50,7 +49,7 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
 
         actions: [
           PopupMenuButton(
-            icon: Icon(Icons.more_vert, color: Colors.black),
+            icon: const Icon(Icons.more_vert, color: Colors.black),
             onSelected: (value) async {
               switch (value) {
                 case 'sync':
@@ -60,7 +59,6 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
                   }
                   break;
                 case 'logout':
-                  widget.viwmodelProgetto.logout();
                   widget.viewmodelutente.logout(context);
                   Navigator.of(context).pushReplacementNamed(Schermate.login);
                   break;
@@ -74,7 +72,7 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
                   title: Text('Sync', style: TextStyle(color: Colors.black)),
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'logout',
                 child: ListTile(
                   leading: Icon(Icons.logout, color: Colors.black),
@@ -100,12 +98,10 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
                 );
               },
             );
-          } else {
-            print("Errore: l'ID dell'utente corrente è null");
           }
         },
         backgroundColor: Colors.red,
-        child: Icon(Icons.add, color: Colors.white),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -117,7 +113,7 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
               ),
             if (isLoading)
             const SizedBox(height: 16),
-            SezioneProfiloUtente(),
+            const SezioneProfiloUtente(),
             const SizedBox(height: 16),
             if (!isLoading)
               SezioneITUoiProgetti(
@@ -132,7 +128,7 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
                   progettiCompletati: completedProjects.length,
                   progettiUtente: projects.length,
                 ),
-                SezioneCalendario(),
+                const SezioneCalendario(),
               ],
             ),
           ],
@@ -144,21 +140,21 @@ class _YourProjectsPageState extends State<YourProjectsPage> {
 
 class CreaProgettoDialog extends StatefulWidget {
   final VoidCallback onDismissRequest;
-  ProgettoViewModel viewModelProgetto;
+  final ProgettoViewModel viewModelProgetto;
   final String currentUserId;
 
 
-  CreaProgettoDialog({
+  const CreaProgettoDialog({super.key,
     required this.onDismissRequest,
     required this.viewModelProgetto,
     required this.currentUserId,
   });
 
   @override
-  _CreaProgettoDialogState createState() => _CreaProgettoDialogState();
+  CreaProgettoDialogState createState() => CreaProgettoDialogState();
 }
 
-class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
+class CreaProgettoDialogState extends State<CreaProgettoDialog> {
   String nome = '';
   String descrizione = '';
   DateTime dataScadenza = DateTime.now();
@@ -166,7 +162,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
   String codiceProgetto = '';
   final maxCharsNome = 20;
   final maxCharsDescrizione = 200;
-  bool aggiungiProgetto = false;
+  bool uniscitiProgetto = false;
   bool creaProgetto = true;
 
   @override
@@ -188,16 +184,16 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
               onChanged: (value) {
                 if (value.length <= maxCharsNome) {
                   setState(() {
-                    aggiungiProgetto = false;
+                    uniscitiProgetto = false;
                     nome = value;
                   });
                 }
               },
               decoration: InputDecoration(
                 labelText: 'Nome',
-                labelStyle: TextStyle(color: Colors.black),
+                labelStyle: const TextStyle(color: Colors.black),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
+                  borderSide: const BorderSide(color: Colors.black),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -205,7 +201,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
               maxLines: 2,
             ) ,
             if(creaProgetto)
@@ -213,7 +209,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
               alignment: Alignment.centerRight,
               child: Text(
                 '${nome.length} / $maxCharsNome',
-                style: TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black),
               ),
             ),
             if(creaProgetto)
@@ -223,16 +219,16 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
               onChanged: (value) {
                 if (value.length <= maxCharsDescrizione) {
                   setState(() {
-                    aggiungiProgetto = false;
+                    uniscitiProgetto = false;
                     descrizione = value;
                   });
                 }
               },
               decoration: InputDecoration(
                 labelText: 'Descrizione',
-                labelStyle: TextStyle(color: Colors.black),
+                labelStyle: const TextStyle(color: Colors.black),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
+                  borderSide: const BorderSide(color: Colors.black),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -240,7 +236,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
               maxLines: 4,
             ),
             if(creaProgetto)
@@ -248,11 +244,11 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
               alignment: Alignment.centerRight,
               child: Text(
                 '${descrizione.length} / $maxCharsDescrizione',
-                style: TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black),
               ),
             ),
             if(creaProgetto)
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             if(creaProgetto)
             TextField(
               controller: TextEditingController(text: dataScadenzaStr),
@@ -271,7 +267,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                 );
                 if (pickedDate != null && pickedDate != dataScadenza) {
                   setState(() {
-                    aggiungiProgetto = false;
+                    uniscitiProgetto = false;
                     dataScadenza = pickedDate;
                   });
                 }
@@ -279,18 +275,18 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
               readOnly: true,
               decoration: InputDecoration(
                 labelText: 'Data di Scadenza',
-                labelStyle: TextStyle(color: Colors.black),
+                labelStyle: const TextStyle(color: Colors.black),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
+                  borderSide: const BorderSide(color: Colors.black),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red.shade700),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
-                suffixIcon: Icon(Icons.calendar_today, color: Colors.black),
+                suffixIcon: const Icon(Icons.calendar_today, color: Colors.black),
               ),
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
             ),
             if(creaProgetto)
             const SizedBox(height: 8.0),
@@ -299,7 +295,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
               value: priorita,
               onChanged: (value) {
                 setState(() {
-                  aggiungiProgetto = false;
+                  uniscitiProgetto = false;
                   priorita = value!;
                 });
               },
@@ -308,15 +304,15 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                   value: priorita,
                   child: Text(
                     priorita.toString().split('.').last,
-                    style: TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                   ),
                 );
               }).toList(),
               decoration: InputDecoration(
                 labelText: 'Priorità',
-                labelStyle: TextStyle(color: Colors.black),
+                labelStyle: const TextStyle(color: Colors.black),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
+                  borderSide: const BorderSide(color: Colors.black),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -326,8 +322,8 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
               ),
             ),
             if(creaProgetto)
-            SizedBox(height: 16.0),
-            if(aggiungiProgetto)
+            const SizedBox(height: 16.0),
+            if(uniscitiProgetto)
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -336,7 +332,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                       setState(() {
                         creaProgetto = !creaProgetto;
                         codiceProgetto = '';
-                        aggiungiProgetto = !aggiungiProgetto;
+                        uniscitiProgetto = !uniscitiProgetto;
                       });
                     },
                     child: Text(
@@ -351,7 +347,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                 ),
               ],
             ),
-            Divider(color: Colors.black),
+            const Divider(color: Colors.black),
             if(creaProgetto)
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -375,7 +371,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                         dataScadenzaStr = '';
                         dataScadenza = DateTime.now();
                         codiceProgetto = '';
-                        aggiungiProgetto = !aggiungiProgetto;
+                        uniscitiProgetto = !uniscitiProgetto;
                       });
                     },
                     child: Text(
@@ -392,7 +388,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
               ),
             const SizedBox(height: 10.0),
 
-            if(aggiungiProgetto)
+            if(uniscitiProgetto)
               const Text(
                 'Inserisci il codice:',
                 textAlign: TextAlign.center,
@@ -401,22 +397,21 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                   fontSize: 16.0,
                 ),
               ),
-            if(aggiungiProgetto)
-            SizedBox(height: 15.0),
-            if(aggiungiProgetto)
+            if(uniscitiProgetto)
+            const SizedBox(height: 15.0),
+            if(uniscitiProgetto)
               TextField(
               onChanged: (value) {
                 setState(() {
                   nome = '';
-                  print (nome);
                   codiceProgetto = value;
                 });
               },
               decoration: InputDecoration(
                 labelText: 'Codice Progetto',
-                labelStyle: TextStyle(color: Colors.black),
+                labelStyle: const TextStyle(color: Colors.black),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
+                  borderSide: const BorderSide(color: Colors.black),
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -424,7 +419,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
             ),
 
             const SizedBox(height: 16.0),
@@ -447,28 +442,28 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
           onPressed: codiceProgetto.isNotEmpty || nome.isNotEmpty
               ? () async {
             if (codiceProgetto.isNotEmpty) {
-
+              final navigator = Navigator.of(context);
               bool success = await widget.viewModelProgetto.aggiungiPartecipanteConCodice(
                 widget.currentUserId, codiceProgetto);
               if (success) {
                 widget.viewModelProgetto.caricaProgettiUtente(widget.currentUserId, true);
                 widget.viewModelProgetto.caricaProgettiCompletatiUtente(widget.currentUserId);
                 creaProgetto = false;
-                aggiungiProgetto = false;
-                Navigator.of(context).pop();
+                uniscitiProgetto = false;
+                navigator.pop();
               } else {
                 showDialog(
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text('Errore'),
+                      title: const Text('Errore'),
                       content: Text(widget.viewModelProgetto.erroreAggiungiProgetto!),
                       actions: [
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: Text('OK'),
+                          child: const Text('OK'),
                         ),
                       ],
                     );
@@ -476,7 +471,7 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                 );
               }
             } else {
-              // Create a new project
+              final navigator = Navigator.of(context);
               await widget.viewModelProgetto.addProgetto(
                   nome: nome,
                   descrizione: descrizione,
@@ -487,13 +482,12 @@ class _CreaProgettoDialogState extends State<CreaProgettoDialog> {
                     widget.viewModelProgetto.caricaProgettiUtente(widget.currentUserId, true);
                     widget.viewModelProgetto.caricaProgettiCompletatiUtente(widget.currentUserId);
                     Navigator.of(context).pushReplacementNamed(Schermate.ituoiProgetti);
-                    print('Progetto creato con successo con ID: $progettoId');
                   }
 
               );
               creaProgetto = false;
-              aggiungiProgetto = false;
-              Navigator.of(context).pop();
+              uniscitiProgetto = false;
+              navigator.pop();
             }
           } : null,
           style: ElevatedButton.styleFrom(

@@ -1,33 +1,37 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:teamsync_flutter/data.models/Priorita.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/Model/Progetto.dart';
-
-import '../../../navigation/Schermate.dart'; // Assicurati di avere il modello Progetto
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Model/progetto.dart';
+import '../../../navigation/Schermate.dart';
 
 class ITuoiProgettiItem extends StatelessWidget {
   final Progetto progetto;
   final int attivitaNonCompletate;
-  final bool progettoScaduto; // Nuovo parametro per la scadenza del progetto
 
-  ITuoiProgettiItem({
+
+  const ITuoiProgettiItem({super.key,
     required this.progetto,
     required this.attivitaNonCompletate,
-    required this.progettoScaduto,
   });
+
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     final dateFormatter = DateFormat('dd/MM/yyyy');
     final dataScadenza = dateFormatter.format(progetto.dataScadenza);
     final dataConsegna = dateFormatter.format(progetto.dataConsegna);
+    final bool progettoScaduto = DateTime.now().isAfter(progetto.dataScadenza);
 
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
           context,
           Schermate.leMieAttivita,
-          arguments: progetto.id, // Il parametro idProgetto
+          arguments: progetto.id,
         );
       },
       child: Card(
@@ -37,11 +41,9 @@ class ITuoiProgettiItem extends StatelessWidget {
       ),
       color:Colors.white,
 
-
       child: Container(
-          width: 220,
-          height: 140,
-          padding: const EdgeInsets.all(16),///ciao
+          width: screenWidth*0.5,
+          padding:  EdgeInsets.symmetric(vertical: screenHeight*0.02, horizontal: screenWidth*0.03 ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -49,20 +51,23 @@ class ITuoiProgettiItem extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (progetto.completato)
-                    Icon(
-                      Icons.check_circle,
-                      color: Colors.black,
-                    ),
+
+
                   Flexible(
                     child: Text(
                       progetto.nome,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color:  Colors.black,
                       ),
-                      overflow: TextOverflow.ellipsis, // Assicura che il testo non strabordi
+                      overflow: TextOverflow.ellipsis,
                     ),
+                  ),
+                  if (progetto.completato)
+                  const Icon(
+                    Icons.check_circle,
+                    color: Colors.black,
+                    size: 20,
                   ),
                   if (!progetto.completato)
                     CircleAvatar(
@@ -76,10 +81,14 @@ class ITuoiProgettiItem extends StatelessWidget {
                 thickness: 1,
               ),
               if (progetto.completato)
-                _buildCompletedProjectRow(dataConsegna)
-              else
+                _buildCompletedProjectRow(dataConsegna),
+              if (progetto.completato)
+                _buildVotoRow(progetto.voto),
+              if (!progetto.completato)
                 _buildIncompleteProjectRow(attivitaNonCompletate),
+              if (!progetto.completato)
               _buildDeadlineRow(dataScadenza, progettoScaduto),
+
             ],
           ),
         ),
@@ -91,7 +100,7 @@ class ITuoiProgettiItem extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Icon(
+        const Icon(
           Icons.date_range,
           size: 16,
           color: Colors.black,
@@ -99,7 +108,7 @@ class ITuoiProgettiItem extends StatelessWidget {
         const SizedBox(width: 5),
         Text(
           dataConsegna,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 12,
             color: Colors.black,
           ),
@@ -112,15 +121,15 @@ class ITuoiProgettiItem extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Icon(
+        const Icon(
           Icons.task,
           size: 16,
           color:  Colors.black,
         ),
-        SizedBox(width: 5),
+        const SizedBox(width: 5),
         Text(
           '$attivitaNonCompletate attività',
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 12,
             color: Colors.black,
           ),
@@ -149,6 +158,29 @@ class ITuoiProgettiItem extends StatelessWidget {
       ],
     );
   }
+
+  Row _buildVotoRow(String voto) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        const Icon(
+          Icons.grade,
+          size: 16,
+          color: Colors.black,
+        ),
+        const SizedBox(width: 5),
+        Text(
+          voto,
+          style: const TextStyle(
+            fontSize: 12,
+            color:  Colors.black,
+          ),
+        ),
+      ],
+    );
+  }
+
+
 }
 
 

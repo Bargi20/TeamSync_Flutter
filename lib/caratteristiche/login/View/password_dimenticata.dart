@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
+import 'package:teamsync_flutter/caratteristiche/login/viewModel/view_model_utente.dart';
 import 'package:teamsync_flutter/navigation/schermate.dart';
 import '../../../theme/color.dart';
 
 class PasswordDimenticata extends StatefulWidget {
   final ViewModelUtente viewModelUtente;
-
   const PasswordDimenticata(this.viewModelUtente, {super.key});
 
   @override
-  _PasswordDimenticataState createState() => _PasswordDimenticataState();
+  PasswordDimenticataState createState() => PasswordDimenticataState();
 }
 
-class _PasswordDimenticataState extends State<PasswordDimenticata> {
+class PasswordDimenticataState extends State<PasswordDimenticata> {
   final TextEditingController emailRecuperoPasswordController = TextEditingController();
   bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Stack(
         children: [
@@ -28,7 +29,7 @@ class _PasswordDimenticataState extends State<PasswordDimenticata> {
             height: double.infinity,
           ),
           Padding(
-            padding: const EdgeInsets.all(30.0),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth*0.1, vertical:  screenHeight*0.05),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -41,7 +42,7 @@ class _PasswordDimenticataState extends State<PasswordDimenticata> {
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: screenHeight*0.01),
                 Text(
                   'Non preoccuparti, inserisci la tua email e ti invieremo un link per reimpostare la tua password.',
                   textAlign: TextAlign.center,
@@ -50,7 +51,7 @@ class _PasswordDimenticataState extends State<PasswordDimenticata> {
                     color: Colors.grey[700],
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: screenHeight*0.03),
                 TextField(
                   controller: emailRecuperoPasswordController,
                   decoration: InputDecoration(
@@ -68,26 +69,27 @@ class _PasswordDimenticataState extends State<PasswordDimenticata> {
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
-                const SizedBox(height: 25),
+                SizedBox(height: screenHeight*0.03),
                 SizedBox(
-                  width: 250,
-                  height: 50, // Dimensione minima di altezza per il pulsante
+                  width: screenWidth*0.7,
+                  height: screenHeight*0.07,
                   child: ElevatedButton(
                     onPressed: () async {
+                      final navigator = Navigator.of(context);
+                      final scaffoldmessenger = ScaffoldMessenger.of(context);
                       setState(() => isLoading = true);
                       await widget.viewModelUtente.resetPassword(
                         emailRecuperoPasswordController.text,
                       );
                       if (widget.viewModelUtente.resetPasswordRiuscito) {
                         widget.viewModelUtente.resetPasswordRiuscito = false;
-                        Navigator.pushReplacementNamed(
-                          context, Schermate.login,
-                        );
+                        navigator.pushReplacementNamed(
+                          Schermate.login,);
                       }
                       if (widget.viewModelUtente.erroreResetPassword != null) {
                         var errore = widget.viewModelUtente.erroreResetPassword;
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        ScaffoldMessenger.of(context).showSnackBar(
+                        scaffoldmessenger.hideCurrentSnackBar();
+                        scaffoldmessenger.showSnackBar(
                           SnackBar(content: Text(errore!),
                               duration: const Duration(seconds: 1),),
                         );

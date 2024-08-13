@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:teamsync_flutter/caratteristiche/benvenuto/schermata_di_benvenuto.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/View/ITuoiProgetti.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/ViewModel/ViewModelProgetto.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/View/home_page_progetti.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/ViewModel/view_model_progetto.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/LeMieAttivitaUI.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/ViewModel/LeMieAttivitaViewModel.dart';
-import 'package:teamsync_flutter/caratteristiche/login/View/PasswordDimenticata.dart';
+import 'package:teamsync_flutter/caratteristiche/login/View/password_dimenticata.dart';
 import 'package:teamsync_flutter/caratteristiche/login/View/login.dart';
 import 'package:teamsync_flutter/caratteristiche/login/View/registrazione.dart';
-import 'package:teamsync_flutter/caratteristiche/login/View/verificaMail.dart';
-import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
+import 'package:teamsync_flutter/caratteristiche/login/View/verifica_mail.dart';
+import 'package:teamsync_flutter/caratteristiche/login/viewModel/view_model_utente.dart';
 import 'package:teamsync_flutter/navigation/schermate.dart';
 import 'package:provider/provider.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/Repository/RepositoryProgetto.dart';
+
 
 class NavGraph extends StatelessWidget {
   const NavGraph({super.key});
@@ -58,7 +58,7 @@ class NavGraph extends StatelessWidget {
           Schermate.ituoiProgetti: (context) {
             var viewModelProgetto = Provider.of<ProgettoViewModel>(context, listen: true);
             var viewModelutente = Provider.of<ViewModelUtente>(context, listen: true);
-            return YourProjectsPage(viewmodelutente: viewModelutente, viwmodelProgetto: viewModelProgetto,);
+            return YourProjectsPage(viewmodelutente: viewModelutente, viewmodelProgetto: viewModelProgetto,);
           },
 
 

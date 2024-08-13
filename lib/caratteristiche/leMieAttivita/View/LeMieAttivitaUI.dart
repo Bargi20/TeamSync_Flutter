@@ -1,12 +1,12 @@
 import 'package:intl/intl.dart' show DateFormat;
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/ViewModel/ViewModelProgetto.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/ViewModel/view_model_progetto.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/Model/LeMieAttivita.dart';
 import 'package:flutter/material.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/Model/Progetto.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Model/progetto.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/ViewModel/LeMieAttivitaViewModel.dart';
-import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
+import 'package:teamsync_flutter/caratteristiche/login/viewModel/view_model_utente.dart';
 import 'package:teamsync_flutter/data.models/Priorita.dart';
-import '../../login/Model/UserClass.dart';
+import '../../login/Model/user_class.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/InfoProgettoUI.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/ModificaProgetto.dart';
 import '../../../navigation/schermate.dart';
@@ -87,7 +87,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
       isLoadingAttivita = true;
     });
     try {
-      await widget.viemodelprogetto.caricaAttivitaCompletate(widget.idProgetto);
+      await widget.viemodelprogetto.caricaTutteLeAttivitaCompletate(widget.idProgetto);
     } finally {
       setState(() {
         isLoadingAttivita = false;
@@ -100,7 +100,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
       isLoadingAttivita = true;
     });
     try {
-      await widget.viemodelprogetto.caricaAttivitaNonCompletate(
+      await widget.viemodelprogetto.caricaTutteLeAttivitaNonCompletate(
           widget.idProgetto);
     } finally {
       setState(() {
@@ -114,7 +114,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
       isLoadingAttivita = true;
     });
     try {
-      await widget.viemodelprogetto.caricaLeMieAttivita(
+      await widget.viemodelprogetto.caricaLeMieAttivitaNonCompletate(
           widget.idProgetto,
           widget.viewmodelutente.utenteCorrente!.id
       );
@@ -406,11 +406,11 @@ class _LemieAttivitaState extends State<lemieAttivita> {
             if(!isLoadingAttivita && isClickedLeMie)
               Expanded(
                 child: ListView.builder(
-                  itemCount: widget.viemodelprogetto.leMieAttivitaNonCompletate
+                  itemCount: widget.viemodelprogetto.attivitaNonCompletate
                       .length,
                   itemBuilder: (context, index) {
                     final attivita = widget.viemodelprogetto
-                        .leMieAttivitaNonCompletate[index];
+                        .attivitaNonCompletate[index];
                     return TodoItem(item: attivita,
                         viewModelUtente: widget.viewmodelutente,
                         leMieAttivitaViewModel: widget.viewmodelAttivita,

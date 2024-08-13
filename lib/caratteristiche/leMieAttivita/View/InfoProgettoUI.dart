@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/Model/Progetto.dart';
-import 'package:teamsync_flutter/caratteristiche/iTuoiProcetti/ViewModel/ViewModelProgetto.dart';
-import 'package:teamsync_flutter/caratteristiche/login/Model/UserClass.dart'; // Assicurati di importare ProfiloUtente
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Model/progetto.dart';
+import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/ViewModel/view_model_progetto.dart';
+import 'package:teamsync_flutter/caratteristiche/login/Model/user_class.dart'; // Assicurati di importare ProfiloUtente
 
 class InfoProgetto extends StatelessWidget {
   final String projectId;

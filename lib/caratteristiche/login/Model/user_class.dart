@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
+/// Enum che rappresenta i possibili valori del sesso dell'utente.
 enum SessoUtente {
   UOMO,
   DONNA,
@@ -12,7 +14,7 @@ class ProfiloUtente {
   String cognome;
   String matricola;
   DateTime dataDiNascita;
-  SessoUtente sesso; // Cambiato da String a SessoUtente
+  SessoUtente sesso;
   String email;
   bool primoAccesso;
   String? immagine;
@@ -31,11 +33,15 @@ class ProfiloUtente {
     this.amici = const [],
   });
 
+
+  /// Crea un'istanza di [ProfiloUtente] a partire da un documento Firestore.
+  /// [doc] Il documento Firestore da cui estrarre i dati.
+  /// Ritorna un'istanza di [ProfiloUtente] con i dati estratti dal documento.
+  /// In caso di errore nel parsing del campo 'sesso', il valore di default sarà [SessoUtente.ALTRO].
   factory ProfiloUtente.fromFirestore(DocumentSnapshot doc) {
     var data = doc.data() as Map<String, dynamic>;
-
-    // Convert the sesso field from string to SessoUtente enum
     SessoUtente sessoEnum;
+
     try {
       sessoEnum = SessoUtente.values.firstWhere(
             (e) => e.toString().split('.').last == data['sesso'],
@@ -59,45 +65,5 @@ class ProfiloUtente {
     );
   }
 
-  // Convert ProfiloUtente to Map for Firestore
-  Map<String, dynamic> toMap() {
-    return {
-      'nome': nome,
-      'cognome': cognome,
-      'matricola': matricola,
-      'dataDiNascita': Timestamp.fromDate(dataDiNascita),
-      'sesso': sesso.toString().split('.').last, // Convert enum to string
-      'email': email,
-      'primoAccesso': primoAccesso,
-      'immagine': immagine,
-      'amici': amici,
-    };
-  }
 
-  // Convert from a map
-  factory ProfiloUtente.fromMap(Map<String, dynamic> map) {
-    // Convert the sesso field from string to SessoUtente enum
-    SessoUtente sessoEnum;
-    try {
-      sessoEnum = SessoUtente.values.firstWhere(
-            (e) => e.toString().split('.').last == map['sesso'],
-        orElse: () => SessoUtente.ALTRO,
-      );
-    } catch (e) {
-      sessoEnum = SessoUtente.ALTRO; // Default value
-    }
-
-    return ProfiloUtente(
-      id: map['id'],
-      nome: map['nome'],
-      cognome: map['cognome'],
-      matricola: map['matricola'],
-      dataDiNascita: (map['dataDiNascita'] as Timestamp).toDate(),
-      sesso: sessoEnum,
-      email: map['email'],
-      primoAccesso: map['primoAccesso'],
-      immagine: map['immagine'],
-      amici: List<String>.from(map['amici'] ?? []),
-    );
-  }
 }

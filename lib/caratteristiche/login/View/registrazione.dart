@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:teamsync_flutter/caratteristiche/login/viewModel/ViewModelUtente.dart';
-
+import 'package:teamsync_flutter/caratteristiche/login/viewModel/view_model_utente.dart';
 import 'package:teamsync_flutter/navigation/Schermate.dart';
 import '../../../theme/color.dart';
-import '../Model/UserClass.dart';
+import '../Model/user_class.dart';
 import 'package:intl/intl.dart';
 
 
 
 class Registrazione extends StatefulWidget {
 
-  ViewModelUtente viewModelUtente;
-  Registrazione(this.viewModelUtente, {super.key});
+  final ViewModelUtente viewModelUtente;
+  const Registrazione(this.viewModelUtente, {super.key});
 
   @override
-  _RegistrazioneState createState() => _RegistrazioneState();
+  RegistrazioneState createState() => RegistrazioneState();
 }
 
-class _RegistrazioneState extends State<Registrazione> {
+class RegistrazioneState extends State<Registrazione> {
 
   String matricola = "";
   String email = "";
@@ -29,9 +28,6 @@ class _RegistrazioneState extends State<Registrazione> {
   SessoUtente sesso = SessoUtente.UOMO;
   bool passwordVisibile = false;
   bool confermaPasswordVisibile = false;
-  String? erroreRegistrazione;
-  bool registrazioneRiuscita = false;
-  bool expanded = false;
 
 
   @override
@@ -56,6 +52,10 @@ class _RegistrazioneState extends State<Registrazione> {
 
   @override
   Widget build(BuildContext context) {
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -65,212 +65,214 @@ class _RegistrazioneState extends State<Registrazione> {
               width: double.infinity,
               height: double.infinity,
             ),
-    Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child:  Column(
-            children: [
-              const SizedBox(height: 70),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                    Image.asset('assets/icon.png', width: 70, height: 70),
-                ],
-              ),
-              const SizedBox(height: 50),
-              const Text(
-                "Iscriviti",
-                style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: Colors.black),
-              ),
-              const SizedBox(height: 30),
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
+          SingleChildScrollView(
+            child:Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child:  Column(
+                  children: [
+                    SizedBox(height: screenHeight*0.06),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-
-                        TextField(
-                          decoration: const InputDecoration(
-                            labelText: 'Matricola',
-                            prefixIcon: Icon(Icons.badge),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                            ),
-                          ),
-                          onChanged: (value) => setState(() => matricola = value),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          decoration: const InputDecoration(
-                            labelText: 'Email',
-                            prefixIcon: Icon(Icons.mail),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                            ),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          onChanged: (value) => setState(() => email = value),
-                        ),
-
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
+                          Image.asset('assets/icon.png', width: 70, height: 70),
+                      ],
+                    ),
+                    SizedBox(height: screenHeight*0.05),
+                    const Text(
+                      "Iscriviti",
+                      style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                    SizedBox(height: screenHeight*0.03),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: screenWidth*0.05),
+                          child: Column(
+                            children: [
+                              TextField(
                                 decoration: const InputDecoration(
-                                  labelText: 'Nome',
+                                  labelText: 'Matricola',
+                                  prefixIcon: Icon(Icons.badge),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
                                   ),
                                 ),
-                                onChanged: (value) => setState(() => nome = value),
+                                onChanged: (value) => setState(() => matricola = value),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: TextField(
+                              SizedBox(height: screenHeight*0.01),
+                              TextField(
                                 decoration: const InputDecoration(
-                                  labelText: 'Cognome',
+                                  labelText: 'Email',
+                                  prefixIcon: Icon(Icons.mail),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
                                   ),
                                 ),
-                                onChanged: (value) => setState(() => cognome = value),
+                                keyboardType: TextInputType.emailAddress,
+                                onChanged: (value) => setState(() => email = value),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
+                              SizedBox(height: screenHeight*0.01),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      decoration: const InputDecoration(
+                                        labelText: 'Nome',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                        ),
+                                      ),
+                                      onChanged: (value) => setState(() => nome = value),
+                                    ),
+                                  ),
+                                  SizedBox(width: screenWidth*0.01),
+                                  Expanded(
+                                    child: TextField(
+                                      decoration: const InputDecoration(
+                                        labelText: 'Cognome',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                        ),
+                                      ),
+                                      onChanged: (value) => setState(() => cognome = value),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: screenHeight*0.01),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Data di Nascita',
+                                        border: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                        ),
+                                        suffixIcon: IconButton(
+                                          icon: const Icon(Icons.calendar_today),
+                                          onPressed: _showDatePicker,
+                                        ),
+                                      ),
+                                      readOnly: true,
+                                      controller: TextEditingController(text: DateFormat('dd/MM/yyyy').format(dataDiNascita)),
+                                    ),
+                                  ),
+                                  SizedBox(width: screenWidth*0.01),
+                                  Expanded(
+                                    child: _buildDropdownField(),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: screenHeight*0.01),
+                              TextField(
+                                  decoration: InputDecoration(
+                                    labelText: 'Password',
+                                    border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(passwordVisibile ? Icons.visibility : Icons.visibility_off),
+                                      onPressed: () {
+                                        setState(() {
+                                          passwordVisibile = !passwordVisibile;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                obscureText: !passwordVisibile,
+                                onChanged: (value) => setState(() => password = value),
+                              ),
+                              SizedBox(height: screenHeight*0.01),
+                              TextField(
                                 decoration: InputDecoration(
-                                  labelText: 'Data di Nascita',
+                                  labelText: 'Conferma Password',
                                   border: const OutlineInputBorder(
                                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
                                   ),
                                   suffixIcon: IconButton(
-                                    icon: const Icon(Icons.calendar_today),
-                                    onPressed: _showDatePicker,
+                                    icon: Icon(confermaPasswordVisibile ? Icons.visibility : Icons.visibility_off),
+                                    onPressed: () {
+                                      setState(() {
+                                        confermaPasswordVisibile = !confermaPasswordVisibile;
+                                      });
+                                    },
                                   ),
                                 ),
-                                readOnly: true,
-                                controller: TextEditingController(text: DateFormat('dd/MM/yyyy').format(dataDiNascita)),
+                                obscureText: !confermaPasswordVisibile,
+                                onChanged: (value) => setState(() => confermaPassword = value),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: _buildDropdownField(),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 10),
-                        TextField(
-                            decoration: InputDecoration(
-                              labelText: 'Password',
-                              border: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+
+
+                        SizedBox(height: screenHeight*0.02),
+                        ElevatedButton(
+                          onPressed:   () async {
+                            final navigator = Navigator.of(context);
+                            final scaffoldMessanger = ScaffoldMessenger.of(context);
+                            await widget.viewModelUtente.signUp(matricola, nome, cognome, email, dataDiNascita, sesso, password, confermaPassword);
+                            if (widget.viewModelUtente.registrazioneRiuscita) {
+                              widget.viewModelUtente.registrazioneRiuscita = false;
+                              navigator.pushReplacementNamed(Schermate.verificaEmail);
+                            }
+                            else {
+                              if (widget.viewModelUtente.erroreRegistrazione != null) {
+                                scaffoldMessanger.hideCurrentSnackBar();
+
+                            scaffoldMessanger.showSnackBar(
+                              SnackBar(
+                                  content: Text(widget.viewModelUtente.erroreRegistrazione!),
+                                  duration: const Duration(seconds: 1),
+                                  action: SnackBarAction(
+                                    label: 'Chiudi',
+                                    onPressed: () {
+                                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                    },
+                                  )
                               ),
-                              suffixIcon: IconButton(
-                                icon: Icon(passwordVisibile ? Icons.visibility : Icons.visibility_off),
-                                onPressed: () {
-                                  setState(() {
-                                    passwordVisibile = !passwordVisibile;
-                                  });
-                                },
-                              ),
-                            ),
-                          obscureText: !passwordVisibile,
-                          onChanged: (value) => setState(() => password = value),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          decoration: InputDecoration(
-                            labelText: 'Conferma Password',
-                            border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(confermaPasswordVisibile ? Icons.visibility : Icons.visibility_off),
-                              onPressed: () {
-                                setState(() {
-                                  confermaPasswordVisibile = !confermaPasswordVisibile;
-                                });
-                              },
+                          );
+                          }
+                          }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white, backgroundColor: Red70,
+                            padding:  EdgeInsets.symmetric(vertical: screenHeight*0.02, horizontal: screenWidth*0.1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
                             ),
                           ),
-                          obscureText: !confermaPasswordVisibile,
-                          onChanged: (value) => setState(() => confermaPassword = value),
+                          child: const Text("Next"),
                         ),
-
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed:   () async {
-                    await widget.viewModelUtente.signUp(matricola, nome, cognome, email, dataDiNascita, sesso, password, confermaPassword);
-                    if (widget.viewModelUtente.registrazioneRiuscita) {
-                      widget.viewModelUtente.registrazioneRiuscita = false;
-                     Navigator.pushReplacementNamed(context, Schermate.verificaEmail);
-                    } else {
-                    if (widget.viewModelUtente.erroreRegistrazione != null) {
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text(widget.viewModelUtente.erroreRegistrazione!),
-                            duration: const Duration(seconds: 1), // Durata del SnackBar
-                            action: SnackBarAction(
-                              label: 'Chiudi',
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                              },
-                            )
+                    SizedBox(height: screenHeight*0.03),
+                    Column(
+                      children: [
+                        const Text(
+                          "Hai già un account?",
+                          style: TextStyle(color: Colors.black),
                         ),
-                    );
-                    }
-
-                    }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white, backgroundColor: Red70,
-                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushReplacementNamed(context, Schermate.login);
+                          },
+                          child: const Text(
+                            "Login",
+                            style: TextStyle(color:  Red70, decoration: TextDecoration.underline),
+                          ),
+                        ),
+                      ],
                     ),
-                    child: const Text("Next"),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              Column(
-                children: [
-                  const Text(
-                    "Hai già un account?",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushReplacementNamed(context, Schermate.login);
-                    },
-                    child: const Text(
-                      "Login",
-                      style: TextStyle(color:  Red70, decoration: TextDecoration.underline),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          )
+                  ],
+                )
+            ),
           ),
         ],
       ),
     );
   }
-
 
   Widget _buildDropdownField() {
     return DropdownButtonFormField<SessoUtente>(
