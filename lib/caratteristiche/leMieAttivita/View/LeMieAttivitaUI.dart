@@ -603,7 +603,7 @@ class _TodoItemState extends State<TodoItem> {
                             ),
                             content: Text(
                               widget.isclickecdCompletate ? 'Segna come non completata'
-                                  : 'Segna come non completata',
+                                  : 'Segna come completata',
                               style: TextStyle(color: Colors.grey[700]),
                             ),
                             actions: [
