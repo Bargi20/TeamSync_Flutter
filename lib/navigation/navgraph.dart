@@ -35,7 +35,6 @@ class NavGraph extends StatelessWidget {
       child: MaterialApp(
         initialRoute: Schermate.login,
         routes: {
-
           Schermate.benvenuto: (context) {
             var viewModel = Provider.of<ViewModelUtente>(context, listen: true);
             return SchermataDiBenvenuto(viewModelUtente: viewModel);

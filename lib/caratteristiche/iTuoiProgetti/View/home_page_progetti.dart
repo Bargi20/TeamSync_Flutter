@@ -157,7 +157,7 @@ class CreaProgettoDialog extends StatefulWidget {
 class CreaProgettoDialogState extends State<CreaProgettoDialog> {
   String nome = '';
   String descrizione = '';
-  DateTime dataScadenza = DateTime.now();
+  DateTime dataScadenza = DateTime.now().add(const Duration(days: 1));
   Priorita priorita = Priorita.NESSUNA;
   String codiceProgetto = '';
   final maxCharsNome = 20;
@@ -168,7 +168,6 @@ class CreaProgettoDialogState extends State<CreaProgettoDialog> {
   @override
   Widget build(BuildContext context) {
     var dataScadenzaStr = DateFormat('dd/MM/yyyy').format(dataScadenza);
-
     return AlertDialog(
       title: const Text(
         'Crea o Unisciti a un Progetto',
@@ -369,7 +368,7 @@ class CreaProgettoDialogState extends State<CreaProgettoDialog> {
                         descrizione = '';
                         priorita = Priorita.NESSUNA;
                         dataScadenzaStr = '';
-                        dataScadenza = DateTime.now();
+                        dataScadenza = DateTime.now().add(const Duration(days: 1));
                         codiceProgetto = '';
                         uniscitiProgetto = !uniscitiProgetto;
                       });

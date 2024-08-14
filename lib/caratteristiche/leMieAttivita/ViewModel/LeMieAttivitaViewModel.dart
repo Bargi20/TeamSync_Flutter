@@ -94,6 +94,18 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
     }
   }
 
+  Future<String?> updateDataScadenzaTodo(
+      LeMieAttivita todo ,
+      DateTime dataScadenzaProgetto,
+      ) async {
+    try {
+      await repository.updateTodo(id: todo.id!, titolo: todo.titolo, descrizione: todo.descrizione, dataScadenza: dataScadenzaProgetto, priorita: todo.priorita, progetto: todo.progetto, utenti: todo.utenti, completato : todo.completato, dataCreazione : todo.dataScadenza);
+      return null;
+    } catch (e) {
+      return "Errore durante la modifica della task.";
+    }
+  }
+
 
 
   Future<void> deleteTodo(String id) async {

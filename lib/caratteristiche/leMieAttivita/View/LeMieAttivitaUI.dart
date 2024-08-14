@@ -20,6 +20,8 @@ class lemieAttivita extends StatefulWidget {
   ProgettoViewModel viemodelprogetto;
   LeMieAttivitaViewModel viewmodelAttivita;
   ViewModelUtente viewmodelutente;
+
+
   lemieAttivita({super.key, required this.idProgetto, required this.viemodelprogetto, required this.viewmodelutente, required this.viewmodelAttivita});
 
   @override
@@ -33,14 +35,16 @@ class _LemieAttivitaState extends State<lemieAttivita> {
   bool isClickedCompletate = false;
   bool isClickedNonCompletate = false;
   bool isClickedLeMie = true;
-
+  DateTime dataScadenzaMassimaTask = DateTime(1900, 1, 1);
+  late DateTime data_scadenzaProgetto;
   @override
   void initState() {
     super.initState();
     _fetchProgettoData();
     _fetchLeMieAttivitaData();
-  }
+    _fetchAttivitaNonCompletate();
 
+  }
   void _handleCompletate() {
     setState(() {
       isClickedCompletate = true;
@@ -66,6 +70,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
       isClickedLeMie = true;
     });
     _fetchLeMieAttivitaData();
+    _fetchAttivitaNonCompletate();
   }
 
   Future<void> _fetchProgettoData() async {
@@ -73,8 +78,9 @@ class _LemieAttivitaState extends State<lemieAttivita> {
       isLoadingProgetto = true;
     });
     try {
-      progetto =
-      await widget.viemodelprogetto.getProgettoById(widget.idProgetto);
+      progetto = await widget.viemodelprogetto.getProgettoById(widget.idProgetto);
+      print(progetto!.nome);
+      data_scadenzaProgetto = await recuperaDataScadenza(widget.idProgetto);
     } finally {
       setState(() {
         isLoadingProgetto = false;
@@ -87,12 +93,15 @@ class _LemieAttivitaState extends State<lemieAttivita> {
       isLoadingAttivita = true;
     });
     try {
-      await widget.viemodelprogetto.caricaTutteLeAttivitaCompletate(widget.idProgetto);
+      await widget.viemodelprogetto.caricaTutteLeAttivitaCompletate(
+          widget.idProgetto);
+
     } finally {
       setState(() {
         isLoadingAttivita = false;
       });
     }
+
   }
 
   Future<void> _fetchAttivitaNonCompletate() async {
@@ -102,6 +111,16 @@ class _LemieAttivitaState extends State<lemieAttivita> {
     try {
       await widget.viemodelprogetto.caricaTutteLeAttivitaNonCompletate(
           widget.idProgetto);
+      dataScadenzaMassimaTask = DateTime(1900, 1, 1);
+      for(LeMieAttivita a in widget.viemodelprogetto.attivitaNonCompletate)
+        {
+          if (dataScadenzaMassimaTask.isBefore(a.dataScadenza))
+            {
+              dataScadenzaMassimaTask = a.dataScadenza;
+            }
+        }
+
+
     } finally {
       setState(() {
         isLoadingAttivita = false;
@@ -118,6 +137,15 @@ class _LemieAttivitaState extends State<lemieAttivita> {
           widget.idProgetto,
           widget.viewmodelutente.utenteCorrente!.id
       );
+      dataScadenzaMassimaTask = DateTime(1900, 1, 1);
+      for(LeMieAttivita a in widget.viemodelprogetto.attivitaNonCompletate)
+      {
+        if (dataScadenzaMassimaTask.isBefore(a.dataScadenza))
+        {
+          dataScadenzaMassimaTask = a.dataScadenza;
+        }
+
+      }
     } finally {
       setState(() {
         isLoadingAttivita = false;
@@ -155,55 +183,69 @@ class _LemieAttivitaState extends State<lemieAttivita> {
     }
   }
 
+
+
+
   Future<void> _handleModificaTask(LeMieAttivita attivita) async {
-    final result = await widget.viewmodelAttivita.updateTodo(attivita.id!, attivita.titolo, attivita.descrizione, attivita.dataScadenza, attivita.dataCreazione, attivita.progetto, attivita.utenti, attivita.completato, attivita.priorita, context);
-    if(result == null)
-      {
-        if (isClickedCompletate) {
-          await _fetchAttivitaCompletate();
-        }
+    final result = await widget.viewmodelAttivita.updateTodo(
+        attivita.id!,
+        attivita.titolo,
+        attivita.descrizione,
+        attivita.dataScadenza,
+        attivita.dataCreazione,
+        attivita.progetto,
+        attivita.utenti,
+        attivita.completato,
+        attivita.priorita,
+        context);
+    if (result == null) {
+      if (isClickedCompletate) {
+        await _fetchAttivitaCompletate();
+      }
 
-        if (isClickedLeMie) {
-          await _fetchLeMieAttivitaData();
-        }
-        if (isClickedNonCompletate) {
-          await _fetchAttivitaNonCompletate();
-        }
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text("Task Aggiornata con successo"),
-              duration: const Duration(seconds: 1), // Durata del SnackBar
-              action: SnackBarAction(
-                label: 'Chiudi',
-                onPressed: () {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                },
-              ),
+      if (isClickedLeMie) {
+        await _fetchLeMieAttivitaData();
+      }
+      if (isClickedNonCompletate) {
+        await _fetchAttivitaNonCompletate();
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text("Task Aggiornata con successo"),
+            duration: const Duration(seconds: 1), // Durata del SnackBar
+            action: SnackBarAction(
+              label: 'Chiudi',
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
             ),
-          );
-        });
-
-      }else
-        {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(result),
-                duration: const Duration(seconds: 2), // Durata del SnackBar
-                action: SnackBarAction(
-                  label: 'Chiudi',
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  },
-                ),
-              ),
-            );
-          });
-        }
-
+          ),
+        );
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result),
+            duration: const Duration(seconds: 2), // Durata del SnackBar
+            action: SnackBarAction(
+              label: 'Chiudi',
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+            ),
+          ),
+        );
+      });
+    }
   }
 
+  Future<DateTime> recuperaDataScadenza(String Id_Prog) async
+{
+  var progetto = await widget.viemodelprogetto.getProgettoById(Id_Prog);
+  return progetto!.dataScadenza;
+}
 
   @override
   Widget build(BuildContext context) {
@@ -245,7 +287,8 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                   context,
                   MaterialPageRoute(builder: (context) => ModificaProgetto(
                       projectId:widget.idProgetto,
-                      viewModel: viewModel
+                      viewModel: viewModel,
+                    DataMinimaScadenzaTask:  dataScadenzaMassimaTask,
                     ),
                   ),
                 );
@@ -382,6 +425,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                       oncomplete: _handleComplete,
                       isclickecdCompletate: isClickedCompletate,
                       onEdit: _handleModificaTask,
+                      DataScadenzaProgetto: data_scadenzaProgetto,
                     );
                   }).toList(),
                 ),
@@ -398,7 +442,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                       oncomplete: _handleComplete,
                       onEdit: _handleModificaTask,
                       isclickecdCompletate: isClickedCompletate,
-
+                      DataScadenzaProgetto: data_scadenzaProgetto,
                     );
                   }).toList(),
                 ),
@@ -418,6 +462,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                       oncomplete: _handleComplete,
                       onEdit: _handleModificaTask,
                       isclickecdCompletate: isClickedCompletate,
+                      DataScadenzaProgetto: data_scadenzaProgetto,
                         );
                   },
                 ),
@@ -460,7 +505,11 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                     }
                     Navigator.of(context).pop();
                   }
-                }, onDismiss: () { Navigator.of(context).pop();  },
+                },
+                  onDismiss: () { Navigator.of(context).pop();
+                  },
+                  DataScadenzaProgetto: data_scadenzaProgetto,
+
               );
             },
           );
@@ -485,6 +534,7 @@ class TodoItem extends StatefulWidget {
   final Function(LeMieAttivita) oncomplete;
   final Function(LeMieAttivita) onEdit;
   final Function(LeMieAttivita) ondelete;
+  final DateTime DataScadenzaProgetto;
   bool isclickecdCompletate;
 
   TodoItem({super.key,
@@ -495,6 +545,7 @@ class TodoItem extends StatefulWidget {
     required this.oncomplete,
     required this.isclickecdCompletate,
     required this.onEdit,
+    required this.DataScadenzaProgetto,
   });
 
   @override
@@ -580,7 +631,7 @@ class _TodoItemState extends State<TodoItem> {
         ) :
         Row(
           children: [
-            if (modifica) ...[
+         if (modifica) ...[
               IconButton(
                 icon: Icon(
                   widget.item.completato ? Icons.clear : Icons.check,
@@ -704,7 +755,7 @@ class _TodoItemState extends State<TodoItem> {
                             style: TextStyle(color: Colors.black),
                           ),
                           content: Text(
-                            'Sei sicuro di voler eliminare questo Todo?',
+                            'Sei sicuro di voler eliminare questa task?',
                             style: TextStyle(color: Colors.grey[700]),
                           ),
                           actions: [
@@ -761,6 +812,7 @@ class _TodoItemState extends State<TodoItem> {
                         onSave: (updatedItem) {
                           widget.onEdit(updatedItem);
                         },
+                        DataScadenzaProgetto: widget.DataScadenzaProgetto,
                       );
                     },
                   );
@@ -873,13 +925,14 @@ class _TodoButtonsState extends State<TodoButtons> {
 
 class AddTodoDialog extends StatefulWidget {
   final Function(LeMieAttivita) onSave;
-
+  final DateTime DataScadenzaProgetto;
   final VoidCallback onDismiss;
 
   const AddTodoDialog({
     super.key,
     required this.onSave,
     required this.onDismiss,
+    required this.DataScadenzaProgetto,
   });
 
   @override
@@ -889,10 +942,10 @@ class AddTodoDialog extends StatefulWidget {
 class _AddTodoDialogState extends State<AddTodoDialog> {
   late TextEditingController _titoloController;
   late TextEditingController _descrizioneController;
-  DateTime _dataScadenza = DateTime.now();
+  DateTime _dataOdierna = DateTime.now();
   Priorita _priorita = Priorita.BASSA;
   final _sdf = DateFormat('dd/MM/yyyy');
-
+  late final bool DataSelezionabile = DateTime.now().isBefore(widget.DataScadenzaProgetto) ? true : false;
   @override
   void initState() {
     super.initState();
@@ -993,20 +1046,21 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
       ],
     );
   }
+
   Widget _buildDateField(BuildContext context) {
     return TextField(
       readOnly: true,
-      controller: TextEditingController(text: _sdf.format(_dataScadenza)),
+      controller: TextEditingController(text: _sdf.format(_dataOdierna)),
       decoration: InputDecoration(
         labelText: 'Data di Scadenza',
         labelStyle: const TextStyle(color: Colors.black),
-        suffixIcon: IconButton(
+        suffixIcon: DataSelezionabile? IconButton(
           icon: const Icon(
             Icons.calendar_today,
             color: Colors.black,
           ),
           onPressed: () => _selectDate(context),
-        ),
+        ): null,
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Colors.black),
           borderRadius: BorderRadius.circular(16.0),
@@ -1023,9 +1077,9 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _dataScadenza,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      initialDate: _dataOdierna,
+      firstDate: _dataOdierna,
+      lastDate: widget.DataScadenzaProgetto,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -1039,9 +1093,9 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
       },
     );
 
-    if (picked != null && picked != _dataScadenza) {
+    if (picked != null && picked != _dataOdierna) {
       setState(() {
-        _dataScadenza = picked;
+        _dataOdierna = picked;
       });
     }
   }
@@ -1101,7 +1155,7 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
     final nuovaAttivita = LeMieAttivita(
       titolo: titolo,
       descrizione: descrizione,
-      dataScadenza: _dataScadenza,
+      dataScadenza: _dataOdierna,
       priorita: _priorita,
       completato: false,
       progetto: '',
@@ -1116,11 +1170,14 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
 
 class EditTodoDialog extends StatefulWidget {
   final LeMieAttivita todoItem;
+  final DateTime DataScadenzaProgetto;
   final void Function(LeMieAttivita) onSave;
   const EditTodoDialog({
     required this.todoItem,
     required this.onSave,
+    required this.DataScadenzaProgetto,
     super.key,
+
   });
 
   @override
@@ -1133,7 +1190,7 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
   late TextEditingController dataScadenzaController;
   late DateTime dataScadenza;
   late Priorita priorita;
-
+  late final bool DataSelezionabile = DateTime.now().isBefore(widget.DataScadenzaProgetto) || (DateTime.now().day == (widget.DataScadenzaProgetto.day) && DateTime.now().month == (widget.DataScadenzaProgetto.month) && DateTime.now().year == (widget.DataScadenzaProgetto.year))? true : false;
   @override
   void initState() {
     super.initState();
@@ -1261,12 +1318,13 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
     );
   }
 
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: dataScadenza,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      firstDate: DateTime.now(),
+      lastDate: widget.DataScadenzaProgetto,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(

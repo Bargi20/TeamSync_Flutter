@@ -3,11 +3,14 @@ import 'package:teamsync_flutter/data.models/Priorita.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Model/progetto.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/ViewModel/view_model_progetto.dart';
 
+import '../../../navigation/Schermate.dart';
+
 class ModificaProgetto extends StatefulWidget {
   final String projectId;
   final ProgettoViewModel viewModel;
+  final DateTime DataMinimaScadenzaTask;
 
-  const ModificaProgetto({required this.projectId, required this.viewModel, Key? key}) : super(key: key);
+  const ModificaProgetto({required this.projectId, required this.viewModel, required this.DataMinimaScadenzaTask, Key? key}) : super(key: key);
 
   @override
   _ModificaProgettoState createState() => _ModificaProgettoState();
@@ -17,6 +20,7 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
   late TextEditingController _nomeProgettoController;
   late TextEditingController _descrizioneProgettoController;
   late TextEditingController _dataScadenzaController;
+  bool caricaAggiornamenti = false;
   Priorita? _selectedPriorita;
   DateTime? _selectedDate;
 
@@ -55,8 +59,11 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
     super.dispose();
   }
 
-  void _saveChanges() {
+  Future<void> _saveChanges() async {
     if (_progetto == null) return;
+    setState(() {
+      caricaAggiornamenti = true;
+    });
 
     final nomeProgetto = _nomeProgettoController.text;
     final descrizioneProgetto = _descrizioneProgettoController.text;
@@ -64,18 +71,9 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
     final dataScadenza = _selectedDate;
 
     if (nomeProgetto.isNotEmpty && priorita != null && dataScadenza != null) {
-      final progettoAggiornato = Progetto(
-        id: widget.projectId,
-        nome: nomeProgetto,
-        descrizione: descrizioneProgetto,
-        priorita: priorita,
-        dataScadenza: dataScadenza,
-        dataCreazione: _progetto!.dataCreazione,
-        dataConsegna: _progetto!.dataConsegna,
-        partecipanti: _progetto!.partecipanti,
-      );
 
-      widget.viewModel.aggiornaProgetto(
+
+     await widget.viewModel.aggiornaProgetto(
         progettoId: widget.projectId,
         nome: nomeProgetto,
         descrizione: descrizioneProgetto,
@@ -88,7 +86,12 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Progetto salvato con successo!')),
       );
-      Navigator.pop(context); // Chiudi la schermata dopo il salvataggio
+      Navigator.pushNamed(
+        context,
+        Schermate.leMieAttivita, // Il nome della rotta
+        arguments: widget.projectId, // Passa l'idProgetto come argomento
+      );
+
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Per favore, compila tutti i campi obbligatori.')),
@@ -98,6 +101,7 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.DataMinimaScadenzaTask);
     if (_progetto == null) {
       return Scaffold(
         appBar: AppBar(
@@ -177,7 +181,7 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
                 final pickedDate = await showDatePicker(
                   context: context,
                   initialDate: _selectedDate ?? DateTime.now(),
-                  firstDate: DateTime(2000),
+                  firstDate: widget.DataMinimaScadenzaTask,
                   lastDate: DateTime(2101),
                 );
 
@@ -215,8 +219,8 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
             Spacer(),
             Center(
               child: ElevatedButton(
-                onPressed: _saveChanges,
-                child: Text('Salva'),
+                onPressed: caricaAggiornamenti ? null : _saveChanges,
+                child: caricaAggiornamenti? CircularProgressIndicator() : Text('Salva') ,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red, // Colore di sfondo
                   foregroundColor: Colors.white, // Colore del testo
