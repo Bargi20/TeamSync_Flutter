@@ -199,7 +199,7 @@ class InfoProgetto extends StatelessWidget {
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 20.0,
+                    fontSize: 20.1,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center, // Centra il testo all'interno del suo spazio
