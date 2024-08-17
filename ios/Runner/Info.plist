@@ -18,6 +18,11 @@
 	<string>teamsync_flutter</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string> 
+    </array>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>

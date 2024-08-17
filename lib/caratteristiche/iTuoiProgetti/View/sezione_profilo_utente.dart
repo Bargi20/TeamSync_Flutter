@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:teamsync_flutter/navigation/schermate.dart';
 import 'package:teamsync_flutter/caratteristiche/login/Model/user_class.dart';
 import 'package:teamsync_flutter/caratteristiche/login/viewModel/view_model_utente.dart';
 
@@ -23,9 +22,6 @@ class SezioneProfiloUtente extends StatelessWidget {
       ),
       color:  Colors.red[700],
       child: InkWell(
-        onTap: () {
-          Navigator.of(context).pushNamed(Schermate.profilo);
-        },
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: screenHeight*0.015,horizontal: screenWidth*0.03),
           child: Row(

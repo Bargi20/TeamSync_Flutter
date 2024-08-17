@@ -36,6 +36,8 @@ class _LemieAttivitaState extends State<lemieAttivita> {
   bool isClickedCompletate = false;
   bool isClickedNonCompletate = false;
   bool isClickedLeMie = true;
+  DateTime dataScadenzaMassimaLeMieTaskNonCompletate = DateTime(1900, 1, 1);
+  DateTime dataScadenzaMassimaTaskNonCompletateAll = DateTime(1900, 1, 1);
   DateTime dataScadenzaMassimaTask = DateTime(1900, 1, 1);
   late DateTime data_scadenzaProgetto;
   @override
@@ -43,7 +45,6 @@ class _LemieAttivitaState extends State<lemieAttivita> {
     super.initState();
     _fetchProgettoData();
     _fetchLeMieAttivitaData();
-    _fetchAttivitaNonCompletate();
 
   }
   void _handleCompletate() {
@@ -105,6 +106,52 @@ class _LemieAttivitaState extends State<lemieAttivita> {
 
   }
 
+  Future <void> calcolaDataScadenzaMinimaProgetto(List<LeMieAttivita> ListaAttivita, bool Provenienza_LeMieTask) async {
+    setState(() {
+      isLoadingAttivita = true;
+    });
+    try
+    {
+      if(Provenienza_LeMieTask)
+        {
+          dataScadenzaMassimaLeMieTaskNonCompletate =  DateTime(1900, 1, 1);
+          for(LeMieAttivita a in ListaAttivita)
+          {
+            if (dataScadenzaMassimaLeMieTaskNonCompletate.isBefore(a.dataScadenza))
+            {
+              dataScadenzaMassimaLeMieTaskNonCompletate = a.dataScadenza;
+            }
+
+          }
+        } else
+        {
+          dataScadenzaMassimaTaskNonCompletateAll =  DateTime(1900, 1, 1);
+          for(LeMieAttivita a in ListaAttivita)
+          {
+            if (dataScadenzaMassimaTaskNonCompletateAll.isBefore(a.dataScadenza))
+            {
+              dataScadenzaMassimaTaskNonCompletateAll = a.dataScadenza;
+            }
+
+          }
+        }
+
+      if(dataScadenzaMassimaTaskNonCompletateAll.isBefore(dataScadenzaMassimaLeMieTaskNonCompletate)) {
+        dataScadenzaMassimaTask = dataScadenzaMassimaLeMieTaskNonCompletate;
+      }
+      else {
+        dataScadenzaMassimaTask = dataScadenzaMassimaTaskNonCompletateAll;
+      }
+
+
+    }
+    finally {
+      setState(() {
+        isLoadingAttivita = false;
+      });
+    }
+  }
+
   Future<void> _fetchAttivitaNonCompletate() async {
     setState(() {
       isLoadingAttivita = true;
@@ -112,17 +159,9 @@ class _LemieAttivitaState extends State<lemieAttivita> {
     try {
       await widget.viemodelprogetto.caricaTutteLeAttivitaNonCompletate(
           widget.idProgetto);
-      dataScadenzaMassimaTask = DateTime(1900, 1, 1);
-      for(LeMieAttivita a in widget.viemodelprogetto.attivitaNonCompletate)
-        {
-          if (dataScadenzaMassimaTask.isBefore(a.dataScadenza))
-            {
-              dataScadenzaMassimaTask = a.dataScadenza;
-            }
-        }
-
-
-    } finally {
+      await calcolaDataScadenzaMinimaProgetto(widget.viemodelprogetto.attivitaNonCompletateAll, false);
+    }
+    finally {
       setState(() {
         isLoadingAttivita = false;
       });
@@ -138,15 +177,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
           widget.idProgetto,
           widget.viewmodelutente.utenteCorrente!.id
       );
-      dataScadenzaMassimaTask = DateTime(1900, 1, 1);
-      for(LeMieAttivita a in widget.viemodelprogetto.attivitaNonCompletate)
-      {
-        if (dataScadenzaMassimaTask.isBefore(a.dataScadenza))
-        {
-          dataScadenzaMassimaTask = a.dataScadenza;
-        }
-
-      }
+      await calcolaDataScadenzaMinimaProgetto(widget.viemodelprogetto.attivitaNonCompletate, true);
     } finally {
       setState(() {
         isLoadingAttivita = false;
@@ -247,6 +278,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
   var progetto = await widget.viemodelprogetto.getProgettoById(Id_Prog);
   return progetto!.dataScadenza;
 }
+  final _sdf = DateFormat('dd/MM/yyyy');
 
   @override
   Widget build(BuildContext context) {
@@ -425,8 +457,91 @@ class _LemieAttivitaState extends State<lemieAttivita> {
           ),
         ],
       ),
-      body: isLoadingProgetto
-          ? null : Padding(
+      body: isLoadingProgetto ? null :
+          progetto!.completato ?
+
+
+
+          Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Center(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+
+                children: [
+                    const Text(
+                    'Progetto Completato',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24.0,  // Imposta la dimensione del font
+                      fontWeight: FontWeight.bold,  // Imposta il font in grassetto
+                    ),
+                    ),
+                  SizedBox(height: 20.0),  // Aggiungi uno spazio tra il testo e l'immagine
+                  Image.asset(
+                    'assets/im_progettocompletato.png',  // Sostituisci con il percorso dell'immagine
+                    width: 180.0,  // Imposta la larghezza dell'immagine
+                    height: 180.0,  // Imposta l'altezza dell'immagine
+                    fit: BoxFit.cover,  // Adatta l'immagine al box
+                  ),
+                  SizedBox(height: 20.0),  // Spazio tra l'immagine e la riga
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Data Consegna',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18.0,  // Imposta la dimensione del font
+                              fontWeight: FontWeight.bold,  // Imposta il font in grassetto
+                            ),
+                          ),
+
+                           Text(
+                             _sdf.format(progetto!.dataConsegna) ,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18.0,  // Imposta la dimensione del font
+
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 40.0),  // Spazio tra le due colonne
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Voto',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18.0,  // Imposta la dimensione del font
+                              fontWeight: FontWeight.bold,  // Imposta il font in grassetto
+                            ),
+                          ),
+
+                          Text(
+                           (progetto!.voto) ,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18.0,  // Imposta la dimensione del font
+
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+              ],
+              )
+          )
+          )
+
+              :
+          Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -469,7 +584,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
             if(!isLoadingAttivita && isClickedNonCompletate)
               Expanded(
                 child: ListView(
-                  children: widget.viemodelprogetto.attivitaNonCompletate.map((
+                  children: widget.viemodelprogetto.attivitaNonCompletateAll.map((
                       attivita) {
                     return TodoItem(item: attivita,
                         viewModelUtente: widget.viewmodelutente,
@@ -979,6 +1094,7 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
   late TextEditingController _titoloController;
   late TextEditingController _descrizioneController;
   DateTime _dataOdierna = DateTime.now();
+  DateTime _dataSelezionata = DateTime.now();
   Priorita _priorita = Priorita.BASSA;
   final _sdf = DateFormat('dd/MM/yyyy');
   late final bool DataSelezionabile = DateTime.now().isBefore(widget.DataScadenzaProgetto) ? true : false;
@@ -987,6 +1103,12 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
     super.initState();
     _titoloController = TextEditingController();
     _descrizioneController = TextEditingController();
+    _titoloController.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    setState(() {
+    });
   }
 
   @override
@@ -1041,7 +1163,7 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red[700],
           ),
-          onPressed: _onSave,
+        onPressed: _titoloController.text.isNotEmpty ? _onSave : null,
           child: const Text(
             'Aggiungi Todo',
             style: TextStyle(color: Colors.white),
@@ -1086,7 +1208,7 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
   Widget _buildDateField(BuildContext context) {
     return TextField(
       readOnly: true,
-      controller: TextEditingController(text: _sdf.format(_dataOdierna)),
+      controller: TextEditingController(text: _sdf.format( _dataSelezionata )),
       decoration: InputDecoration(
         labelText: 'Data di Scadenza',
         labelStyle: const TextStyle(color: Colors.black),
@@ -1113,7 +1235,7 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _dataOdierna,
+      initialDate: _dataSelezionata,
       firstDate: _dataOdierna,
       lastDate: widget.DataScadenzaProgetto,
       builder: (context, child) {
@@ -1131,7 +1253,7 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
 
     if (picked != null && picked != _dataOdierna) {
       setState(() {
-        _dataOdierna = picked;
+        _dataSelezionata = picked;
       });
     }
   }
@@ -1191,7 +1313,7 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
     final nuovaAttivita = LeMieAttivita(
       titolo: titolo,
       descrizione: descrizione,
-      dataScadenza: _dataOdierna,
+      dataScadenza: _dataSelezionata,
       priorita: _priorita,
       completato: false,
       progetto: '',
@@ -1226,7 +1348,7 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
   late TextEditingController dataScadenzaController;
   late DateTime dataScadenza;
   late Priorita priorita;
-  late final bool DataSelezionabile = DateTime.now().isBefore(widget.DataScadenzaProgetto) || (DateTime.now().day == (widget.DataScadenzaProgetto.day) && DateTime.now().month == (widget.DataScadenzaProgetto.month) && DateTime.now().year == (widget.DataScadenzaProgetto.year))? true : false;
+  late final bool DataSelezionabile = DateTime.now().isBefore(widget.DataScadenzaProgetto) ? true : false;
   @override
   void initState() {
     super.initState();
@@ -1235,10 +1357,13 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
     dataScadenzaController = TextEditingController(text: DateFormat('dd/MM/yyyy').format(widget.todoItem.dataScadenza));
     dataScadenza = widget.todoItem.dataScadenza;
     priorita = widget.todoItem.priorita;
+    titoloController.addListener(_onTextChanged);
   }
 
-
-
+  void _onTextChanged() {
+    setState(() {
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1286,7 +1411,7 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red[700],
           ),
-          onPressed: _onSave,
+          onPressed: titoloController.text.isNotEmpty ? _onSave : null,
           child: const Text(
             'Salva',
             style: TextStyle(color: Colors.white),
@@ -1334,13 +1459,13 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
       decoration: InputDecoration(
         labelText: 'Data Scadenza',
         labelStyle: const TextStyle(color: Colors.black),
-        suffixIcon: IconButton(
+        suffixIcon: DataSelezionabile ? IconButton(
           icon: const Icon(
             Icons.calendar_today,
             color: Colors.black,
           ),
           onPressed: () => _selectDate(context),
-        ),
+        ): null,
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Colors.black),
           borderRadius: BorderRadius.circular(16.0),

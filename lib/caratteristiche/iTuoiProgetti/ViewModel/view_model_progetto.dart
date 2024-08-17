@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -28,6 +27,7 @@ class ProgettoViewModel extends ChangeNotifier {
   List<Progetto> _progettiCompletati = [];
   String? _utenteCorrenteId;
   bool _isLoading = false;
+  List <LeMieAttivita> _attivitaNonCompletateAll = [];
   List<LeMieAttivita> _attivitaNonCompletate = [];
   List<LeMieAttivita> _attivitaCompletate = [];
   Map<String, int> _attivitaProgetti = {};
@@ -38,6 +38,7 @@ class ProgettoViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   List<LeMieAttivita> get attivitaNonCompletate => _attivitaNonCompletate;
   List<LeMieAttivita> get attivitaCompletate => _attivitaCompletate;
+  List<LeMieAttivita> get attivitaNonCompletateAll => _attivitaNonCompletateAll;
   List<Progetto> get progetti => _progetti;
   Map<String, int> get attivitaProgetti => _attivitaProgetti;
 
@@ -86,7 +87,7 @@ class ProgettoViewModel extends ChangeNotifier {
   caricaTutteLeAttivitaNonCompletate(String progettoId) async {
     try {
       final attivitaProgetto = await repositoryLeMieAttivita.getAttivitaByProgettoId(progettoId);
-      _attivitaNonCompletate = attivitaProgetto.where((a) => !a.completato).toList();
+      _attivitaNonCompletateAll = attivitaProgetto.where((a) => !a.completato).toList();
       notifyListeners();
     } catch (e) {
       rethrow;

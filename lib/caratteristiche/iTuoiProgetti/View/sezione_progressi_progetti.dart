@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SezioneProgressiProgetti extends StatelessWidget {
-  final int progettiCompletati;
+  final int? progettiCompletati;
   final int progettiUtente;
 
   const SezioneProgressiProgetti({super.key,
@@ -13,7 +13,7 @@ class SezioneProgressiProgetti extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final progress = progettiUtente > 0 ? progettiCompletati / progettiUtente : 0.0;
+    final progress = progettiUtente > 0 ? progettiCompletati! / progettiUtente : 0.0;
 
     return Card(
       elevation: 16.0,

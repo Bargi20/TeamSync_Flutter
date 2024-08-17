@@ -60,7 +60,6 @@ class NavGraph extends StatelessWidget {
             return YourProjectsPage(viewmodelutente: viewModelutente, viewmodelProgetto: viewModelProgetto,);
           },
 
-
           Schermate.leMieAttivita: (context) {
             final String idProgetto = ModalRoute.of(context)!.settings.arguments as String;
             var viewModelProgetto = Provider.of<ProgettoViewModel>(context, listen: true);
@@ -73,7 +72,6 @@ class NavGraph extends StatelessWidget {
               viewmodelAttivita: viewModelAttivita,
             );
     },
-
         },
       ),
     );

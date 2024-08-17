@@ -227,6 +227,7 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
       "30"
     ];
 
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Modifica Progetto'),
@@ -355,7 +356,7 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
               ),
               SizedBox(height: 16.0), // Spazio tra Data Consegna e il testo
               DropdownButtonFormField<String>(
-                value: _selectedVoto,
+                value: _selectedVoto != null && voti.contains(_selectedVoto) ? _selectedVoto : voti.first,
                 menuMaxHeight: 400,
                 items: voti.map((String voto) {
                   return DropdownMenuItem<String>(
@@ -380,6 +381,7 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
                   ),
                 ),
               ),
+
             ],
           ],
         ),

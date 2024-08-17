@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Model/progetto.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/ViewModel/view_model_progetto.dart';
-import 'package:teamsync_flutter/caratteristiche/login/Model/user_class.dart'; // Assicurati di importare ProfiloUtente
+import 'package:teamsync_flutter/caratteristiche/login/Model/user_class.dart';
+import 'package:teamsync_flutter/data.models/Priorita.dart';
+import 'package:teamsync_flutter/theme/color.dart'; // Assicurati di importare ProfiloUtente
 
 class InfoProgetto extends StatelessWidget {
   final String projectId;
@@ -35,7 +37,7 @@ class InfoProgetto extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start, // Align to the top
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Card(
                       elevation: 8.0,
                       shape: RoundedRectangleBorder(
@@ -43,7 +45,7 @@ class InfoProgetto extends StatelessWidget {
                       ),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.red,
+                          color: Red70,
                           borderRadius: BorderRadius.circular(16.0),
                         ),
                         width: double.infinity,
@@ -82,7 +84,7 @@ class InfoProgetto extends StatelessWidget {
                             ),
                             const SizedBox(height: 8.0),
                             Text(
-                              'Priorità: ${progetto.priorita}',
+                              'Priorità: ${progetto.priorita.toShortString()}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.0,
@@ -113,7 +115,7 @@ class InfoProgetto extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0), // Adjusted padding
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Adjusted padding
                     child: FutureBuilder<List<ProfiloUtente>>(
                       future: viewModel.getPartecipantiByIds(progetto.partecipanti),
                       builder: (context, AsyncSnapshot<List<ProfiloUtente>> partecipantiSnapshot) {
@@ -137,7 +139,7 @@ class InfoProgetto extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: utenti.map((utente) {
