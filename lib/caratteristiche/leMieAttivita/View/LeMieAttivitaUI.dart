@@ -11,6 +11,7 @@ import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/InfoProgetto
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/ModificaProgetto.dart';
 import '../../../navigation/schermate.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:logging/logging.dart';
 
 
 
@@ -295,32 +296,31 @@ class _LemieAttivitaState extends State<lemieAttivita> {
               }
 
               if (result == 3) {
-                ProgettoViewModel viewModel = ProgettoViewModel();
                 TextEditingController controller = TextEditingController(text: '${progetto!.codice}');
 
                 showDialog(context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Inserisci il valore'),
+                      title: const Text('Inserisci il valore'),
                       content: TextField(
                         readOnly: true,
                         controller: controller,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Codice Progetto',
                         ),
                       ),
                       actions: <Widget>[
                         TextButton(
-                          child: Text('Annulla'),
+                          child: const Text('Annulla'),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
                         ),
-                        TextButton(
-                          child: Text('Condividi'),
+                        ElevatedButton(
+                          child: const Text('Condividi'),
                           onPressed: () {
-                            Share.share('${progetto!.codice}');
+                            Share.share(progetto!.codice);
                             Navigator.of(context).pop();
                           },
                         ),
@@ -328,21 +328,57 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                     );
                   },
                 );
-
-
               }
 
               if (result == 4) {
-                ProgettoViewModel viewModel = ProgettoViewModel();
-                String? utenteId = viewModel.utenteCorrenteId; // Dichiarazione della variabile `utenteId`
+                final navigator = Navigator.of(context);
+                print('Entrato nella sezione abbandona ');
 
-                if (progetto != null && progetto!.id != null && utenteId != null) {
-                  viewModel.abbandonaProgetto(utenteId, progetto!.id!); // Usa `utenteId!` per forzare il cast a `String`
-                } else {
-                  // Gestisci il caso in cui `progetto`, `progetto.id` o `viewModel.utenteCorrenteId` sia `null`
-                }
-                Navigator.pushReplacementNamed(context, Schermate.ituoiProgetti);
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Abbandona Progetto'),
+                      content: const Text('Sei sicuro di voler abbandonare il progetto?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Chiudi il dialogo
+                          },
+                          child: const Text('Annulla',
+                          style: TextStyle(color : Colors.black),),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red[700],
+                          ),
+                          onPressed: ()async {
+                              Navigator.of(context).pop(); // Chiudi il dialogo
+                              print('Entrato nella sezione del bottone premuto Abbandona ');
+
+                              ProgettoViewModel viewModel = ProgettoViewModel();
+                              final Logger log = Logger('MyLogger');
+
+                              if (progetto != null && progetto!.id != null) {
+                              await viewModel.abbandonaProgetto(progetto!.id!); // Aspetta il completamento della funzione
+                              } else {
+                              }
+
+                              // Naviga alla schermata desiderata
+                              navigator.pushReplacementNamed(Schermate.ituoiProgetti);
+                              },
+                          child: const Text(
+                            'Abbandona Progetto',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
               }
+
+
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
               const PopupMenuItem<int>(

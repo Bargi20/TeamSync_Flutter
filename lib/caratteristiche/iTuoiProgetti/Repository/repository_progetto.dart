@@ -90,21 +90,38 @@ class RepositoryProgetto {
   /// [callback] Funzione di callback da chiamare al termine dell'abbandono del progetto.
   Future<void> abbandonaProgetto(String? userId, String progettoId, Function(bool) callback) async {
     if (userId == null) return;
+
     try {
       final progettoRef = firestore.collection('progetti').doc(progettoId);
+
+      // Verifica se il progetto esiste
+      final progettoSnapshot = await progettoRef.get();
+      if (!progettoSnapshot.exists) {
+        throw Exception("Il progetto con ID $progettoId non esiste.");
+      }
+
+      // Rimuovi l'utente dai partecipanti
       await progettoRef.update({
         'partecipanti': FieldValue.arrayRemove([userId])
       });
 
+      // Ottieni la lista dei partecipanti aggiornata
       final listaPartecipanti = await getPartecipantiDelProgetto(progettoId);
+
+      // Se non ci sono più partecipanti, elimina il progetto
       if (listaPartecipanti.isEmpty) {
         await eliminaProgetto(progettoId);
-        callback(listaPartecipanti.isEmpty);
+        callback(true);  // Passa true al callback se il progetto è stato eliminato
+      } else {
+        callback(false);  // Passa false al callback se il progetto non è stato eliminato
       }
     } catch (e) {
+      // Gestisci l'errore
+      print("Errore durante l'abbandono del progetto: $e");
       throw Exception("Errore durante l'abbandono del progetto: $e");
     }
   }
+
 
 
 

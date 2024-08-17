@@ -9,7 +9,7 @@ class InfoProgetto extends StatelessWidget {
 
   InfoProgetto({
     required this.projectId,
-    required this.viewModel
+    required this.viewModel,
   });
 
   @override
@@ -30,115 +30,114 @@ class InfoProgetto extends StatelessWidget {
             return const Center(child: Text('Progetto non trovato'));
           } else {
             Progetto progetto = progettoSnapshot.data!;
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start, // Align to the top
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Card(
-                    elevation: 8.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.red,
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start, // Align to the top
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Card(
+                      elevation: 8.0,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16.0),
                       ),
-                      width: double.infinity,
-                      height: 270,
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          const Center(
-                            child: Text(
-                              'Informazioni',
-                              style: TextStyle(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        width: double.infinity,
+                        height: 390,
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            const Center(
+                              child: Text(
+                                'Informazioni',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10.0), // Reduced space
+                            Text(
+                              'Nome: ${progetto.nome}',
+                              style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 20.0,
+                                fontSize: 16.0,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 10.0), // Reduced space
-                          Text(
-                            'Nome: ${progetto.nome}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
+                            const SizedBox(height: 8.0),
+                            Text(
+                              'Descrizione: ${progetto.descrizione}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 8.0),
-                          Text(
-                            'Descrizione: ${progetto.descrizione}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
+                            const SizedBox(height: 8.0),
+                            Text(
+                              'Priorità: ${progetto.priorita}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 8.0),
-                          Text(
-                            'Priorità: ${progetto.priorita}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
+                            const SizedBox(height: 8.0),
+                            Text(
+                              'Data Creazione: ${progetto.dataCreazione}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 8.0),
-                          Text(
-                            'Data Creazione: ${progetto.dataCreazione}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
+                            const SizedBox(height: 8.0),
+                            Text(
+                              'Data Scadenza: ${progetto.dataScadenza}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 8.0),
-                          Text(
-                            'Data Scadenza: ${progetto.dataScadenza}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0), // Adjusted padding
-                  child: FutureBuilder<List<ProfiloUtente>>(
-                    future: viewModel.getPartecipantiByIds(progetto.partecipanti),
-                    builder: (context, AsyncSnapshot<List<ProfiloUtente>> partecipantiSnapshot) {
-                      if (partecipantiSnapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (partecipantiSnapshot.hasError) {
-                        return const Center(child: Text('Errore nel caricamento dei partecipanti'));
-                      } else if (!partecipantiSnapshot.hasData || partecipantiSnapshot.data!.isEmpty) {
-                        return const Center(child: Text('Nessun partecipante trovato.'));
-                      } else {
-                        List<ProfiloUtente> utenti = partecipantiSnapshot.data!;
-                        return Container(
-                          height: 380, // Altezza del riquadro scrollabile
-                          decoration: BoxDecoration(
-                            color: Colors.white, // Colore di sfondo del riquadro
-                            borderRadius: BorderRadius.circular(16.0), // Arrotondamento dei bordi
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26, // Ombra per dare un effetto di elevazione
-                                blurRadius: 20.0,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          padding: EdgeInsets.only(top: 7.0, bottom: 7.0, left: 2.0 , right: 2.0),
-                          child: SingleChildScrollView(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0), // Adjusted padding
+                    child: FutureBuilder<List<ProfiloUtente>>(
+                      future: viewModel.getPartecipantiByIds(progetto.partecipanti),
+                      builder: (context, AsyncSnapshot<List<ProfiloUtente>> partecipantiSnapshot) {
+                        if (partecipantiSnapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (partecipantiSnapshot.hasError) {
+                          return const Center(child: Text('Errore nel caricamento dei partecipanti'));
+                        } else if (!partecipantiSnapshot.hasData || partecipantiSnapshot.data!.isEmpty) {
+                          return const Center(child: Text('Nessun partecipante trovato.'));
+                        } else {
+                          List<ProfiloUtente> utenti = partecipantiSnapshot.data!;
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white, // Colore di sfondo del riquadro
+                              borderRadius: BorderRadius.circular(16.0), // Arrotondamento dei bordi
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black26, // Ombra per dare un effetto di elevazione
+                                  blurRadius: 20.0,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            padding: const EdgeInsets.all(8.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: utenti.map((utente) {
@@ -150,13 +149,13 @@ class InfoProgetto extends StatelessWidget {
                                 );
                               }).toList(),
                             ),
-                          ),
-                        );
-                      }
-                    },
+                          );
+                        }
+                      },
+                    ),
                   ),
-                )
-              ],
+                ],
+              ),
             );
           }
         },
@@ -190,7 +189,7 @@ class InfoProgetto extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Icon(
-                Icons.school, // Icona del cappello da laureando
+                Icons.person, // Icona del profilo utente
                 size: 40.0,
                 color: Colors.black12, // Colore dell'icona
               ),

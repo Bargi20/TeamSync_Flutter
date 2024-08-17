@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Model/progetto.dart';
@@ -7,6 +9,8 @@ import 'package:teamsync_flutter/caratteristiche/LeMieAttivita/Repository/ToDoRe
 import 'package:teamsync_flutter/caratteristiche/login/Model/user_class.dart';
 import 'package:teamsync_flutter/caratteristiche/login/Repository/repository_utente.dart';
 import 'package:teamsync_flutter/data.models/Priorita.dart';
+import 'package:logging/logging.dart';
+
 
 
 class ProgettoViewModel extends ChangeNotifier {
@@ -174,7 +178,7 @@ class ProgettoViewModel extends ChangeNotifier {
 
 
   /// Aggiorna un progetto esistente.
-  Future<void> aggiornaProgetto({required String progettoId, required String nome, required String descrizione, required DateTime dataScadenza, required Priorita priorita, required String voto, required DateTime dataConsegna, }) async
+  Future<void> aggiornaProgetto({required String progettoId, required String nome, required String descrizione, required DateTime dataScadenza, required Priorita priorita,required bool completato, required String voto, required DateTime dataConsegna, }) async
   {
     try {
 
@@ -186,6 +190,7 @@ class ProgettoViewModel extends ChangeNotifier {
           descrizione: descrizione,
           dataScadenza: dataScadenza,
           priorita: priorita,
+          completato: completato,
           voto: voto,
           dataConsegna: dataConsegna,
         );
@@ -201,6 +206,23 @@ class ProgettoViewModel extends ChangeNotifier {
     }
   }
 
+  Future<bool> verificaProgettoCompletato({required String progettoID}) async {
+    try {
+      // Recupera il progetto usando l'ID
+      Progetto? progetto = await repositoryProgetto.getProgettoById(progettoID);
+
+      // Verifica se il progetto è completato
+      if (progetto != null && progetto.completato == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      // Gestione dell'eccezione, puoi loggare l'errore o restituire un valore di default
+      print('Errore durante il recupero del progetto: $e');
+      return false;
+    }
+  }
 
 
 
@@ -235,15 +257,25 @@ class ProgettoViewModel extends ChangeNotifier {
       }
 
 
+  final Logger log = Logger('ProgettoService');
 
 
   /// Rimuove un partecipante da un progetto.
   /// [userID] ID dell'utente che abbandona il progetto.
   /// [progettoID] ID del progetto da cui l'utente abbandona.
-  Future<void> abbandonaProgetto(String userID, String progettoID) async {
+  Future<void> abbandonaProgetto(String progettoID) async {
     try {
-      await repositoryProgetto.abbandonaProgetto(userID, progettoID,(bool isProgettoEliminato) {
+      final userId = await repositoryProgetto.getUtenteCorrenteId();
+      log.info('L\'utente con ID: $userId sta abbandonando il progetto con ID: $progettoID');
 
+
+      await repositoryProgetto.abbandonaProgetto(userId, progettoID, (bool isProgettoEliminato) {
+        // Esegui una azione basata sul fatto che il progetto sia stato eliminato o meno
+        if (isProgettoEliminato) {
+
+        } else {
+          // Azioni da eseguire se il progetto non è stato eliminato
+        }
       });
     } catch (e) {
       rethrow;

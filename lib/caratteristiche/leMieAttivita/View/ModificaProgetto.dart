@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:teamsync_flutter/data.models/Priorita.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Model/progetto.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/ViewModel/view_model_progetto.dart';
-
 import '../../../navigation/Schermate.dart';
 
 class ModificaProgetto extends StatefulWidget {
@@ -10,7 +9,12 @@ class ModificaProgetto extends StatefulWidget {
   final ProgettoViewModel viewModel;
   final DateTime DataMinimaScadenzaTask;
 
-  const ModificaProgetto({required this.projectId, required this.viewModel, required this.DataMinimaScadenzaTask, Key? key}) : super(key: key);
+  const ModificaProgetto({
+    required this.projectId,
+    required this.viewModel,
+    required this.DataMinimaScadenzaTask,
+    Key? key,
+  }) : super(key: key);
 
   @override
   _ModificaProgettoState createState() => _ModificaProgettoState();
@@ -20,9 +24,15 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
   late TextEditingController _nomeProgettoController;
   late TextEditingController _descrizioneProgettoController;
   late TextEditingController _dataScadenzaController;
+  late TextEditingController _dataConsegnaController;
   bool caricaAggiornamenti = false;
   Priorita? _selectedPriorita;
   DateTime? _selectedDate;
+  DateTime? _selectedDate2;
+  String? _selectedVoto;
+  Priorita? _priorita;
+
+  bool _progettoCompletato = false;
 
   Progetto? _progetto;
 
@@ -32,6 +42,7 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
     _nomeProgettoController = TextEditingController();
     _descrizioneProgettoController = TextEditingController();
     _dataScadenzaController = TextEditingController();
+    _dataConsegnaController = TextEditingController();
     _loadProgetto();
   }
 
@@ -43,7 +54,16 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
         _nomeProgettoController.text = progetto.nome ?? '';
         _descrizioneProgettoController.text = progetto.descrizione ?? '';
         _selectedPriorita = progetto.priorita;
+        _priorita = progetto.priorita;
         _selectedDate = progetto.dataScadenza;
+        _selectedDate2 = progetto.dataConsegna;
+        _progettoCompletato = progetto.completato ?? false;
+        _selectedVoto = progetto.voto ?? "Non valutato";
+
+        _dataConsegnaController.text = _selectedDate2 == null
+            ? ''
+            : "${_selectedDate2!.day}/${_selectedDate2!.month}/${_selectedDate2!.year}";
+
         _dataScadenzaController.text = _selectedDate == null
             ? ''
             : "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}";
@@ -56,6 +76,7 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
     _nomeProgettoController.dispose();
     _descrizioneProgettoController.dispose();
     _dataScadenzaController.dispose();
+    _dataConsegnaController.dispose();
     super.dispose();
   }
 
@@ -69,18 +90,19 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
     final descrizioneProgetto = _descrizioneProgettoController.text;
     final priorita = _selectedPriorita;
     final dataScadenza = _selectedDate;
+    final dataConsegna = _selectedDate2;
+    final voto = _selectedVoto ?? "Non valutato";
 
     if (nomeProgetto.isNotEmpty && priorita != null && dataScadenza != null) {
-
-
-     await widget.viewModel.aggiornaProgetto(
+      await widget.viewModel.aggiornaProgetto(
         progettoId: widget.projectId,
         nome: nomeProgetto,
         descrizione: descrizioneProgetto,
         dataScadenza: dataScadenza,
         priorita: priorita,
-        voto: _progetto!.voto,
-        dataConsegna: _progetto!.dataConsegna,
+        completato: _progettoCompletato,
+        voto: voto,
+        dataConsegna: dataConsegna!,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -88,10 +110,9 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
       );
       Navigator.pushNamed(
         context,
-        Schermate.leMieAttivita, // Il nome della rotta
-        arguments: widget.projectId, // Passa l'idProgetto come argomento
+        Schermate.leMieAttivita,
+        arguments: widget.projectId,
       );
-
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Per favore, compila tutti i campi obbligatori.')),
@@ -99,9 +120,86 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
     }
   }
 
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    int? maxLength,
+    int maxLines = 1,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        TextField(
+          controller: controller,
+          maxLength: maxLength,
+          maxLines: maxLines,
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: const TextStyle(color: Colors.black),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.black),
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red[700]!),
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+          ),
+          style: const TextStyle(color: Colors.black),
+        ),
+
+      ],
+    );
+  }
+
+  // Widget per il dropdown della priorità
+  Widget _buildPriorityDropdown() {
+    return DropdownButtonFormField<Priorita>(
+      value: _priorita,
+      decoration: InputDecoration(
+        labelText: 'Priorità',
+        labelStyle: const TextStyle(color: Colors.black),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black),
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red[700]!),
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+      ),
+      items: Priorita.values.map((Priorita p) {
+        return DropdownMenuItem<Priorita>(
+          value: p,
+          child: Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: p.colore,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                p.name,
+                style: const TextStyle(color: Colors.black),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+      onChanged: (Priorita? newValue) {
+        setState(() {
+          _priorita = newValue!;
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    print(widget.DataMinimaScadenzaTask);
     if (_progetto == null) {
       return Scaffold(
         appBar: AppBar(
@@ -112,67 +210,50 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
       );
     }
 
+    List<String> voti = [
+      "Non valutato",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24",
+      "25",
+      "26",
+      "27",
+      "28",
+      "29",
+      "30"
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Modifica Progetto'),
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: _nomeProgettoController,
-              decoration: InputDecoration(
-                labelText: 'Nome Progetto',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-              ),
-            ),
+            _buildTextField(controller: _nomeProgettoController, label: "Nome Progetto"),
             SizedBox(height: 16.0),
-            TextField(
-              controller: _descrizioneProgettoController,
-              decoration: InputDecoration(
-                labelText: 'Descrizione Progetto',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-              ),
-              maxLines: 3,
-            ),
+            _buildTextField(controller: _descrizioneProgettoController, label: "Descrizione Progetto"),
             SizedBox(height: 16.0),
-            DropdownButtonFormField<Priorita>(
-              value: _selectedPriorita,
-              decoration: InputDecoration(
-                labelText: 'Priorità',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-              ),
-              items: Priorita.values.map((Priorita value) {
-                return DropdownMenuItem<Priorita>(
-                  value: value,
-                  child: SizedBox(
-                    width: 100,
-                    child: Text(value.toShortString()),
-                  ),
-                );
-              }).toList(),
-              onChanged: (Priorita? newValue) {
-                setState(() {
-                  _selectedPriorita = newValue;
-                });
-              },
-            ),
+            _buildPriorityDropdown(),
             SizedBox(height: 16.0),
             TextField(
               controller: _dataScadenzaController,
               decoration: InputDecoration(
                 labelText: 'Data Scadenza',
+                labelStyle: const TextStyle(color: Colors.black),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red[700]!),
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
                 suffixIcon: Icon(Icons.calendar_today),
               ),
@@ -183,52 +264,138 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
                   initialDate: _selectedDate ?? DateTime.now(),
                   firstDate: widget.DataMinimaScadenzaTask,
                   lastDate: DateTime(2101),
+                  builder: (context,child){
+                    return Theme (
+                      data: Theme.of(context).copyWith(
+                        colorScheme: const ColorScheme.light(
+                          primary: Colors.red,
+                          onSurface: Colors.black,
+                        )
+                      ),
+                      child: child!,
+                    );
+                  }
                 );
 
                 if (pickedDate != null) {
                   setState(() {
                     _selectedDate = pickedDate;
-                    _dataScadenzaController.text = "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}";
+                    _dataScadenzaController.text =
+                    "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}";
                   });
                 }
               },
             ),
-            SizedBox(height: 16.0), // Spazio tra Data Scadenza e il testo
-
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Hai finito il progetto e vuoi consegnarlo?'),
-                SizedBox(height: 8.0), // Spazio tra il testo e il switch
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text('Hai finito il progetto e vuoi consegnarlo?'),
                     Text('Attiva il bottone'),
-                    SizedBox(width: 8.0), // Spazio tra il testo e il switch
-                    Switch(
-                      value: false, // Imposta il valore del switch come desiderato
-                      onChanged: (bool newValue) {
-                        // Non gestiamo questo cambiamento per adesso
-                        // ma puoi aggiungere la logica se necessario
-                      },
-                    ),
                   ],
+                ),
+                Switch(
+                  value: _progettoCompletato,
+                  activeColor: Colors.red[700],
+                  onChanged: (bool newValue) {
+                    setState(() {
+                      _progettoCompletato = newValue;
+                    });
+                  },
                 ),
               ],
             ),
+            SizedBox(height: 16.0),
+            if (_progettoCompletato) ...[
+              TextField(
+                controller: _dataConsegnaController,
+                decoration: InputDecoration(
+                  labelText: 'Data Consegna',
+                  labelStyle: const TextStyle(color: Colors.black),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red[700]!),
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  suffixIcon: Icon(Icons.calendar_today),
+                ),
+                readOnly: true,
+                onTap: () async {
+                  final pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: _selectedDate2 ?? DateTime.now(),
+                    firstDate: widget.DataMinimaScadenzaTask,
+                    lastDate: DateTime(2101),
+                      builder: (context,child){
+                        return Theme (
+                          data: Theme.of(context).copyWith(
+                              colorScheme: const ColorScheme.light(
+                                primary: Colors.red,
+                                onSurface: Colors.black,
+                              )
+                          ),
+                          child: child!,
+                        );
+                      }
+                  );
 
-            Spacer(),
-            Center(
-              child: ElevatedButton(
-                onPressed: caricaAggiornamenti ? null : _saveChanges,
-                child: caricaAggiornamenti? CircularProgressIndicator() : Text('Salva') ,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Colore di sfondo
-                  foregroundColor: Colors.white, // Colore del testo
-                  padding: EdgeInsets.symmetric(horizontal: 60, vertical: 12),
+                  if (pickedDate != null) {
+                    setState(() {
+                      _selectedDate2 = pickedDate;
+                      _dataConsegnaController.text =
+                      "${_selectedDate2!.day}/${_selectedDate2!.month}/${_selectedDate2!.year}";
+                    });
+                  }
+                },
+              ),
+              SizedBox(height: 16.0), // Spazio tra Data Consegna e il testo
+              DropdownButtonFormField<String>(
+                value: _selectedVoto,
+                menuMaxHeight: 400,
+                items: voti.map((String voto) {
+                  return DropdownMenuItem<String>(
+                    value: voto,
+                    child: Text(voto),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedVoto = newValue;
+                  });
+                },
+                decoration: InputDecoration(
+                  labelText: 'Seleziona un voto per questo progetto:',
+                  labelStyle: const TextStyle(color: Colors.black),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red[700]!),
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
                 ),
               ),
-            ),
+            ],
           ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton(
+          onPressed: caricaAggiornamenti ? null : _saveChanges,
+          child: caricaAggiornamenti
+              ? CircularProgressIndicator()
+              : Text('Salva'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red[700], // Colore di sfondo
+            foregroundColor: Colors.white, // Colore del testo
+            padding: EdgeInsets.symmetric(horizontal: 60, vertical: 12),
+          ),
         ),
       ),
     );
