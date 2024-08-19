@@ -8,6 +8,8 @@ import 'caratteristiche/login/ViewModel/view_model_utente.dart';
 import 'caratteristiche/iTuoiProgetti/ViewModel/view_model_progetto.dart';  // Importa il ViewModelProgetto
 import 'firebase_options.dart';
 import 'navigation/navgraph.dart';
+import 'package:teamsync_flutter/caratteristiche/leMieAttivita/ViewModel/LeMieAttivitaViewModel.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +24,9 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ViewModelUtente()),
-        ChangeNotifierProvider(create: (_) => ProgettoViewModel()), // Aggiungi il ProgettoViewModel
+        ChangeNotifierProvider(create: (_) => ProgettoViewModel()),
+        ChangeNotifierProvider(create: (_) => LeMieAttivitaViewModel()),
+// Aggiungi il ProgettoViewModel
       ],
       child: const MyApp(),
     ),

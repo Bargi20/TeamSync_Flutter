@@ -67,6 +67,40 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
     }
   }
 
+  Future<bool> utenteAssegnato(String idUtente, String idTask) async {
+    try {
+      bool isAssigned = await repository.utenteAssegnato(idUtente, idTask);
+      return isAssigned;
+    } catch (e) {
+      print('Errore durante la verifica dell\'assegnazione dell\'utente: ${e.toString()}');
+      throw Exception('Errore durante la verifica dell\'assegnazione dell\'utente: ${e.toString()}');
+    }
+  }
+
+  Future<void> addUserTodo(String idUtente, String idTask) async {
+    try {
+      // Chiama il metodo del repository per aggiungere l'utente al task
+      await repository.addUserToTodo(idTask, idUtente);
+    } catch (e) {
+      // Gestisci l'errore, ad esempio stampando un messaggio o mostrando un errore all'utente
+      print('Errore durante l\'aggiunta dell\'utente al task: ${e.toString()}');
+      // Rethrow l'eccezione per gestirla a un livello superiore se necessario
+      throw Exception('Errore durante l\'aggiunta dell\'utente al task: ${e.toString()}');
+    }
+  }
+
+  Future<void> removeUserTodo(String idUtente, String idTask) async {
+    try {
+      // Chiama il metodo del repository per aggiungere l'utente al task
+      await repository.removeUserFromTodo(idTask, idUtente);
+    } catch (e) {
+      // Gestisci l'errore, ad esempio stampando un messaggio o mostrando un errore all'utente
+      print('Errore durante l\'aggiunta dell\'utente al task: ${e.toString()}');
+      // Rethrow l'eccezione per gestirla a un livello superiore se necessario
+      throw Exception('Errore durante l\'aggiunta dell\'utente al task: ${e.toString()}');
+    }
+  }
+
 
   Future<String?> updateTodo(
       String id,

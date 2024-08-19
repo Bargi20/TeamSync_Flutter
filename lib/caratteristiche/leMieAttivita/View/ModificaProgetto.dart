@@ -123,8 +123,9 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
-    int? maxLength,
+    required int maxLength,
     int maxLines = 1,
+    int currentLength = 0,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -144,10 +145,17 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
               borderSide: BorderSide(color: Colors.red[700]!),
               borderRadius: BorderRadius.circular(16.0),
             ),
+            counter: Text(
+              '$currentLength/$maxLength',
+              style: const TextStyle(color: Colors.black54, fontSize: 12.0),
+            ),
+            counterText: '',
           ),
           style: const TextStyle(color: Colors.black),
+          onChanged: (text) {
+            setState(() {});
+          },
         ),
-
       ],
     );
   }
@@ -192,7 +200,7 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
       }).toList(),
       onChanged: (Priorita? newValue) {
         setState(() {
-          _priorita = newValue!;
+          _selectedPriorita = newValue!;
         });
       },
     );
@@ -227,7 +235,6 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
       "30"
     ];
 
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Modifica Progetto'),
@@ -238,9 +245,20 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildTextField(controller: _nomeProgettoController, label: "Nome Progetto"),
+            _buildTextField(
+              controller: _nomeProgettoController,
+              label: "Nome Progetto",
+              maxLength: 20,
+              currentLength: _nomeProgettoController.text.length,
+            ),
             SizedBox(height: 16.0),
-            _buildTextField(controller: _descrizioneProgettoController, label: "Descrizione Progetto"),
+            _buildTextField(
+              controller: _descrizioneProgettoController,
+              label: "Descrizione Progetto",
+              maxLength: 200,
+              maxLines: 5,
+              currentLength: _descrizioneProgettoController.text.length,
+            ),
             SizedBox(height: 16.0),
             _buildPriorityDropdown(),
             SizedBox(height: 16.0),
@@ -265,17 +283,17 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
                   initialDate: _selectedDate ?? DateTime.now(),
                   firstDate: widget.DataMinimaScadenzaTask,
                   lastDate: DateTime(2101),
-                  builder: (context,child){
-                    return Theme (
+                  builder: (context, child) {
+                    return Theme(
                       data: Theme.of(context).copyWith(
                         colorScheme: const ColorScheme.light(
                           primary: Colors.red,
                           onSurface: Colors.black,
-                        )
+                        ),
                       ),
                       child: child!,
                     );
-                  }
+                  },
                 );
 
                 if (pickedDate != null) {
@@ -332,17 +350,17 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
                     initialDate: _selectedDate2 ?? DateTime.now(),
                     firstDate: widget.DataMinimaScadenzaTask,
                     lastDate: DateTime(2101),
-                      builder: (context,child){
-                        return Theme (
-                          data: Theme.of(context).copyWith(
-                              colorScheme: const ColorScheme.light(
-                                primary: Colors.red,
-                                onSurface: Colors.black,
-                              )
+                    builder: (context, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: const ColorScheme.light(
+                            primary: Colors.red,
+                            onSurface: Colors.black,
                           ),
-                          child: child!,
-                        );
-                      }
+                        ),
+                        child: child!,
+                      );
+                    },
                   );
 
                   if (pickedDate != null) {
@@ -354,7 +372,7 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
                   }
                 },
               ),
-              SizedBox(height: 16.0), // Spazio tra Data Consegna e il testo
+              SizedBox(height: 16.0),
               DropdownButtonFormField<String>(
                 value: _selectedVoto != null && voti.contains(_selectedVoto) ? _selectedVoto : voti.first,
                 menuMaxHeight: 400,
@@ -381,7 +399,6 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
                   ),
                 ),
               ),
-
             ],
           ],
         ),

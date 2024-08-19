@@ -30,6 +30,41 @@ class TodoRepository {
     }
   }
 
+  /*
+  Future<void> addUserToTodo(String id, String newUser) async {
+    try {
+      // Ottieni il riferimento al documento Todo
+      DocumentReference documentRef = FirebaseFirestore.instance.collection('Todo').doc(id);
+
+      // Ottieni il documento
+      DocumentSnapshot document = await documentRef.get();
+
+      if (document.exists) {
+        // Converti il documento in un oggetto
+        Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+
+        // Assicurati che i dati esistano e contengano la chiave 'utenti'
+        if (data != null && data.containsKey('utenti')) {
+          // Ottieni la lista degli utenti e aggiornala
+          List<dynamic> utenti = List.from(data['utenti']);
+          utenti.add(newUser);
+
+          // Aggiorna il documento con la lista aggiornata
+          await documentRef.update({'utenti': utenti});
+        } else {
+          throw Exception("Campo 'utenti' non trovato nel documento");
+        }
+      } else {
+        throw Exception("Todo non trovato");
+      }
+    } catch (e) {
+      // Gestisci l'errore se necessario
+      throw Exception("Errore durante l'aggiornamento degli utenti del Todo: ${e.toString()}");
+    }
+  }
+
+   */
+
 
   Future<List<LeMieAttivita>> getAttivitaByProgettoId(String progettoId) async {
     try {
@@ -102,6 +137,31 @@ class TodoRepository {
       throw Exception("Errore durante l'aggiunta dell'utente al Todo: ${e.toString()}");
     }
   }
+
+
+  Future<bool> utenteAssegnato(String userId, String taskId) async {
+    try {
+      DocumentReference taskRef = _database.collection('Todo').doc(taskId);
+      DocumentSnapshot taskDoc = await taskRef.get();
+
+      if (taskDoc.exists) {
+        Map<String, dynamic>? data = taskDoc.data() as Map<String, dynamic>?;
+
+        if (data != null && data.containsKey('utenti')) {
+          List<dynamic> utenti = List.from(data['utenti']);
+          return utenti.contains(userId);
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('Errore durante la verifica dell\'assegnazione dell\'utente: ${e.toString()}');
+      return false;  // Restituisci false in caso di errore
+    }
+  }
+
 
   Future<void> removeUserFromTodo(String id, String userToRemove) async {
     try {

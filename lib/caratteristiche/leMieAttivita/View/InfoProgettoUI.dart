@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Model/progetto.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/ViewModel/view_model_progetto.dart';
 import 'package:teamsync_flutter/caratteristiche/login/Model/user_class.dart';
-import 'package:teamsync_flutter/data.models/Priorita.dart';
 import 'package:teamsync_flutter/theme/color.dart'; // Assicurati di importare ProfiloUtente
 
 class InfoProgetto extends StatelessWidget {
@@ -16,6 +16,8 @@ class InfoProgetto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Info Progetto'),
@@ -32,6 +34,7 @@ class InfoProgetto extends StatelessWidget {
             return const Center(child: Text('Progetto non trovato'));
           } else {
             Progetto progetto = progettoSnapshot.data!;
+
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start, // Align to the top
@@ -64,7 +67,8 @@ class InfoProgetto extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 10.0), // Reduced space
+                            const SizedBox(height: 10.0),
+                            // Reduced space
                             Text(
                               'Nome: ${progetto.nome}',
                               style: const TextStyle(
@@ -84,7 +88,7 @@ class InfoProgetto extends StatelessWidget {
                             ),
                             const SizedBox(height: 8.0),
                             Text(
-                              'Priorità: ${progetto.priorita.toShortString()}',
+                              'Priorità: ${progetto.priorita.name}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.0,
@@ -93,7 +97,7 @@ class InfoProgetto extends StatelessWidget {
                             ),
                             const SizedBox(height: 8.0),
                             Text(
-                              'Data Creazione: ${progetto.dataCreazione}',
+                              'Data Creazione:${DateFormat('dd/MM/yyyy').format(progetto.dataCreazione)}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.0,
@@ -102,7 +106,7 @@ class InfoProgetto extends StatelessWidget {
                             ),
                             const SizedBox(height: 8.0),
                             Text(
-                              'Data Scadenza: ${progetto.dataScadenza}',
+                              'Data Scadenza: ${DateFormat('dd/MM/yyyy').format(progetto.dataScadenza)}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.0,
@@ -131,7 +135,7 @@ class InfoProgetto extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: Colors.white, // Colore di sfondo del riquadro
                               borderRadius: BorderRadius.circular(16.0), // Arrotondamento dei bordi
-                              boxShadow: [
+                              boxShadow: const [
                                 BoxShadow(
                                   color: Colors.black26, // Ombra per dare un effetto di elevazione
                                   blurRadius: 20.0,
@@ -188,8 +192,8 @@ class InfoProgetto extends StatelessWidget {
         padding: padding,
         child: Row(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Icon(
                 Icons.person, // Icona del profilo utente
                 size: 40.0,
@@ -200,7 +204,7 @@ class InfoProgetto extends StatelessWidget {
               child: Center(
                 child: Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20.1,
                     fontWeight: FontWeight.bold,
                   ),

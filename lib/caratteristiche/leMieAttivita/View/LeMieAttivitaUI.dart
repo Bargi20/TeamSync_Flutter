@@ -9,6 +9,8 @@ import 'package:teamsync_flutter/data.models/Priorita.dart';
 import '../../login/Model/user_class.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/InfoProgettoUI.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/ModificaProgetto.dart';
+import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/DelegaTask.dart';
+
 import '../../../navigation/schermate.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:logging/logging.dart';
@@ -1394,6 +1396,35 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
             const SizedBox(height: 16.0),
             _buildPriorityDropdown(),
             const SizedBox(height: 16.0),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey[400],
+              ),
+              onPressed: () {
+                ProgettoViewModel viewModel = ProgettoViewModel(); // Creazione dell'istanza
+                LeMieAttivitaViewModel viewModelTodo = LeMieAttivitaViewModel();
+                ViewModelUtente viewModelUtente = ViewModelUtente();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Delegatask(
+                      taskId: widget.todoItem.id!,
+                      titolo: widget.todoItem.titolo,
+                      descrizione: widget.todoItem.descrizione,
+                      priorita: widget.todoItem.priorita.name,
+                      data : widget.todoItem.dataScadenza,
+                      progettoId : widget.todoItem.progetto!,
+                      viewModel: viewModel,
+                      viewModelTodo: viewModelTodo,
+                    ),
+                  ),
+                );
+              },
+              child: const Text(
+                'Delega Task',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
           ],
         ),
       ),
@@ -1420,6 +1451,8 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
       ],
     );
   }
+
+
 
   Widget _buildTextField({
     required TextEditingController controller,
