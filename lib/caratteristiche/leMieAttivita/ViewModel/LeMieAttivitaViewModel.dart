@@ -72,7 +72,6 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
       bool isAssigned = await repository.utenteAssegnato(idUtente, idTask);
       return isAssigned;
     } catch (e) {
-      print('Errore durante la verifica dell\'assegnazione dell\'utente: ${e.toString()}');
       throw Exception('Errore durante la verifica dell\'assegnazione dell\'utente: ${e.toString()}');
     }
   }
@@ -83,7 +82,6 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
       await repository.addUserToTodo(idTask, idUtente);
     } catch (e) {
       // Gestisci l'errore, ad esempio stampando un messaggio o mostrando un errore all'utente
-      print('Errore durante l\'aggiunta dell\'utente al task: ${e.toString()}');
       // Rethrow l'eccezione per gestirla a un livello superiore se necessario
       throw Exception('Errore durante l\'aggiunta dell\'utente al task: ${e.toString()}');
     }
@@ -95,7 +93,6 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
       await repository.removeUserFromTodo(idTask, idUtente);
     } catch (e) {
       // Gestisci l'errore, ad esempio stampando un messaggio o mostrando un errore all'utente
-      print('Errore durante l\'aggiunta dell\'utente al task: ${e.toString()}');
       // Rethrow l'eccezione per gestirla a un livello superiore se necessario
       throw Exception('Errore durante l\'aggiunta dell\'utente al task: ${e.toString()}');
     }

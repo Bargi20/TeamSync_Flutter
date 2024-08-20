@@ -23,7 +23,7 @@ class LeMieAttivita {
     required this.progetto,
     required this.utenti,
     this.fileUri,
-    DateTime? dataCreazione,  // Parametro opzionale
+    DateTime? dataCreazione,
   }) : dataCreazione = dataCreazione ?? DateTime.now();
 
   factory LeMieAttivita.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -35,7 +35,7 @@ class LeMieAttivita {
       dataScadenza: (data['dataScadenza'] as Timestamp).toDate(),
       dataCreazione: (data['dataCreazione'] as Timestamp).toDate(),
       priorita: Priorita.values.firstWhere(
-            (e) => e.name == data['priorita'],  // Confronta il nome dell'enum con il valore nel database
+            (e) => e.name == data['priorita'],
         orElse: () => Priorita.NESSUNA,
       ),
       completato: data['completato'] ?? false,
@@ -45,7 +45,6 @@ class LeMieAttivita {
     );
   }
 
-  // Metodo per creare un'istanza di LeMieAttivita da una mappa
   factory LeMieAttivita.fromMap(Map<String, dynamic> map) {
     return LeMieAttivita(
       id: map['id'] ?? '',
@@ -64,7 +63,6 @@ class LeMieAttivita {
     );
   }
 
-  // Convert an instance of LeMieAttivita to a map for Firestore
   Map<String, dynamic> toMap() {
     return {
       'titolo': titolo,

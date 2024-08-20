@@ -65,7 +65,7 @@ class NavGraph extends StatelessWidget {
             var viewModelProgetto = Provider.of<ProgettoViewModel>(context, listen: true);
             var viewModelutente = Provider.of<ViewModelUtente>(context, listen: true);
             var viewModelAttivita = Provider.of<LeMieAttivitaViewModel>(context, listen: true);
-            return lemieAttivita(
+            return LemieAttivita(
               idProgetto: idProgetto,
               viemodelprogetto: viewModelProgetto,
               viewmodelutente: viewModelutente,

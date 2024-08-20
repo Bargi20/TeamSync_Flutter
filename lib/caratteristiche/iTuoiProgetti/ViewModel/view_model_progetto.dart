@@ -209,18 +209,19 @@ class ProgettoViewModel extends ChangeNotifier {
 
   Future<bool> verificaProgettoCompletato({required String progettoID}) async {
     try {
-      // Recupera il progetto usando l'ID
       Progetto? progetto = await repositoryProgetto.getProgettoById(progettoID);
 
-      // Verifica se il progetto è completato
       if (progetto != null && progetto.completato == true) {
         return true;
       } else {
         return false;
       }
     } catch (e) {
-      // Gestione dell'eccezione, puoi loggare l'errore o restituire un valore di default
-      print('Errore durante il recupero del progetto: $e');
+      SnackBar(
+        content: Text('Errore durante il recupero del progetto: $e'),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      );
       return false;
     }
   }
@@ -271,11 +272,14 @@ class ProgettoViewModel extends ChangeNotifier {
 
 
       await repositoryProgetto.abbandonaProgetto(userId, progettoID, (bool isProgettoEliminato) {
-        // Esegui una azione basata sul fatto che il progetto sia stato eliminato o meno
         if (isProgettoEliminato) {
 
         } else {
-          // Azioni da eseguire se il progetto non è stato eliminato
+          const SnackBar(
+            content: Text('Errore nella eliminazione del progetto'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          );
         }
       });
     } catch (e) {

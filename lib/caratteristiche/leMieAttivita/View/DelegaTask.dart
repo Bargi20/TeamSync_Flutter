@@ -26,8 +26,8 @@ class Delegatask extends StatefulWidget {
     required this.priorita,
     required this.viewModelTodo,
 
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _DelegataskState createState() => _DelegataskState();
@@ -68,10 +68,8 @@ class _DelegataskState extends State<Delegatask> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            print('Pulsante indietro premuto, si torna alla schermata precedente con progettoId: ${widget.progettoId}');
 
             // Log del contesto
-            print('Contesto della navigazione: $context');
 
             try {
               Navigator.of(context).pushNamed(
@@ -79,7 +77,7 @@ class _DelegataskState extends State<Delegatask> {
                 arguments: widget.progettoId,
               );
             } catch (e) {
-              print('Errore durante la navigazionee: $e');
+
             }
           },
         ),

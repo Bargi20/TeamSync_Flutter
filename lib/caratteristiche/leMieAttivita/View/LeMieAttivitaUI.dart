@@ -18,20 +18,20 @@ import 'package:logging/logging.dart';
 
 
 
-class lemieAttivita extends StatefulWidget {
+class LemieAttivita extends StatefulWidget {
   final String idProgetto;
   ProgettoViewModel viemodelprogetto;
   LeMieAttivitaViewModel viewmodelAttivita;
   ViewModelUtente viewmodelutente;
 
 
-  lemieAttivita({super.key, required this.idProgetto, required this.viemodelprogetto, required this.viewmodelutente, required this.viewmodelAttivita});
+  LemieAttivita({super.key, required this.idProgetto, required this.viemodelprogetto, required this.viewmodelutente, required this.viewmodelAttivita});
 
   @override
   _LemieAttivitaState createState() => _LemieAttivitaState();
 }
 
-class _LemieAttivitaState extends State<lemieAttivita> {
+class _LemieAttivitaState extends State<LemieAttivita> {
   Progetto? progetto;
   bool isLoadingProgetto = true;
   bool isLoadingAttivita = true;
@@ -41,7 +41,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
   DateTime dataScadenzaMassimaLeMieTaskNonCompletate = DateTime(1900, 1, 1);
   DateTime dataScadenzaMassimaTaskNonCompletateAll = DateTime(1900, 1, 1);
   DateTime dataScadenzaMassimaTask = DateTime(1900, 1, 1);
-  late DateTime data_scadenzaProgetto;
+  late DateTime dataScadenzaProgetto;
   @override
   void initState() {
     super.initState();
@@ -83,8 +83,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
     });
     try {
       progetto = await widget.viemodelprogetto.getProgettoById(widget.idProgetto);
-      print(progetto!.nome);
-      data_scadenzaProgetto = await recuperaDataScadenza(widget.idProgetto);
+      dataScadenzaProgetto = await recuperaDataScadenza(widget.idProgetto);
     } finally {
       setState(() {
         isLoadingProgetto = false;
@@ -108,16 +107,16 @@ class _LemieAttivitaState extends State<lemieAttivita> {
 
   }
 
-  Future <void> calcolaDataScadenzaMinimaProgetto(List<LeMieAttivita> ListaAttivita, bool Provenienza_LeMieTask) async {
+  Future <void> calcolaDataScadenzaMinimaProgetto(List<LeMieAttivita> listaAttivita, bool provenienzaLeMieTask) async {
     setState(() {
       isLoadingAttivita = true;
     });
     try
     {
-      if(Provenienza_LeMieTask)
+      if(provenienzaLeMieTask)
         {
           dataScadenzaMassimaLeMieTaskNonCompletate =  DateTime(1900, 1, 1);
-          for(LeMieAttivita a in ListaAttivita)
+          for(LeMieAttivita a in listaAttivita)
           {
             if (dataScadenzaMassimaLeMieTaskNonCompletate.isBefore(a.dataScadenza))
             {
@@ -128,7 +127,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
         } else
         {
           dataScadenzaMassimaTaskNonCompletateAll =  DateTime(1900, 1, 1);
-          for(LeMieAttivita a in ListaAttivita)
+          for(LeMieAttivita a in listaAttivita)
           {
             if (dataScadenzaMassimaTaskNonCompletateAll.isBefore(a.dataScadenza))
             {
@@ -275,9 +274,9 @@ class _LemieAttivitaState extends State<lemieAttivita> {
     }
   }
 
-  Future<DateTime> recuperaDataScadenza(String Id_Prog) async
+  Future<DateTime> recuperaDataScadenza(String idProg) async
 {
-  var progetto = await widget.viemodelprogetto.getProgettoById(Id_Prog);
+  var progetto = await widget.viemodelprogetto.getProgettoById(idProg);
   return progetto!.dataScadenza;
 }
   final _sdf = DateFormat('dd/MM/yyyy');
@@ -323,14 +322,14 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                   MaterialPageRoute(builder: (context) => ModificaProgetto(
                       projectId:widget.idProgetto,
                       viewModel: viewModel,
-                    DataMinimaScadenzaTask:  dataScadenzaMassimaTask,
+                    dataMinimaScadenzaTask:  dataScadenzaMassimaTask,
                     ),
                   ),
                 );
               }
 
               if (result == 3) {
-                TextEditingController controller = TextEditingController(text: '${progetto!.codice}');
+                TextEditingController controller = TextEditingController(text: progetto!.codice);
 
                 showDialog(context: context,
                   builder: (BuildContext context) {
@@ -366,7 +365,6 @@ class _LemieAttivitaState extends State<lemieAttivita> {
 
               if (result == 4) {
                 final navigator = Navigator.of(context);
-                print('Entrato nella sezione abbandona ');
 
                 showDialog(
                   context: context,
@@ -388,10 +386,8 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                           ),
                           onPressed: ()async {
                               Navigator.of(context).pop(); // Chiudi il dialogo
-                              print('Entrato nella sezione del bottone premuto Abbandona ');
 
                               ProgettoViewModel viewModel = ProgettoViewModel();
-                              final Logger log = Logger('MyLogger');
 
                               if (progetto != null && progetto!.id != null) {
                               await viewModel.abbandonaProgetto(progetto!.id!); // Aspetta il completamento della funzione
@@ -465,7 +461,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
 
 
           Padding(
-              padding: EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(20.0),
               child: Center(
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -479,14 +475,14 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                       fontWeight: FontWeight.bold,  // Imposta il font in grassetto
                     ),
                     ),
-                  SizedBox(height: 20.0),  // Aggiungi uno spazio tra il testo e l'immagine
+                  const SizedBox(height: 20.0),  // Aggiungi uno spazio tra il testo e l'immagine
                   Image.asset(
                     'assets/im_progettocompletato.png',  // Sostituisci con il percorso dell'immagine
                     width: 180.0,  // Imposta la larghezza dell'immagine
                     height: 180.0,  // Imposta l'altezza dell'immagine
                     fit: BoxFit.cover,  // Adatta l'immagine al box
                   ),
-                  SizedBox(height: 20.0),  // Spazio tra l'immagine e la riga
+                  const SizedBox(height: 20.0),  // Spazio tra l'immagine e la riga
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -505,14 +501,14 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                            Text(
                              _sdf.format(progetto!.dataConsegna) ,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18.0,  // Imposta la dimensione del font
 
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(width: 40.0),  // Spazio tra le due colonne
+                      const SizedBox(width: 40.0),  // Spazio tra le due colonne
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -528,7 +524,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                           Text(
                            (progetto!.voto) ,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18.0,  // Imposta la dimensione del font
 
                             ),
@@ -578,7 +574,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                       oncomplete: _handleComplete,
                       isclickecdCompletate: isClickedCompletate,
                       onEdit: _handleModificaTask,
-                      DataScadenzaProgetto: data_scadenzaProgetto,
+                      dataScadenzaProgetto: dataScadenzaProgetto,
                     );
                   }).toList(),
                 ),
@@ -595,7 +591,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                       oncomplete: _handleComplete,
                       onEdit: _handleModificaTask,
                       isclickecdCompletate: isClickedCompletate,
-                      DataScadenzaProgetto: data_scadenzaProgetto,
+                      dataScadenzaProgetto: dataScadenzaProgetto,
                     );
                   }).toList(),
                 ),
@@ -615,7 +611,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                       oncomplete: _handleComplete,
                       onEdit: _handleModificaTask,
                       isclickecdCompletate: isClickedCompletate,
-                      DataScadenzaProgetto: data_scadenzaProgetto,
+                      dataScadenzaProgetto: dataScadenzaProgetto,
                         );
                   },
                 ),
@@ -661,7 +657,7 @@ class _LemieAttivitaState extends State<lemieAttivita> {
                 },
                   onDismiss: () { Navigator.of(context).pop();
                   },
-                  DataScadenzaProgetto: data_scadenzaProgetto,
+                  dataScadenzaProgetto: dataScadenzaProgetto,
 
               );
             },
@@ -687,7 +683,7 @@ class TodoItem extends StatefulWidget {
   final Function(LeMieAttivita) oncomplete;
   final Function(LeMieAttivita) onEdit;
   final Function(LeMieAttivita) ondelete;
-  final DateTime DataScadenzaProgetto;
+  final DateTime dataScadenzaProgetto;
   bool isclickecdCompletate;
 
   TodoItem({super.key,
@@ -698,7 +694,7 @@ class TodoItem extends StatefulWidget {
     required this.oncomplete,
     required this.isclickecdCompletate,
     required this.onEdit,
-    required this.DataScadenzaProgetto,
+    required this.dataScadenzaProgetto,
   });
 
   @override
@@ -965,7 +961,7 @@ class _TodoItemState extends State<TodoItem> {
                         onSave: (updatedItem) {
                           widget.onEdit(updatedItem);
                         },
-                        DataScadenzaProgetto: widget.DataScadenzaProgetto,
+                        dataScadenzaProgetto: widget.dataScadenzaProgetto,
                       );
                     },
                   );
@@ -1078,14 +1074,14 @@ class _TodoButtonsState extends State<TodoButtons> {
 
 class AddTodoDialog extends StatefulWidget {
   final Function(LeMieAttivita) onSave;
-  final DateTime DataScadenzaProgetto;
+  final DateTime dataScadenzaProgetto;
   final VoidCallback onDismiss;
 
   const AddTodoDialog({
     super.key,
     required this.onSave,
     required this.onDismiss,
-    required this.DataScadenzaProgetto,
+    required this.dataScadenzaProgetto,
   });
 
   @override
@@ -1095,11 +1091,11 @@ class AddTodoDialog extends StatefulWidget {
 class _AddTodoDialogState extends State<AddTodoDialog> {
   late TextEditingController _titoloController;
   late TextEditingController _descrizioneController;
-  DateTime _dataOdierna = DateTime.now();
+  final DateTime _dataOdierna = DateTime.now();
   DateTime _dataSelezionata = DateTime.now();
   Priorita _priorita = Priorita.BASSA;
   final _sdf = DateFormat('dd/MM/yyyy');
-  late final bool DataSelezionabile = DateTime.now().isBefore(widget.DataScadenzaProgetto) ? true : false;
+  late final bool dataSelezionabile = DateTime.now().isBefore(widget.dataScadenzaProgetto) ? true : false;
   @override
   void initState() {
     super.initState();
@@ -1214,7 +1210,7 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
       decoration: InputDecoration(
         labelText: 'Data di Scadenza',
         labelStyle: const TextStyle(color: Colors.black),
-        suffixIcon: DataSelezionabile? IconButton(
+        suffixIcon: dataSelezionabile? IconButton(
           icon: const Icon(
             Icons.calendar_today,
             color: Colors.black,
@@ -1239,7 +1235,7 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
       context: context,
       initialDate: _dataSelezionata,
       firstDate: _dataOdierna,
-      lastDate: widget.DataScadenzaProgetto,
+      lastDate: widget.dataScadenzaProgetto,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -1330,12 +1326,12 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
 
 class EditTodoDialog extends StatefulWidget {
   final LeMieAttivita todoItem;
-  final DateTime DataScadenzaProgetto;
+  final DateTime dataScadenzaProgetto;
   final void Function(LeMieAttivita) onSave;
   const EditTodoDialog({
     required this.todoItem,
     required this.onSave,
-    required this.DataScadenzaProgetto,
+    required this.dataScadenzaProgetto,
     super.key,
 
   });
@@ -1350,7 +1346,7 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
   late TextEditingController dataScadenzaController;
   late DateTime dataScadenza;
   late Priorita priorita;
-  late final bool DataSelezionabile = DateTime.now().isBefore(widget.DataScadenzaProgetto) ? true : false;
+  late final bool dataSelezionabile = DateTime.now().isBefore(widget.dataScadenzaProgetto) ? true : false;
   @override
   void initState() {
     super.initState();
@@ -1403,7 +1399,6 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
               onPressed: () {
                 ProgettoViewModel viewModel = ProgettoViewModel(); // Creazione dell'istanza
                 LeMieAttivitaViewModel viewModelTodo = LeMieAttivitaViewModel();
-                ViewModelUtente viewModelUtente = ViewModelUtente();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -1413,7 +1408,7 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
                       descrizione: widget.todoItem.descrizione,
                       priorita: widget.todoItem.priorita.name,
                       data : widget.todoItem.dataScadenza,
-                      progettoId : widget.todoItem.progetto!,
+                      progettoId : widget.todoItem.progetto,
                       viewModel: viewModel,
                       viewModelTodo: viewModelTodo,
                     ),
@@ -1492,7 +1487,7 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
       decoration: InputDecoration(
         labelText: 'Data Scadenza',
         labelStyle: const TextStyle(color: Colors.black),
-        suffixIcon: DataSelezionabile ? IconButton(
+        suffixIcon: dataSelezionabile ? IconButton(
           icon: const Icon(
             Icons.calendar_today,
             color: Colors.black,
@@ -1518,7 +1513,7 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
       context: context,
       initialDate: dataScadenza,
       firstDate: DateTime.now(),
-      lastDate: widget.DataScadenzaProgetto,
+      lastDate: widget.dataScadenzaProgetto,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(

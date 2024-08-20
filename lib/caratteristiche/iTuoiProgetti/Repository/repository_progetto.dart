@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Model/progetto.dart';
 import 'package:uuid/uuid.dart';
 
@@ -100,24 +101,24 @@ class RepositoryProgetto {
         throw Exception("Il progetto con ID $progettoId non esiste.");
       }
 
-      // Rimuovi l'utente dai partecipanti
       await progettoRef.update({
         'partecipanti': FieldValue.arrayRemove([userId])
       });
 
-      // Ottieni la lista dei partecipanti aggiornata
       final listaPartecipanti = await getPartecipantiDelProgetto(progettoId);
 
-      // Se non ci sono più partecipanti, elimina il progetto
       if (listaPartecipanti.isEmpty) {
         await eliminaProgetto(progettoId);
-        callback(true);  // Passa true al callback se il progetto è stato eliminato
+        callback(true);
       } else {
-        callback(false);  // Passa false al callback se il progetto non è stato eliminato
+        callback(false);
       }
     } catch (e) {
-      // Gestisci l'errore
-      print("Errore durante l'abbandono del progetto: $e");
+      SnackBar(
+        content: Text("Errore durante l'abbandono del progetto: $e"),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      );
       throw Exception("Errore durante l'abbandono del progetto: $e");
     }
   }
