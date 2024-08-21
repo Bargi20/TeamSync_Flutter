@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/ViewModel/LeMieAttivitaViewModel.dart';
 import 'package:teamsync_flutter/caratteristiche/login/Model/user_class.dart';
 import 'package:teamsync_flutter/navigation/schermate.dart';
+import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/LeMieAttivitaUI.dart';
 
 class Delegatask extends StatefulWidget {
   final String taskId;
@@ -68,11 +69,8 @@ class _DelegataskState extends State<Delegatask> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-             Navigator.of(context).pushNamed(
-                Schermate.leMieAttivita,
-                arguments: widget.progettoId,
-              );
-            }
+            Navigator.pop(context);
+            },
         ),
       ),
 
