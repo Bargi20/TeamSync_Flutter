@@ -13,7 +13,6 @@ import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/DelegaTask.d
 
 import '../../../navigation/schermate.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:logging/logging.dart';
 
 
 
@@ -246,7 +245,7 @@ class _LemieAttivitaState extends State<LemieAttivita> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text("Task Aggiornata con successo"),
-            duration: const Duration(seconds: 1), // Durata del SnackBar
+            duration: const Duration(seconds: 1),
             action: SnackBarAction(
               label: 'Chiudi',
               onPressed: () {
@@ -261,7 +260,7 @@ class _LemieAttivitaState extends State<LemieAttivita> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(result),
-            duration: const Duration(seconds: 2), // Durata del SnackBar
+            duration: const Duration(seconds: 2),
             action: SnackBarAction(
               label: 'Chiudi',
               onPressed: () {
@@ -301,14 +300,14 @@ class _LemieAttivitaState extends State<LemieAttivita> {
             icon: const Icon(Icons.more_vert),
             onSelected: (int result) {
               if (result == 1) {
-                ProgettoViewModel viewModel = ProgettoViewModel(); // Creazione dell'istanza
+                ProgettoViewModel viewModel = ProgettoViewModel();
 
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => InfoProgetto(
-                      projectId: widget.idProgetto, // Passaggio dell'ID del progetto
-                      viewModel: viewModel, // Passaggio dell'istanza del ViewModel
+                      projectId: widget.idProgetto,
+                      viewModel: viewModel,
                     ),
                   ),
                 );
@@ -375,7 +374,7 @@ class _LemieAttivitaState extends State<LemieAttivita> {
                       actions: [
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).pop(); // Chiudi il dialogo
+                            Navigator.of(context).pop();
                           },
                           child: const Text('Annulla',
                           style: TextStyle(color : Colors.black),),
@@ -385,16 +384,15 @@ class _LemieAttivitaState extends State<LemieAttivita> {
                             backgroundColor: Colors.red[700],
                           ),
                           onPressed: ()async {
-                              Navigator.of(context).pop(); // Chiudi il dialogo
+                              Navigator.of(context).pop();
 
                               ProgettoViewModel viewModel = ProgettoViewModel();
 
                               if (progetto != null && progetto!.id != null) {
-                              await viewModel.abbandonaProgetto(progetto!.id!); // Aspetta il completamento della funzione
+                              await viewModel.abbandonaProgetto(progetto!.id!);
                               } else {
                               }
 
-                              // Naviga alla schermata desiderata
                               navigator.pushReplacementNamed(Schermate.ituoiProgetti);
                               },
                           child: const Text(
@@ -471,18 +469,18 @@ class _LemieAttivitaState extends State<LemieAttivita> {
                     'Progetto Completato',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 24.0,  // Imposta la dimensione del font
-                      fontWeight: FontWeight.bold,  // Imposta il font in grassetto
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
                     ),
                     ),
-                  const SizedBox(height: 20.0),  // Aggiungi uno spazio tra il testo e l'immagine
+                  const SizedBox(height: 20.0),
                   Image.asset(
-                    'assets/im_progettocompletato.png',  // Sostituisci con il percorso dell'immagine
-                    width: 180.0,  // Imposta la larghezza dell'immagine
-                    height: 180.0,  // Imposta l'altezza dell'immagine
-                    fit: BoxFit.cover,  // Adatta l'immagine al box
+                    'assets/im_progettocompletato.png',
+                    width: 180.0,
+                    height: 180.0,
+                    fit: BoxFit.cover,
                   ),
-                  const SizedBox(height: 20.0),  // Spazio tra l'immagine e la riga
+                  const SizedBox(height: 20.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -493,8 +491,8 @@ class _LemieAttivitaState extends State<LemieAttivita> {
                             'Data Consegna',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 18.0,  // Imposta la dimensione del font
-                              fontWeight: FontWeight.bold,  // Imposta il font in grassetto
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
 
@@ -502,13 +500,13 @@ class _LemieAttivitaState extends State<LemieAttivita> {
                              _sdf.format(progetto!.dataConsegna) ,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
-                              fontSize: 18.0,  // Imposta la dimensione del font
+                              fontSize: 18.0,
 
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(width: 40.0),  // Spazio tra le due colonne
+                      const SizedBox(width: 40.0),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -516,8 +514,8 @@ class _LemieAttivitaState extends State<LemieAttivita> {
                             'Voto',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 18.0,  // Imposta la dimensione del font
-                              fontWeight: FontWeight.bold,  // Imposta il font in grassetto
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
 
@@ -525,7 +523,7 @@ class _LemieAttivitaState extends State<LemieAttivita> {
                            (progetto!.voto) ,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
-                              fontSize: 18.0,  // Imposta la dimensione del font
+                              fontSize: 18.0,
 
                             ),
                           ),
@@ -624,7 +622,7 @@ class _LemieAttivitaState extends State<LemieAttivita> {
 
 
       floatingActionButton: Visibility(
-          visible: !isClickedCompletate, // Mostra o nasconde il FAB in base a questa variabile
+          visible: !isClickedCompletate,
           child: FloatingActionButton(
         onPressed: () {
           showDialog(
@@ -666,7 +664,7 @@ class _LemieAttivitaState extends State<LemieAttivita> {
         backgroundColor: Colors.red[700],
         child: const Icon(
           Icons.add,
-          color: Colors.white, // Colore dell'icona
+          color: Colors.white,
         ),
 
       ),
@@ -823,7 +821,7 @@ class _TodoItemState extends State<TodoItem> {
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors
-                                      .red[700], // Sfondo rosso
+                                      .red[700],
                                 ),
                                 child: const Text(
                                   'Conferma',
@@ -912,7 +910,7 @@ class _TodoItemState extends State<TodoItem> {
                               onPressed: () {
                                 setState(() {
                                   dialogDelete =
-                                  false; // Chiudi il dialogo senza fare nulla
+                                  false;
                                 });
                                 Navigator.of(context).pop();
                               },
@@ -931,12 +929,13 @@ class _TodoItemState extends State<TodoItem> {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors
-                                    .red[700], // Colore rosso del pulsante di conferma
+                                    .red[700],
                               ),
                               child: const Text(
                                 'Conferma',
                                 style: TextStyle(color: Colors
-                                    .white), // Testo bianco sul pulsante
+                                    .white
+                                ),
                               ),
                             ),
                           ],
@@ -1397,7 +1396,7 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
                 backgroundColor: Colors.grey[400],
               ),
               onPressed: () {
-                ProgettoViewModel viewModel = ProgettoViewModel(); // Creazione dell'istanza
+                ProgettoViewModel viewModel = ProgettoViewModel();
                 LeMieAttivitaViewModel viewModelTodo = LeMieAttivitaViewModel();
                 Navigator.push(
                   context,

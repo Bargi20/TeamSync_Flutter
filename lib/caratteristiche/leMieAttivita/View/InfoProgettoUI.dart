@@ -3,13 +3,13 @@ import 'package:intl/intl.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/Model/progetto.dart';
 import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/ViewModel/view_model_progetto.dart';
 import 'package:teamsync_flutter/caratteristiche/login/Model/user_class.dart';
-import 'package:teamsync_flutter/theme/color.dart'; // Assicurati di importare ProfiloUtente
+import 'package:teamsync_flutter/theme/color.dart';
 
 class InfoProgetto extends StatelessWidget {
   final String projectId;
   final ProgettoViewModel viewModel;
 
-  InfoProgetto({
+  const InfoProgetto({super.key,
     required this.projectId,
     required this.viewModel,
   });
@@ -37,7 +37,7 @@ class InfoProgetto extends StatelessWidget {
 
             return SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // Align to the top
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -119,7 +119,7 @@ class InfoProgetto extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Adjusted padding
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: FutureBuilder<List<ProfiloUtente>>(
                       future: viewModel.getPartecipantiByIds(progetto.partecipanti),
                       builder: (context, AsyncSnapshot<List<ProfiloUtente>> partecipantiSnapshot) {
@@ -133,11 +133,11 @@ class InfoProgetto extends StatelessWidget {
                           List<ProfiloUtente> utenti = partecipantiSnapshot.data!;
                           return Container(
                             decoration: BoxDecoration(
-                              color: Colors.white, // Colore di sfondo del riquadro
-                              borderRadius: BorderRadius.circular(16.0), // Arrotondamento dei bordi
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.0),
                               boxShadow: const [
                                 BoxShadow(
-                                  color: Colors.black26, // Ombra per dare un effetto di elevazione
+                                  color: Colors.black26,
                                   blurRadius: 20.0,
                                   offset: Offset(0, 4),
                                 ),
@@ -195,9 +195,9 @@ class InfoProgetto extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Icon(
-                Icons.person, // Icona del profilo utente
+                Icons.person,
                 size: 40.0,
-                color: Colors.black12, // Colore dell'icona
+                color: Colors.black12,
               ),
             ),
             Expanded(
@@ -208,7 +208,7 @@ class InfoProgetto extends StatelessWidget {
                     fontSize: 20.1,
                     fontWeight: FontWeight.bold,
                   ),
-                  textAlign: TextAlign.center, // Centra il testo all'interno del suo spazio
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),

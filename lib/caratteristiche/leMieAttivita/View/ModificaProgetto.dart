@@ -408,8 +408,8 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
         child: ElevatedButton(
           onPressed: caricaAggiornamenti ? null : _saveChanges,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red[700], // Colore di sfondo
-            foregroundColor: Colors.white, // Colore del testo
+            backgroundColor: Colors.red[700],
+            foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 12),
           ),
           child: caricaAggiornamenti

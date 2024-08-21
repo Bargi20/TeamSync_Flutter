@@ -68,18 +68,11 @@ class _DelegataskState extends State<Delegatask> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-
-            // Log del contesto
-
-            try {
-              Navigator.of(context).pushNamed(
+             Navigator.of(context).pushNamed(
                 Schermate.leMieAttivita,
                 arguments: widget.progettoId,
               );
-            } catch (e) {
-
             }
-          },
         ),
       ),
 

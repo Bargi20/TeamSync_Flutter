@@ -51,7 +51,6 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
     }
 
     try {
-      // Chiamata a repository per aggiungere il Todo
       await repository.addTodo(
         titolo: titolo,
         descrizione: descrizione,
@@ -78,22 +77,18 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
 
   Future<void> addUserTodo(String idUtente, String idTask) async {
     try {
-      // Chiama il metodo del repository per aggiungere l'utente al task
       await repository.addUserToTodo(idTask, idUtente);
     } catch (e) {
-      // Gestisci l'errore, ad esempio stampando un messaggio o mostrando un errore all'utente
-      // Rethrow l'eccezione per gestirla a un livello superiore se necessario
+
       throw Exception('Errore durante l\'aggiunta dell\'utente al task: ${e.toString()}');
     }
   }
 
   Future<void> removeUserTodo(String idUtente, String idTask) async {
     try {
-      // Chiama il metodo del repository per aggiungere l'utente al task
       await repository.removeUserFromTodo(idTask, idUtente);
     } catch (e) {
-      // Gestisci l'errore, ad esempio stampando un messaggio o mostrando un errore all'utente
-      // Rethrow l'eccezione per gestirla a un livello superiore se necessario
+
       throw Exception('Errore durante l\'aggiunta dell\'utente al task: ${e.toString()}');
     }
   }

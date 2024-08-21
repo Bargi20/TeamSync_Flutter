@@ -95,7 +95,6 @@ class RepositoryProgetto {
     try {
       final progettoRef = firestore.collection('progetti').doc(progettoId);
 
-      // Verifica se il progetto esiste
       final progettoSnapshot = await progettoRef.get();
       if (!progettoSnapshot.exists) {
         throw Exception("Il progetto con ID $progettoId non esiste.");
