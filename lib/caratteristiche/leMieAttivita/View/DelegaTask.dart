@@ -215,13 +215,11 @@ class _DelegataskState extends State<Delegatask> {
                                             ),
                                             onPressed: () async {
                                               if (_userAssigned[utente.id] ?? false) {
-                                                // Rimuovere l'utente dal task
                                                 await widget.viewModelTodo.removeUserTodo(utente.id, widget.taskId);
                                                 setState(() {
                                                   _userAssigned[utente.id] = false;
                                                 });
                                               } else {
-                                                // Assegnare l'utente al task
                                                 await widget.viewModelTodo.addUserTodo(utente.id, widget.taskId);
                                                 setState(() {
                                                   _userAssigned[utente.id] = true;
