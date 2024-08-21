@@ -4,8 +4,6 @@ import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/ViewModel/view_mo
 import 'package:intl/intl.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/ViewModel/LeMieAttivitaViewModel.dart';
 import 'package:teamsync_flutter/caratteristiche/login/Model/user_class.dart';
-import 'package:teamsync_flutter/navigation/schermate.dart';
-import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/LeMieAttivitaUI.dart';
 
 class Delegatask extends StatefulWidget {
   final String taskId;
