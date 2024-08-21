@@ -26,6 +26,9 @@ class LeMieAttivita {
     DateTime? dataCreazione,
   }) : dataCreazione = dataCreazione ?? DateTime.now();
 
+  /// Crea un'istanza di [LeMieAttivita] a partire da un [DocumentSnapshot] di Firestore.
+  /// [doc] Documento di Firestore contenente i dati del progetto.
+  /// Ritorna un'istanza di [LeMieAttivita] con i dati estratti dal documento.
   factory LeMieAttivita.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return LeMieAttivita(
@@ -45,6 +48,21 @@ class LeMieAttivita {
     );
   }
 
+  /// Crea un'istanza di [LeMieAttivita] a partire da una mappa di dati.
+  ///
+  /// [map] Una `Map<String, dynamic>` contenente i valori da convertire in un'istanza di [LeMieAttivita].
+  /// [id] ID del task (opzionale, default vuoto).
+  /// [titolo] Titolo del task (opzionale, default vuoto).
+  /// [descrizione] Descrizione del task (opzionale, default vuoto).
+  /// [dataScadenza] Data di scadenza del task, convertita da `Timestamp` a `DateTime` (opzionale).
+  /// [dataCreazione] Data di creazione del task, convertita da `Timestamp` a `DateTime` (opzionale).
+  /// [priorita] Priorità del task, convertita da `String` all'enum [Priorita] (opzionale, default `Priorita.NESSUNA`).
+  /// [completato] Stato di completamento del task (opzionale, default `false`).
+  /// [progetto] ID del progetto a cui il task appartiene (opzionale, default vuoto).
+  /// [utenti] Lista di ID utenti assegnati al task, convertita da `List<dynamic>` a `List<String>` (opzionale).
+  /// [fileUri] URI del file associato al task (opzionale, può essere null).
+  ///
+  /// Ritorna un'istanza di [LeMieAttivita] con i dati forniti.
   factory LeMieAttivita.fromMap(Map<String, dynamic> map) {
     return LeMieAttivita(
       id: map['id'] ?? '',
@@ -62,6 +80,20 @@ class LeMieAttivita {
       fileUri: map['fileUri'],
     );
   }
+
+  /// Converte l'istanza corrente di [LeMieAttivita] in una mappa di dati.
+  ///
+  /// [titolo] Titolo del task.
+  /// [descrizione] Descrizione del task.
+  /// [dataScadenza] Data di scadenza del task, convertita da `DateTime` a `Timestamp`.
+  /// [dataCreazione] Data di creazione del task, convertita da `DateTime` a `Timestamp`.
+  /// [priorita] Priorità del task, convertita dall'enum [Priorita] a `String` tramite il metodo `toShortString`.
+  /// [completato] Stato di completamento del task.
+  /// [progetto] ID del progetto a cui il task appartiene.
+  /// [utenti] Lista di ID utenti assegnati al task.
+  /// [fileUri] URI del file associato al task (può essere null).
+  ///
+  /// Ritorna una `Map<String, dynamic>` rappresentante l'istanza di [LeMieAttivita] con i dati convertiti.
 
   Map<String, dynamic> toMap() {
     return {
