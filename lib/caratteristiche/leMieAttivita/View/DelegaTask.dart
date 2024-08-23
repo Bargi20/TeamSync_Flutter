@@ -4,6 +4,8 @@ import 'package:teamsync_flutter/caratteristiche/iTuoiProgetti/ViewModel/view_mo
 import 'package:intl/intl.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/ViewModel/LeMieAttivitaViewModel.dart';
 import 'package:teamsync_flutter/caratteristiche/login/Model/user_class.dart';
+import 'package:teamsync_flutter/caratteristiche/login/viewModel/view_model_utente.dart';
+import '../../../navigation/Schermate.dart';
 
 class Delegatask extends StatefulWidget {
   final String taskId;
@@ -14,6 +16,7 @@ class Delegatask extends StatefulWidget {
   final String progettoId;
   final ProgettoViewModel viewModel;
   final LeMieAttivitaViewModel viewModelTodo;
+  final ViewModelUtente viewModelUtente;
 
   const Delegatask({
     required this.taskId,
@@ -24,7 +27,7 @@ class Delegatask extends StatefulWidget {
     required this.descrizione,
     required this.priorita,
     required this.viewModelTodo,
-
+    required this.viewModelUtente,
     super.key,
   });
 
@@ -36,10 +39,10 @@ class _DelegataskState extends State<Delegatask> {
   Map<String, bool> _userAssigned = {};
   late Future<Progetto?> _futureProgetto;
 
-
   @override
   void initState() {
     super.initState();
+    print('Delegatask initialized');
     _futureProgetto = widget.viewModel.getProgettoById(widget.progettoId);
     _checkUserAssignments();
   }
@@ -67,11 +70,14 @@ class _DelegataskState extends State<Delegatask> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
-            },
+            Navigator.pushNamed(
+              context,
+              Schermate.leMieAttivita,
+              arguments: widget.progettoId,
+            );
+          },
         ),
       ),
-
       body: FutureBuilder<Progetto?>(
         future: _futureProgetto,
         builder: (BuildContext context, AsyncSnapshot<Progetto?> snapshot) {
@@ -83,7 +89,6 @@ class _DelegataskState extends State<Delegatask> {
             return const Center(child: Text('Progetto non trovato'));
           } else {
             Progetto progetto = snapshot.data!;
-
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

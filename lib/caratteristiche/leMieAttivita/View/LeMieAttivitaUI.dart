@@ -10,9 +10,9 @@ import '../../login/Model/user_class.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/InfoProgettoUI.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/ModificaProgetto.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/View/DelegaTask.dart';
-
 import '../../../navigation/schermate.dart';
 import 'package:share_plus/share_plus.dart';
+
 
 
 
@@ -48,6 +48,8 @@ class _LemieAttivitaState extends State<LemieAttivita> {
     _fetchLeMieAttivitaData();
 
   }
+
+
   void _handleCompletate() {
     setState(() {
       isClickedCompletate = true;
@@ -289,7 +291,6 @@ class _LemieAttivitaState extends State<LemieAttivita> {
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.of(context).pushReplacementNamed(Schermate.ituoiProgetti);
-
           },
         ),
         title: isLoadingProgetto
@@ -312,10 +313,10 @@ class _LemieAttivitaState extends State<LemieAttivita> {
                   ),
                 );
               }
-              
+
               if (result == 2){
                 ProgettoViewModel viewModel = ProgettoViewModel();
-                
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ModificaProgetto(
@@ -661,13 +662,12 @@ class _LemieAttivitaState extends State<LemieAttivita> {
             },
           );
         },
-        backgroundColor: Colors.red[700],
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-
-      ),
+            backgroundColor: Colors.red[700],
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+          ),
       )
     );
   }
@@ -753,10 +753,8 @@ class _TodoItemState extends State<TodoItem> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
-
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -767,18 +765,17 @@ class _TodoItemState extends State<TodoItem> {
         margin: const EdgeInsets.all(8.0),
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          color:  Colors.grey[200],
+          color: Colors.grey[200],
           borderRadius: BorderRadius.circular(8.0),
           border: Border.all(color: Colors.white),
         ),
-        child:  caricamento ?
-        const Center(
-          child:
-          CircularProgressIndicator(),
-        ) :
-        Row(
+        child: caricamento
+            ? const Center(
+          child: CircularProgressIndicator(),
+        )
+            : Row(
           children: [
-         if (modifica) ...[
+            if (modifica) ...[
               IconButton(
                 icon: Icon(
                   widget.item.completato ? Icons.clear : Icons.check,
@@ -800,7 +797,8 @@ class _TodoItemState extends State<TodoItem> {
                               style: TextStyle(color: Colors.black),
                             ),
                             content: Text(
-                              widget.isclickecdCompletate ? 'Segna come non completata'
+                              widget.isclickecdCompletate
+                                  ? 'Segna come non completata'
                                   : 'Segna come completata',
                               style: TextStyle(color: Colors.grey[700]),
                             ),
@@ -820,8 +818,7 @@ class _TodoItemState extends State<TodoItem> {
                                   Navigator.of(context).pop();
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors
-                                      .red[700],
+                                  backgroundColor: Colors.red[700],
                                 ),
                                 child: const Text(
                                   'Conferma',
@@ -832,12 +829,12 @@ class _TodoItemState extends State<TodoItem> {
                           );
                         });
                   }
-
                 },
               ),
-            ] else ...[
-              const SizedBox(width: 50),
-            ],
+            ] else
+              ...[
+                const SizedBox(width: 50),
+              ],
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -851,9 +848,9 @@ class _TodoItemState extends State<TodoItem> {
                     maxLines: 1,
                   ),
                   Text(
-                    widget.item.descrizione ,
+                    widget.item.descrizione,
                     style: const TextStyle(
-                      color:  Colors.black,
+                      color: Colors.black,
                     ),
                     maxLines: 1,
                   ),
@@ -863,16 +860,16 @@ class _TodoItemState extends State<TodoItem> {
                       fontSize: 12,
                       color: widget.item.dataScadenza.isBefore(DateTime.now())
                           ? Colors.red
-                          : Colors.black),
+                          : Colors.black,
                     ),
+                  ),
                   Text(
                     listaUtenti,
                     style: const TextStyle(
                       color: Colors.black,
                     ),
                   ),
-
-                   Icon(
+                  Icon(
                     Icons.circle,
                     color: widget.item.priorita.colore,
                     size: 16.0,
@@ -881,92 +878,117 @@ class _TodoItemState extends State<TodoItem> {
               ),
             ),
             if (modifica) ...[
-              IconButton(
-                icon: const Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                ),
-                onPressed: () {
-                  setState(() {
-                    dialogDelete = true;
-                  });
+              Column(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        dialogDelete = true;
+                      });
 
-                  if (dialogDelete) {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          backgroundColor: Colors.grey[350],
-                          title: const Text(
-                            'Elimina Todo',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          content: Text(
-                            'Sei sicuro di voler eliminare questa task?',
-                            style: TextStyle(color: Colors.grey[700]),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  dialogDelete =
-                                  false;
-                                });
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text(
-                                'Annulla',
+                      if (dialogDelete) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: Colors.grey[350],
+                              title: const Text(
+                                'Elimina Todo',
                                 style: TextStyle(color: Colors.black),
                               ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                widget.ondelete(widget.item);
-                                setState(() {
-                                  dialogDelete = false;
-                                });
-                                Navigator.of(context).pop();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors
-                                    .red[700],
+                              content: Text(
+                                'Sei sicuro di voler eliminare questa task?',
+                                style: TextStyle(color: Colors.grey[700]),
                               ),
-                              child: const Text(
-                                'Conferma',
-                                style: TextStyle(color: Colors
-                                    .white
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      dialogDelete = false;
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    'Annulla',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ],
+                                ElevatedButton(
+                                  onPressed: () {
+                                    widget.ondelete(widget.item);
+                                    setState(() {
+                                      dialogDelete = false;
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red[700],
+                                  ),
+                                  child: const Text(
+                                    'Conferma',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         );
-                      },
-                    );
-                  }
-
-
-                }),
-              IconButton(
-                icon: const Icon(
-                  Icons.edit,
-                  color: Colors.grey,
-                ),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return EditTodoDialog(
-                        todoItem: widget.item,
-                        onSave: (updatedItem) {
-                          widget.onEdit(updatedItem);
+                      }
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.edit,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return EditTodoDialog(
+                            viewModelUtente: widget.viewModelUtente,
+                            todoItem: widget.item,
+                            onSave: (updatedItem) {
+                              widget.onEdit(updatedItem);
+                            },
+                            dataScadenzaProgetto: widget.dataScadenzaProgetto,
+                          );
                         },
-                        dataScadenzaProgetto: widget.dataScadenzaProgetto,
                       );
                     },
-                  );
-                },
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.person_add,
+                      color: Colors.blue,
+                    ),
+                    onPressed: () {
+                      ProgettoViewModel viewModel = ProgettoViewModel();
+                      LeMieAttivitaViewModel viewModelTodo = LeMieAttivitaViewModel();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Delegatask(
+                            taskId: widget.item.id!,
+                            titolo: widget.item.titolo,
+                            descrizione: widget.item.descrizione,
+                            priorita: widget.item.priorita.name,
+                            data : widget.item.dataScadenza,
+                            progettoId : widget.item.progetto,
+                            viewModel: viewModel,
+                            viewModelTodo: viewModelTodo,
+                            viewModelUtente: widget.viewModelUtente,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-
             ],
           ],
         ),
@@ -974,6 +996,7 @@ class _TodoItemState extends State<TodoItem> {
     );
   }
 }
+
 
 class TodoButtons extends StatefulWidget {
   final String idProg;
@@ -1326,11 +1349,13 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
 class EditTodoDialog extends StatefulWidget {
   final LeMieAttivita todoItem;
   final DateTime dataScadenzaProgetto;
+  final ViewModelUtente viewModelUtente;
   final void Function(LeMieAttivita) onSave;
   const EditTodoDialog({
     required this.todoItem,
     required this.onSave,
     required this.dataScadenzaProgetto,
+    required this.viewModelUtente,
     super.key,
 
   });
@@ -1391,34 +1416,7 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
             const SizedBox(height: 16.0),
             _buildPriorityDropdown(),
             const SizedBox(height: 16.0),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[400],
-              ),
-              onPressed: () {
-                ProgettoViewModel viewModel = ProgettoViewModel();
-                LeMieAttivitaViewModel viewModelTodo = LeMieAttivitaViewModel();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Delegatask(
-                      taskId: widget.todoItem.id!,
-                      titolo: widget.todoItem.titolo,
-                      descrizione: widget.todoItem.descrizione,
-                      priorita: widget.todoItem.priorita.name,
-                      data : widget.todoItem.dataScadenza,
-                      progettoId : widget.todoItem.progetto,
-                      viewModel: viewModel,
-                      viewModelTodo: viewModelTodo,
-                    ),
-                  ),
-                );
-              },
-              child: const Text(
-                'Delega Task',
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
+
           ],
         ),
       ),
@@ -1596,6 +1594,9 @@ class _EditTodoDialogState extends State<EditTodoDialog> {
     );
 
     widget.onSave(updatedTodo);
+    setState(() {
+
+    });
     Navigator.of(context).pop();
   }
 

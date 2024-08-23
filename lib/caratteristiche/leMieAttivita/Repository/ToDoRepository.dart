@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:teamsync_flutter/caratteristiche/leMieAttivita/Model/LeMieAttivita.dart';
 import 'package:teamsync_flutter/data.models/Priorita.dart';
+
 class TodoRepository {
   final FirebaseFirestore _database = FirebaseFirestore.instance;
 
 
-  /// Aggiunge un nuovo task (Todo) al database con le informazioni specificate.
+  /// Aggiunge un nuovo task alle mie attività al database con le informazioni specificate.
   ///
   /// Questo metodo crea un'istanza di `LeMieAttivita` con i dettagli forniti e la salva nel database.
   ///
@@ -44,7 +45,7 @@ class TodoRepository {
     }
   }
 
-  /// Recupera la lista delle attività (Todo) associate a un determinato progetto.
+  /// Recupera la lista delle attività associate a un determinato progetto.
   ///
   /// Questo metodo interroga il database per ottenere tutte le attività che appartengono
   /// a un progetto specifico identificato dal suo ID.
@@ -68,12 +69,12 @@ class TodoRepository {
   }
 
 
-  /// Elimina un task (Todo) dal database utilizzando il suo ID.
+  /// Elimina un task dal database utilizzando il suo ID.
   ///
-  /// Questo metodo rimuove un documento dalla collezione 'Todo' del database
+  /// Questo metodo rimuove un documento dalla collezione 'Le mie attività' del database
   /// identificato dal suo ID specificato.
   ///
-  /// [id]          L'ID del task (Todo) da eliminare.
+  /// [id]          L'ID del task da eliminare.
   ///
   /// @return Future<void>  Un futuro che si completa quando l'operazione di eliminazione è conclusa.
   ///
@@ -88,12 +89,12 @@ class TodoRepository {
   }
 
 
-  /// Aggiorna un task (Todo) esistente nel database con le nuove informazioni fornite.
+  /// Aggiorna un task esistente nel database con le nuove informazioni fornite.
   ///
   /// Questo metodo crea un'istanza aggiornata di `LeMieAttivita` con i dettagli specificati
   /// e la salva nel database sostituendo il documento esistente con lo stesso ID.
   ///
-  /// [id]              L'ID del task (Todo) da aggiornare.
+  /// [id]              L'ID del task da aggiornare.
   /// [titolo]          Il titolo aggiornato del task.
   /// [descrizione]     La descrizione aggiornata del task.
   /// [dataScadenza]    La data di scadenza aggiornata del task.
@@ -139,12 +140,12 @@ class TodoRepository {
   }
 
 
-  /// Aggiorna lo stato di completamento di un task (Todo) esistente nel database.
+  /// Aggiorna lo stato di completamento di un task esistente nel database.
   ///
-  /// Questo metodo aggiorna il campo `completato` di un documento `Todo` con l'ID specificato
+  /// Questo metodo aggiorna il campo `completato` di un documento `Le mie attività` con l'ID specificato
   /// per riflettere se il task è stato completato o meno.
   ///
-  /// [id]            L'ID del task (Todo) da aggiornare.
+  /// [id]            L'ID del task da aggiornare.
   /// [completato]    Un valore booleano che indica se il task è completato (`true`) o meno (`false`).
   ///
   /// @return Future<void>  Un futuro che si completa quando l'operazione di aggiornamento è conclusa.
@@ -162,12 +163,12 @@ class TodoRepository {
   }
 
 
-  /// Aggiunge un nuovo utente a un task (Todo) esistente nel database.
+  /// Aggiunge un nuovo utente a un task esistente nel database.
   ///
-  /// Questo metodo recupera il documento `Todo` con l'ID specificato, aggiunge un nuovo utente
+  /// Questo metodo recupera il documento `LeMieAttività` con l'ID specificato, aggiunge un nuovo utente
   /// alla lista degli utenti assegnati e aggiorna il documento con la nuova lista.
   ///
-  /// [id]        L'ID del task (Todo) a cui aggiungere l'utente.
+  /// [id]        L'ID del task a cui aggiungere l'utente.
   /// [newUser]   L'ID del nuovo utente da aggiungere alla lista degli utenti assegnati.
   ///
   /// @return Future<void>  Un futuro che si completa quando l'operazione di aggiornamento è conclusa.
@@ -189,13 +190,13 @@ class TodoRepository {
 
 
 
-  /// Verifica se un utente è assegnato a un task (Todo) nel database.
+  /// Verifica se un utente è assegnato a un task nel database.
   ///
   /// Questo metodo recupera il documento del task specificato e controlla se l'ID dell'utente
   /// è presente nella lista degli utenti assegnati al task.
   ///
   /// [userId]   L'ID dell'utente di cui verificare l'assegnazione.
-  /// [taskId]   L'ID del task (Todo) da verificare.
+  /// [taskId]   L'ID del task da verificare.
   ///
   /// @return Future<bool>  Un futuro che completa con `true` se l'utente è assegnato al task,
   ///                        `false` altrimenti.
@@ -225,13 +226,13 @@ class TodoRepository {
     }
   }
 
-  /// Rimuove un utente assegnato a un task (Todo) nel database.
+  /// Rimuove un utente assegnato a un task nel database.
   ///
   /// Questo metodo recupera il documento del task specificato, rimuove l'utente dalla lista
   /// degli utenti assegnati e aggiorna il documento nel database. Se, dopo la rimozione,
   /// la lista degli utenti è vuota, il task viene eliminato dal database.
   ///
-  /// [id]            L'ID del task (Todo) da cui rimuovere l'utente.
+  /// [id]            L'ID del task da cui rimuovere l'utente.
   /// [userToRemove]  L'ID dell'utente da rimuovere dalla lista degli utenti assegnati.
   ///
   /// @return Future<void>  Un futuro che completa senza valore. Se si verifica un errore,
@@ -260,13 +261,13 @@ class TodoRepository {
   }
 
 
-  /// Recupera un task (Todo) dal database utilizzando il suo ID.
+  /// Recupera un task dal database utilizzando il suo ID.
   ///
   /// Questo metodo recupera il documento del task specificato dal database e lo converte
   /// in un'istanza di `LeMieAttivita`. Se si verifica un errore durante il recupero, viene
   /// sollevata un'eccezione.
   ///
-  /// [id]        L'ID del task (Todo) da recuperare.
+  /// [id]        L'ID del task da recuperare.
   ///
   /// @return Future<LeMieAttivita?>  Un futuro che completa con un'istanza di `LeMieAttivita`
   ///                                  se il task esiste, oppure `null` se il task non esiste.
@@ -285,7 +286,7 @@ class TodoRepository {
   }
 
 
-  /// Conta il numero di task (Todo) completati per un progetto specificato.
+  /// Conta il numero di task completati per un progetto specificato.
   ///
   /// Questo metodo esegue una query sul database per contare i task che sono stati completati
   /// e appartengono al progetto specificato. Se si verifica un errore durante la query, viene
@@ -310,7 +311,7 @@ class TodoRepository {
   }
 
 
-  /// Conta il numero totale di task (Todo) per un progetto specificato.
+  /// Conta il numero totale di task per un progetto specificato.
   ///
   /// Questo metodo esegue una query sul database per contare tutti i task che appartengono
   /// al progetto specificato. Se si verifica un errore durante la query, viene restituito
@@ -334,7 +335,7 @@ class TodoRepository {
     }
   }
 
-  /// Conta il numero di task (Todo) non completati per un progetto specificato.
+  /// Conta il numero di task non completati per un progetto specificato.
   ///
   /// Questo metodo esegue una query sul database per contare tutti i task che appartengono
   /// al progetto specificato e che non sono stati completati. Se si verifica un errore durante

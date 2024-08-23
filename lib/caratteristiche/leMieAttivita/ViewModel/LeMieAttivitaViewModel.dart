@@ -20,10 +20,25 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
   Stream<String> get erroreAggiungiTaskStream =>
       _erroreAggiungiTaskController.stream;
 
+
+
+  /// Aggiunge un messaggio di errore al controller di errore per l'aggiunta di un task.
+  ///
+  /// Questo metodo invia un messaggio di errore al flusso di errore per l'aggiunta di un task. Il messaggio
+  /// viene inviato tramite il controller `_erroreAggiungiTaskController`. Utilizza questo metodo per segnalare
+  /// errori specifici all'utente durante l'aggiunta di un task.
+  ///
   void setErroreAggiungiTask(String message) {
     _erroreAggiungiTaskController.add(message);
   }
 
+
+  /// Resetta il messaggio di errore per l'aggiunta di un task.
+  ///
+  /// Questo metodo invia una stringa vuota al controller `_erroreAggiungiTaskController`, resettando
+  /// il messaggio di errore corrente. Utilizza questo metodo per rimuovere eventuali messaggi di errore
+  /// precedenti una volta che l'errore è stato gestito o risolto.
+  ///
   void resetErroreAggiungiTask() {
     _erroreAggiungiTaskController.add('');
   }
@@ -32,6 +47,18 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
     _errorMessage = message;
     notifyListeners();
   }
+
+
+  /// Aggiunge un nuovo task alla lista dei task.
+  ///
+  /// [titolo] Il titolo del task. Non può essere vuoto.
+  /// [descrizione] Una descrizione opzionale del task.
+  /// [dataScadenza] La data di scadenza del task. Deve essere una data futura rispetto alla data odierna.
+  /// [completato] Indica se il task è stato completato (`true`) o meno (`false`).
+  /// [proprietario] Il nome dell'utente a cui è assegnato il task.
+  /// [progetto] Il nome del progetto a cui il task è associato.
+  /// [priorita] La priorità del task. Deve essere un valore valido del tipo `Priorita`.
+  /// [context] Il contesto dell'interfaccia utente, utilizzato per eventuali operazioni di visualizzazione.
 
   Future<String?> addTodo(
       String titolo,
@@ -66,6 +93,15 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
     }
   }
 
+  /// Verifica se un utente è assegnato a un task.
+  ///
+  /// [idUtente] ID dell'utente da verificare.
+  /// [idTask] ID del task al quale l'utente potrebbe essere assegnato.
+  ///
+  /// Ritorna `true` se l'utente è assegnato al task, altrimenti `false`.
+  ///
+  /// Solleva un'eccezione se si verifica un errore durante la verifica dell'assegnazione.
+
   Future<bool> utenteAssegnato(String idUtente, String idTask) async {
     try {
       bool isAssigned = await repository.utenteAssegnato(idUtente, idTask);
@@ -75,6 +111,15 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
     }
   }
 
+
+  /// Aggiunge un utente a un task.
+  ///
+  /// [idUtente] ID dell'utente da aggiungere al task.
+  /// [idTask] ID del task al quale l'utente deve essere aggiunto.
+  ///
+  /// Questo metodo tenta di aggiungere l'utente specificato al task indicato.
+  /// Non ritorna nulla. Se si verifica un errore durante l'operazione, viene sollevata un'eccezione
+  /// con un messaggio descrittivo.
   Future<void> addUserTodo(String idUtente, String idTask) async {
     try {
       await repository.addUserToTodo(idTask, idUtente);
@@ -84,6 +129,16 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
     }
   }
 
+
+
+  /// Rimuove un utente da un task.
+  ///
+  /// [idUtente] ID dell'utente da rimuovere dal task.
+  /// [idTask] ID del task dal quale l'utente deve essere rimosso.
+  ///
+  /// Questo metodo tenta di rimuovere l'utente specificato dal task indicato.
+  /// Non ritorna nulla. Se si verifica un errore durante l'operazione, viene sollevata un'eccezione
+  /// con un messaggio descrittivo.
   Future<void> removeUserTodo(String idUtente, String idTask) async {
     try {
       await repository.removeUserFromTodo(idTask, idUtente);
@@ -93,6 +148,19 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
     }
   }
 
+
+  /// Modifica un task esistente.
+  ///
+  /// [id] ID del task da modificare.
+  /// [titolo] Nuovo titolo del task. Non può essere vuoto.
+  /// [descrizione] Nuova descrizione del task.
+  /// [dataScadenza] Nuova data di scadenza del task. Deve essere una data futura rispetto alla data di creazione.
+  /// [dataCreazione] Data di creazione originale del task.
+  /// [progetto] Nuovo nome del progetto associato al task.
+  /// [utenti] Nuova lista di ID degli utenti assegnati al task.
+  /// [completato] Indica se il task è stato completato (`true`) o meno (`false`).
+  /// [priorita] Nuova priorità del task. Deve essere un valore valido del tipo `Priorita`.
+  /// [context] Il contesto dell'interfaccia utente, utilizzato per eventuali operazioni di visualizzazione.
 
   Future<String?> updateTodo(
       String id,
@@ -120,12 +188,18 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
     }
   }
 
+
+  /// Aggiorna la data di scadenza di un task.
+  ///
+  /// [attivita] L'oggetto `LeMieAttivita` che rappresenta il task da aggiornare.
+  /// [dataScadenzaProgetto] La nuova data di scadenza del task. Deve essere una data futura rispetto alla data di creazione.
+
   Future<String?> updateDataScadenzaTodo(
-      LeMieAttivita todo ,
+      LeMieAttivita attivita ,
       DateTime dataScadenzaProgetto,
       ) async {
     try {
-      await repository.updateTodo(id: todo.id!, titolo: todo.titolo, descrizione: todo.descrizione, dataScadenza: dataScadenzaProgetto, priorita: todo.priorita, progetto: todo.progetto, utenti: todo.utenti, completato : todo.completato, dataCreazione : todo.dataScadenza);
+      await repository.updateTodo(id: attivita.id!, titolo: attivita.titolo, descrizione: attivita.descrizione, dataScadenza: dataScadenzaProgetto, priorita: attivita.priorita, progetto: attivita.progetto, utenti: attivita.utenti, completato : attivita.completato, dataCreazione : attivita.dataScadenza);
       return null;
     } catch (e) {
       return "Errore durante la modifica della task.";
@@ -133,7 +207,14 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
   }
 
 
-
+  /// Elimina un task identificato dal suo ID.
+  ///
+  /// [id] ID del task da eliminare.
+  ///
+  /// Questo metodo tenta di eliminare il task con l'ID specificato.
+  /// Non ritorna nulla. Se si verifica un errore durante l'eliminazione, viene invocato il metodo
+  /// `setError` con un messaggio descrittivo dell'errore.
+  ///
   Future<void> deleteTodo(String id) async {
     try {
       await repository.deleteTodo(id);
@@ -142,6 +223,14 @@ class LeMieAttivitaViewModel extends ChangeNotifier {
     }
   }
 
+  /// Aggiorna lo stato di completamento di un task.
+  ///
+  /// [id] ID del task il cui stato di completamento deve essere aggiornato.
+  /// [completato] Indica se il task è stato completato (`true`) o meno (`false`).
+  ///
+  /// Questo metodo tenta di aggiornare lo stato di completamento del task identificato dall'ID specificato.
+  /// Non ritorna nulla. Se si verifica un errore durante l'aggiornamento, viene invocato il metodo
+  /// `setError` con un messaggio descrittivo dell'errore.
   Future<void> completeTodo(String id, bool completato) async {
     try {
       await repository.completeTodo(id, completato);
