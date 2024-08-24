@@ -202,15 +202,9 @@ class CreaProgettoDialogState extends State<CreaProgettoDialog> {
               ),
               style: const TextStyle(color: Colors.black),
               maxLines: 2,
+              maxLength: maxCharsNome,
             ) ,
-            if(creaProgetto)
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                '${nome.length} / $maxCharsNome',
-                style: const TextStyle(color: Colors.black),
-              ),
-            ),
+
             if(creaProgetto)
             const SizedBox(height: 8.0),
             if(creaProgetto)
@@ -236,15 +230,8 @@ class CreaProgettoDialogState extends State<CreaProgettoDialog> {
                 ),
               ),
               style: const TextStyle(color: Colors.black),
+              maxLength: maxCharsDescrizione,
               maxLines: 4,
-            ),
-            if(creaProgetto)
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                '${descrizione.length} / $maxCharsDescrizione',
-                style: const TextStyle(color: Colors.black),
-              ),
             ),
             if(creaProgetto)
             const SizedBox(height: 8.0),
@@ -255,7 +242,7 @@ class CreaProgettoDialogState extends State<CreaProgettoDialog> {
                 final pickedDate = await showDatePicker(
                   context: context,
                   initialDate: dataScadenza,
-                  firstDate: DateTime(2000),
+                  firstDate: DateTime.now(),
                   lastDate: DateTime(2101),
                   builder: (context, child) {
                     return Theme(
@@ -476,7 +463,7 @@ class CreaProgettoDialogState extends State<CreaProgettoDialog> {
                   descrizione: descrizione,
                   dataScadenza: dataScadenza,
                   priorita: priorita,
-                  partecipanti: [widget.currentUserId], // Aggiungi il partecipante qui
+                  partecipanti: [widget.currentUserId],
                   onSuccess: (progettoId) {
                     widget.viewModelProgetto.caricaProgettiUtente(widget.currentUserId, true);
                     widget.viewModelProgetto.caricaProgettiCompletatiUtente(widget.currentUserId);

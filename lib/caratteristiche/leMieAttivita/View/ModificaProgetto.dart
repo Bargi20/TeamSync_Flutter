@@ -118,6 +118,9 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
         const SnackBar(content: Text('Per favore, compila tutti i campi obbligatori.')),
       );
     }
+    setState(() {
+      caricaAggiornamenti = false;
+    });
   }
 
   Widget _buildTextField({
@@ -160,7 +163,6 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
     );
   }
 
-  // Widget per il dropdown della priorità
   Widget _buildPriorityDropdown() {
     return DropdownButtonFormField<Priorita>(
       value: _priorita,
@@ -281,7 +283,8 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
                 final pickedDate = await showDatePicker(
                   context: context,
                   initialDate: _selectedDate ?? DateTime.now(),
-                  firstDate: widget.dataMinimaScadenzaTask,
+                  firstDate: _progetto!.dataCreazione,
+
                   lastDate: DateTime(2101),
                   builder: (context, child) {
                     return Theme(
@@ -348,7 +351,7 @@ class _ModificaProgettoState extends State<ModificaProgetto> {
                   final pickedDate = await showDatePicker(
                     context: context,
                     initialDate: _selectedDate2 ?? DateTime.now(),
-                    firstDate: widget.dataMinimaScadenzaTask,
+                    firstDate: _progetto!.dataCreazione,
                     lastDate: DateTime(2101),
                     builder: (context, child) {
                       return Theme(
