@@ -15,15 +15,15 @@ dependencies:
   provider: ^6.0.3
 
   # Firebase packages
-  firebase_core: ^3.3.0 # Assicurati che questa versione sia compatibile con gli altri pacchetti
-  firebase_auth: ^5.1.2 # Assicurati che questa versione sia compatibile con firebase_core
-  cloud_firestore: ^5.1.0 # Utilizza una versione compatibile e disponibile
-  firebase_storage: ^12.1.1 # Assicurati che questa versione sia compatibile con firebase_core
+  firebase_core: ^3.3.0
+  firebase_auth: ^5.1.2
+  cloud_firestore: ^5.1.0
+  firebase_storage: ^12.1.1
   intl: ^0.19.0
   logging: ^1.2.0
 
   # UUID package
-  uuid: ^3.0.6 # Aggiungi questa dipendenza per generare UUID
+  uuid: ^3.0.6
 
   share_plus: ^8.0.0
 
