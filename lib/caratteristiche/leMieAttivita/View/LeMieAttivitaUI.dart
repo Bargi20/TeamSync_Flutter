@@ -1281,48 +1281,46 @@ class _AddTodoDialogState extends State<AddTodoDialog> {
 
   Widget _buildPriorityDropdown() {
     return DropdownButtonFormField<Priorita>(
-
-    value: _priorita,
-    decoration: InputDecoration(
-    labelText: 'Priorità',
-    labelStyle: const TextStyle(color:  Colors.black),
-    enabledBorder: OutlineInputBorder(
-    borderSide: const BorderSide(color: Colors.black),
-    borderRadius: BorderRadius.circular(16.0),
-    ),
-    focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.red[700]!),
-    borderRadius: BorderRadius.circular(16.0),
-    ),
-    ),
-    items: Priorita.values.map((Priorita p) {
-
-    return DropdownMenuItem<Priorita>(
-    value: p,
-    child: Row(
-    children: [
-    Container(
-    width: 10,
-    height: 10,
-    decoration: BoxDecoration(
-    color: p.colore,
-    shape: BoxShape.circle,
-    ),
-    ),
-    const SizedBox(width: 8),
-    Text(
-    p.name,
-    style: const TextStyle(color: Colors.black),
-    ),
-    ],
-    ),
-    );
-    }).toList(),
-    onChanged: (Priorita? newValue) {
-    setState(() {
-    _priorita = newValue!;
-    });
-    },
+      value: _priorita,
+      decoration: InputDecoration(
+        labelText: 'Priorità',
+        labelStyle: const TextStyle(color: Colors.black),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black),
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red[700]!),
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+      ),
+      items: Priorita.values.map((Priorita p) {
+        return DropdownMenuItem<Priorita>(
+          value: p,
+          child: Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: p.colore,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                p.name,
+                style: const TextStyle(color: Colors.black),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+      onChanged: (Priorita? newValue) {
+        setState(() {
+          _priorita = newValue!;
+        });
+      },
     );
   }
 
